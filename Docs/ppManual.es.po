@@ -1,0 +1,255 @@
+
+#: [0]\office:document[15]\office:body[1]\office:text[9]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[9]\\text:h"
+msgid "Notas sobre PicPas"
+msgstr "Notas sobre PicPas"
+
+#: [0]\office:document[15]\office:body[1]\office:text[35]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[35]\\text:h"
+msgid "INTRODUCCIÓN"
+msgstr "INTRODUCCIÓN"
+
+#: [0]\office:document[15]\office:body[1]\office:text[39]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[39]\\text:h"
+msgid "Características del Compilador"
+msgstr "Características del Compilador"
+
+#: [0]\office:document[15]\office:body[1]\office:text[47]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[47]\\text:h"
+msgid "Características de la lDE"
+msgstr "Características de la lDE"
+
+#: [0]\office:document[15]\office:body[1]\office:text[55]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[55]\\text:h"
+msgid "Limitaciones"
+msgstr "Limitaciones"
+
+#: [0]\office:document[15]\office:body[1]\office:text[61]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[61]\\text:h"
+msgid "Instalación"
+msgstr "Instalación"
+
+#: [0]\office:document[15]\office:body[1]\office:text[93]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[93]\\text:h"
+msgid "LA INTERFAZ"
+msgstr "LA INTERFAZ"
+
+#: [0]\office:document[15]\office:body[1]\office:text[115]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[115]\\text:h"
+msgid "Explorador de Código"
+msgstr "Explorador de Código"
+
+#: [0]\office:document[15]\office:body[1]\office:text[143]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[143]\\text:h"
+msgid "Ventana de Edición"
+msgstr "Ventana de Edición"
+
+#: [0]\office:document[15]\office:body[1]\office:text[173]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[173]\\text:h"
+msgid "Panel de mensajes"
+msgstr "Panel de mensajes"
+
+#: [0]\office:document[15]\office:body[1]\office:text[227]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[227]\\text:h"
+msgid "Plegado de código"
+msgstr "Plegado de código"
+
+#: [0]\office:document[15]\office:body[1]\office:text[243]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[243]\\text:h"
+msgid "Cursores Múltiples"
+msgstr "Cursores Múltiples"
+
+#: [0]\office:document[15]\office:body[1]\office:text[271]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[271]\\text:h"
+msgid "Edición Sincronizada"
+msgstr "Edición Sincronizada"
+
+#: [0]\office:document[15]\office:body[1]\office:text[289]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[289]\\text:h"
+msgid "Compilación"
+msgstr "Compilación"
+
+#: [0]\office:document[15]\office:body[1]\office:text[307]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[307]\\text:h"
+msgid "REFERENCIA DEL LENGUAJE"
+msgstr "REFERENCIA DEL LENGUAJE"
+
+#: [0]\office:document[15]\office:body[1]\office:text[311]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[311]\\text:h"
+msgid "Palabras Reservadas"
+msgstr "Palabras Reservadas"
+
+#: [0]\office:document[15]\office:body[1]\office:text[341]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[341]\\text:h"
+msgid "Identificadores"
+msgstr "Identificadores"
+
+#: [0]\office:document[15]\office:body[1]\office:text[395]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[395]\\text:h"
+msgid "Estructura de un programa"
+msgstr "Estructura de un programa"
+
+#: [0]\office:document[15]\office:body[1]\office:text[481]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[481]\\text:h"
+msgid "Operadores"
+msgstr "Operadores"
+
+#: [0]\office:document[15]\office:body[1]\office:text[531]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[531]\\text:h"
+msgid "Precedencia de operadores"
+msgstr "Precedencia de operadores"
+
+#: [0]\office:document[15]\office:body[1]\office:text[563]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[563]\\text:h"
+msgid "Tipos de datos"
+msgstr "Tipos de datos"
+
+#: [0]\office:document[15]\office:body[1]\office:text[587]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[587]\\text:h"
+msgid "Tipo Char"
+msgstr "Tipo Char"
+
+#: [0]\office:document[15]\office:body[1]\office:text[655]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[655]\\text:h"
+msgid "Tipo Bit"
+msgstr "Tipo Bit"
+
+#: [0]\office:document[15]\office:body[1]\office:text[735]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[735]\\text:h"
+msgid "Conversión de tipos"
+msgstr "Conversión de tipos"
+
+#: [0]\office:document[15]\office:body[1]\office:text[805]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[805]\\text:h"
+msgid "Propiedades de tipos"
+msgstr "Propiedades de tipos"
+
+#: [0]\office:document[15]\office:body[1]\office:text[911]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[911]\\text:h"
+msgid "Variables"
+msgstr "Variables"
+
+#: [0]\office:document[15]\office:body[1]\office:text[947]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[947]\\text:h"
+msgid "Variables Absolutas"
+msgstr "Variables Absolutas"
+
+#: [0]\office:document[15]\office:body[1]\office:text[999]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[999]\\text:h"
+msgid "Variables REGISTER"
+msgstr "Variables REGISTER"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1067]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1067]\\text:h"
+msgid "Constantes"
+msgstr "Constantes"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1161]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1161]\\text:h"
+msgid "Estructuras"
+msgstr "Estructuras"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1169]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1169]\\text:h"
+msgid "Condicional IF … THEN"
+msgstr "Condicional IF … THEN"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1253]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1253]\\text:h"
+msgid "Lazo REPEAT"
+msgstr "Lazo REPEAT"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1283]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1283]\\text:h"
+msgid "Lazo WHILE"
+msgstr "Lazo WHILE"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1323]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1323]\\text:h"
+msgid "Lazo FOR"
+msgstr "Lazo FOR"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1349]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1349]\\text:h"
+msgid "Funciones del sistema"
+msgstr "Funciones del sistema"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1359]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1359]\\text:h"
+msgid "Procedimientos"
+msgstr "Procedimientos"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1425]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1425]\\text:h"
+msgid "Funciones"
+msgstr "Funciones"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1489]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1489]\\text:h"
+msgid "Código ensamblador"
+msgstr "Código ensamblador"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1599]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1599]\\text:h"
+msgid "Etiquetas y saltos"
+msgstr "Etiquetas y saltos"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1685]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1685]\\text:h"
+msgid "Referencia a variables"
+msgstr "Referencia a variables"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1771]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1771]\\text:h"
+msgid "Referencia a constantes"
+msgstr "Referencia a constantes"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1817]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1817]\\text:h"
+msgid "Devolución de resultado para funciones"
+msgstr "Devolución de resultado para funciones"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1869]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1869]\\text:h"
+msgid "La directiva ORG"
+msgstr "La directiva ORG"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1913]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1913]\\text:h"
+msgid "Unidades"
+msgstr "Unidades"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1975]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1975]\\text:h"
+msgid "Directivas"
+msgstr "Directivas"
+
+#: [0]\office:document[15]\office:body[1]\office:text[1987]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1987]\\text:h"
+msgid "$PROCESSOR"
+msgstr "$PROCESSOR"
+
+#: [0]\office:document[15]\office:body[1]\office:text[2023]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2023]\\text:h"
+msgid "$FREQUENCY"
+msgstr "$FREQUENCY"
+
+#: [0]\office:document[15]\office:body[1]\office:text[2065]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2065]\\text:h"
+msgid "$MODE"
+msgstr "$MODE"
+
+#: [0]\office:document[15]\office:body[1]\office:text[2145]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2145]\\text:h"
+msgid "APÉNDICE"
+msgstr "APÉNDICE"
+
+#: [0]\office:document[15]\office:body[1]\office:text[2149]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2149]\\text:h"
+msgid "Dispositivos Soportados"
+msgstr "Dispositivos Soportados"
+
+#: [0]\office:document[15]\office:body[1]\office:text[2201]\text:h
+msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2201]\\text:h"
+msgid "Tabla de contenido"
+msgstr "Tabla de contenido"
