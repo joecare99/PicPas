@@ -306,7 +306,7 @@ msgstr "By: Tito Hinostroz"
 #: [0]\office:document[15]\office:body[1]\office:text[13]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[13]\\text:p"
 msgid "PicPas, es un compilador cruzado, multiplataforma, de código abierto (Ver Licencia), para sistemas embebidos, que usen microcontroladores PIC de rango medio (la mayoría de la serie %0:sF)."
-msgstr "PicPas, is a cross compiler, cross-platform, open source (see license), for embedded systems, using PIC microcontrollers from midrange (most of the series %0: sF)."
+msgstr "PicPas, is a cross compiler, cross-platform, open source (see license), for embedded systems, using PIC microcontrollers from midrange (most of the series %0:sF)."
 
 #: [0]\office:document[15]\office:body[1]\office:text[17]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[17]\\text:p"
@@ -356,7 +356,7 @@ msgstr "Xpres"
 #: [0]\office:document[15]\office:body[1]\office:text[43]\text:list[1]\text:list-item[1]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[43]\\text:list[1]\\text:list-item[1]\\text:p"
 msgid "Usa el lenguaje Pascal, en una versión simplificada, y con características de Modula-%0:s"
-msgstr "Using the Pascal language, in a simplified version, and with features to Modula-%0: s"
+msgstr "Using the Pascal language, in a simplified version, and with features to Modula-%0:s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[43]\text:list[3]\text:list-item[1]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[43]\\text:list[3]\\text:list-item[1]\\text:p"
@@ -2473,7 +2473,7 @@ msgstr ";"
 #: [0]\office:document[15]\office:body[1]\office:text[827]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[827]\\text:p"
 msgid "El campo bit%0:s ya se encuentra internamente definido para todas las variables byte y constante no literales."
-msgstr "The field bit %0: s is already internally defined for all the variables byte and constant non-literal."
+msgstr "The field bit %0:s is already internally defined for all the variables byte and constant non-literal."
 
 #: [0]\office:document[15]\office:body[1]\office:text[829]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[829]\\text:p"
@@ -5489,7 +5489,7 @@ msgstr ";"
 #: [0]\office:document[15]\office:body[1]\office:text[1457]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1457]\\text:p"
 msgid "Así el código generado es %0:s instrucciones más cortas y dos ciclos más rápido."
-msgstr "Thus, the generated code is %0: s shorter instructions and two faster cycles."
+msgstr "Thus, the generated code is %0:s shorter instructions and two faster cycles."
 
 #: [0]\office:document[15]\office:body[1]\office:text[1459]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[1459]\\text:p"
@@ -8196,7 +8196,7 @@ msgstr ""
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[59]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[59]\\text:p"
 msgid "%0:s Estructuras%1:s"
-msgstr "%0: s structures %1: s"
+msgstr "%0:s structures %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[61]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[61]\\text:p"
@@ -8206,27 +8206,27 @@ msgstr "%0:s conditional IF THEN %1:s"
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[63]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[63]\\text:p"
 msgid "%0:s Lazo REPEAT%1:s"
-msgstr "%0: s loop REPEAT %1: s"
+msgstr "%0:s loop REPEAT %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[65]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[65]\\text:p"
 msgid "%0:s Lazo WHILE%1:s"
-msgstr "%0: s loop WHILE %1: s"
+msgstr "%0:s loop WHILE %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[69]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[69]\\text:p"
 msgid "%0:s Funciones del sistema%1:s"
-msgstr "%0: s system functions %1: s"
+msgstr "%0:s system functions %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[71]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[71]\\text:p"
 msgid "%0:s Procedimientos%1:s"
-msgstr "%0: s procedures %1: s"
+msgstr "%0:s procedures %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[73]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[73]\\text:p"
 msgid "%0:s Funciones%1:s"
-msgstr "%0: s function %1: s"
+msgstr "%0:s function %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[75]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[75]\\text:p"
@@ -8236,37 +8236,37 @@ msgstr "%0:s code assembler %1:s"
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[77]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[77]\\text:p"
 msgid "%0:s Etiquetas y saltos%1:s"
-msgstr "%0: s tags and jumps 1%: s"
+msgstr "%0:s tags and jumps 1%: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[79]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[79]\\text:p"
 msgid "%0:s Referencia a variables%1:s"
-msgstr "%0: s reference to variable %1: s"
+msgstr "%0:s reference to variable %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[81]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[81]\\text:p"
 msgid "%0:s Referencia a constantes%1:s"
-msgstr "%0: s reference to constant %1: s"
+msgstr "%0:s reference to constant %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[83]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[83]\\text:p"
 msgid "%0:s Devolución de resultado para funciones%1:s"
-msgstr "%0: s return of result for function %1: s"
+msgstr "%0:s return of result for function %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[85]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[85]\\text:p"
 msgid "%0:s La directiva ORG%1:s"
-msgstr "%0: s the ORG directive %1: s"
+msgstr "%0:s the ORG directive %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[87]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[87]\\text:p"
 msgid "%0:s Unidades%1:s"
-msgstr "%0: s units %1: s"
+msgstr "%0:s units %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[89]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[89]\\text:p"
 msgid "%0:s Directivas%1:s"
-msgstr "%0: s directives %1: s"
+msgstr "%0:s directives %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[91]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[91]\\text:p"
@@ -8291,9 +8291,9 @@ msgstr "%0:s APÉNDICE%1:s"
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[99]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[99]\\text:p"
 msgid "%0:s Dispositivos Soportados%1:s"
-msgstr "%0: s devices supported %1: s"
+msgstr "%0:s devices supported %1: s"
 
 #: [0]\office:document[15]\office:body[1]\office:text[2205]\text:table-of-content[3]\text:index-body[101]\text:p
 msgctxt "[0]\\office:document[15]\\office:body[1]\\office:text[2205]\\text:table-of-content[3]\\text:index-body[101]\\text:p"
 msgid "Tabla de contenido%0:s"
-msgstr "Table of contents %0: s"
+msgstr "Table of contents %0:s"
