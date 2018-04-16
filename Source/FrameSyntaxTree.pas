@@ -78,23 +78,23 @@ type
     procedure LocateFile(filname: string);
     procedure Init(syntaxTree0: TXpTreeElements);
     procedure Refresh;
-    procedure SetLanguage(idLang: string);
+    procedure SetLanguage;
   end;
 
 implementation
 {$R *.lfm}
 var
+  //Cadenas con los títulos de los nodos a mostrar en el árbol
   TIT_MAIN, TIT_UNIT : string;
   TIT_CONS: String;
   TIT_VARS: String;
   TIT_FUNC: String;
+  TIT_TYPE: String;
   TIT_OTHER: String;
 
 { TfraSyntaxTree }
-procedure TfraSyntaxTree.SetLanguage(idLang: string);
-{Fija el lenguaje de acuerdo al valor de Globales.curLang}
+procedure TfraSyntaxTree.SetLanguage;
 begin
-  curLang := idLang;
   {$I ..\language\tra_FrameSyntaxTree.pas}
   Refresh;
 end;
@@ -113,11 +113,11 @@ begin
   TreeView1.OnAdvancedCustomDrawItem := @TreeView1AdvancedCustomDrawItem;
   TreeView1.Options := TreeView1.Options - [tvoThemedDraw];
   frmElemProperty.OnExplore := @frmElemPropertyExplore;
-  SetLanguage('en');   //Inicia idioma
   //Configura filtros del explorador de archivos
-  frmArcExplor1.Filter.Items.Add('*.pas,*.pp');  //los filtros se separan por comas
+  frmArcExplor1.Filter.Items.Add('*.pas,*.pp,*.inc');  //los filtros se separan por comas
   frmArcExplor1.Filter.Items.Add('*');  //para seleccionar todos
   frmArcExplor1.Filter.ItemIndex:=0;    //selecciona la primera opción por defecto
+  frmArcExplor1.Filter.Visible := false;
   frmArcExplor1.InternalPopupFile := true;
   frmArcExplor1.InternalPopupFolder := true;
   frmArcExplor1.OnDoubleClickFile := @frmArcExplor1DoubleClickFile;
@@ -128,20 +128,29 @@ function TfraSyntaxTree.AddNodeTo(nodParent: TTreeNode; elem: TxpElement): TTree
 var
   nod: TTreeNode;
 begin
+  if elem = nil then begin
+    nod := TreeView1.Items.AddChild(nodParent, '???');
+    nod.Data := elem;
+    Result := nod;
+    exit;
+  end;
   nod := TreeView1.Items.AddChild(nodParent, elem.name);
-  if elem is TxpEleCon then begin
+  if elem.idClass = eltCons then begin
     nod.ImageIndex := 4;
     nod.SelectedIndex := 4;
-  end else if elem is TxpEleVar then begin
+  end else if elem.idClass = eltVar then begin
     nod.ImageIndex := 2;
     nod.SelectedIndex := 2;
-  end else if elem is TxpEleFun then begin
+  end else if elem.idClass = eltType then begin
+    nod.ImageIndex := 15;
+    nod.SelectedIndex := 15;
+  end else if elem.idClass = eltFunc then begin
     nod.ImageIndex := 3;
     nod.SelectedIndex := 3;
-  end else if elem is TxpEleUnit then begin
+  end else if elem.idClass = eltUnit then begin
     nod.ImageIndex := 6;
     nod.SelectedIndex := 6;
-  end else if elem is TxpEleBody then begin
+  end else if elem.idClass = eltBody then begin
     nod.ImageIndex := 12;
     nod.SelectedIndex := 12;
   end else begin
@@ -158,17 +167,18 @@ end;
 procedure TfraSyntaxTree.RefreshByGroups(nodMain: TTreeNode; curEle: TxpElement);
 var
   elem, elFun: TxpElement;
-  nodVar, nodOtr, nodFun, nodCte, nodUni, nodEleUni, nodEleFun: TTreeNode;
+  nodVar, nodOtr, nodFun, nodCte, nodUni, nodTyp, nodEleUni, nodEleFun: TTreeNode;
 begin
   //Agrega grupos
   nodUni := nil;
   nodVar := nil;
   nodCte := nil;
   nodFun := nil;
+  nodTyp := nil;
   nodOtr := nil;  //por defecto
   //Agrega elementos
   for elem in curEle.elements do begin
-    if elem is TxpEleUnit then begin
+    if elem.idClass = eltUnit then begin
       if noduni = nil then begin
         nodUni := TreeView1.Items.AddChild(nodMain, TIT_UNIT);
         nodUni.ImageIndex := 0;
@@ -178,21 +188,28 @@ begin
       //Agrega los elementos de la unidad
       RefreshByDeclar(nodEleUni, elem);  //No agrupa
       nodEleUni.Expanded := false;
-    end else if elem is TxpEleCon then begin  //constante
+    end else if elem.idClass = eltCons then begin  //constante
       if nodCte= nil then begin
         nodCte := TreeView1.Items.AddChild(nodMain, TIT_CONS);
         nodCte.ImageIndex := 0;
         nodCte.SelectedIndex := 0;
       end;
       AddNodeTo(nodCte, elem);
-    end else if elem is TxpEleVar then begin  //variable
+    end else if elem.idClass = eltVar then begin  //variable
       if nodVar = nil then begin
         nodVar := TreeView1.Items.AddChild(nodMain, TIT_VARS);
         nodVar.ImageIndex := 0;
         nodVar.SelectedIndex := 0;
       end;
       AddNodeTo(nodVar, elem);
-    end else if elem is TxpEleFun then begin  //función
+    end else if elem.idClass = eltType then begin  //variable
+      if nodTyp = nil then begin
+        nodTyp := TreeView1.Items.AddChild(nodMain, TIT_TYPE);
+        nodTyp.ImageIndex := 0;
+        nodTyp.SelectedIndex := 0;
+      end;
+      AddNodeTo(nodTyp, elem);
+    end else if elem.idClass = eltFunc then begin  //función
       if nodFun = nil then begin  //Si no se ha creado, lo crea
         nodFun := TreeView1.Items.AddChild(nodMain, TIT_FUNC);
         nodFun.ImageIndex := 0;
@@ -205,7 +222,7 @@ begin
           AddNodeTo(nodEleFun, elFun);
         end;
       end;
-    end else if elem is TxpEleBody then begin  //cuerpo
+    end else if elem.idClass = eltBody then begin  //cuerpo
       AddNodeTo(nodMain, elem);
     end else begin
       if nodOtr = nil then begin  //Si no se ha creado, lo crea
@@ -232,7 +249,7 @@ begin
   //Agrega elementos
   for elem in curEle.elements do begin
       nodElem := AddNodeTo(nodMain, elem);
-      if elem is TxpEleUnit then begin
+      if elem.idClass = eltUnit then begin
         //Es una unidad
         RefreshByDeclar(nodElem, elem);  //Llamada recursiva
         nodElem.Expanded := false;
@@ -334,6 +351,7 @@ procedure TfraSyntaxTree.SetTextColor(AValue: TColor);
 begin
 //  if FTextColor = AValue then Exit;
   FTextColor := AValue;
+  frmArcExplor1.TextColor := AValue;
 end;
 procedure TfraSyntaxTree.TreeView1AdvancedCustomDrawItem(
   Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState;

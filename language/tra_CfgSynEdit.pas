@@ -1,30 +1,33 @@
-//Editor settings
-Label6.Caption       := trans('&Font:'                 , '&Letra:'                     ,'',
-                              'Schri&ftart:');
-Label7.Caption       := trans('&Size:'                 , '&Tamaño:'                    ,'',
-                              '&Größe:');
-Label8.Caption       := trans('Back color:'            , 'Color de fondo:'             ,'',
-                              'Hintergrundfarbe:');
-Label9.Caption       := trans('Font Color:'            , 'Color texto:'                ,'',
-                              'Schriftfarbe:');
-chkViewVScroll.Caption:= trans('&Vertical Scrollbar'    , 'Barra de desplaz &Vert.'     ,'',
-                              '& Vertikale Bildlaufleiste');
-chkViewHScroll.Caption:= trans('&Horizontal Scrollbar'  , 'Barra de desplaz &Horiz.'    ,'',
-                              '&Horizontale Bildlaufleiste');
-chkAutoindent.Caption:= trans('Autoindent'             , 'Auto-indentado'              ,'',
-                              'Autom. Einrückung');
-chkHighCurWord.Caption := trans('Highlight current word' , 'Resaltar palabra bajo cursor','',
-                              'Aktuelles Wort markieren');
+//Editor Colors settings
+Label8.Caption       := trans('Back color:'      , 'Color de fondo:'             ,'',
+                              'Hintergrundfarbe:', 'Колір фону','Цвет фона');
+Label9.Caption       := trans('Font Color:'      , 'Color texto:'                ,'',
+                              'Schriftfarbe:'    ,'Колір шрифту','Цвет шрифта');
+chkAutoindent.Caption:= trans('Autoindent'       , 'Auto-indentado'              ,'',
+                              'Autom. Einrückung', '','');
 chkHighCurLin.Caption := trans('Hightlight current line', 'Marcar línea actual'         ,'',
-                              'Markiere aktuelle Zeile');
-chkVerPanVer.Caption := trans('Gutter'                 , 'Panel Vertical'              ,'',
-                              'Rinne');
+                              'Markiere aktuelle Zeile' , 'Підсвітка поточного рядка','Подсветка текущей строки');
+
+chkHighCurWord.Caption:= trans('Highlight current word ', 'Resaltar palabra bajo cursor','',
+                               'Aktuelles Wort markieren', 'Підсвітка поточного слова','Подсветка текущего слова');
+label10.Caption       := trans('Back color:'             , 'Color de fondo:'             ,'',
+                               'Hintergrundfarbe:'       , 'Колір фону','Цвет фона');
+label11.Caption       := trans('Text color:'             , 'Color de texto:'             ,'',
+                               'Farbe Text:'             , 'Колір текста','Цвет текста');
+label12.Caption       := trans('Frame color:'            , 'Color de borde:'             ,'',
+                               ''                        , 'Колір рамки','Цвет рамки');
+chkFullWord.Caption   := trans('Full Word'               , 'Palabra completa'             ,'',
+                               ''                        , 'Повне слово','Полное слово');
+
+chkVerPanVer.Caption := trans('Gutter '                 , 'Panel Vertical'              ,'',
+                              'Rinne'                   , '','');
 chkVerNumLin.Caption := trans('Show line number'       , 'Ver Núm.de línea'            ,'',
-                              'Zeilennummer anzeigen');
+                              'Zeilennummer anzeigen'  , 'Показувати номер рядка','Показывать номер строки');
 label2.Caption       := trans('Back color:'            , 'Color Fondo:'                ,'',
-                              'Hintergrundfarbe:');
+                              'Hintergrundfarbe:'      , 'Колір фону','Цвет фона');
 chkVerMarPle.Caption := trans('Show folding marks'     , 'Ver Marc.de plegado'         ,'',
-                              'Klappbare Marken zeigen');
+                              'Klappbare Marken zeigen', 'Показувати згортаючі мітки','Показывать сворачивающие метки');
 label3.Caption       := trans('Text color:'            , 'Color de texto:'             ,'',
-                              'Farbe Text:');
+                              'Farbe Text:'            , 'Колір текста','Цвет текста');
+
 

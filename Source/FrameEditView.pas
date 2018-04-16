@@ -3,26 +3,27 @@ unit FrameEditView;
 {$mode objfpc}{$H+}
 interface
 uses
-  Classes, SysUtils, FileUtil, LazUTF8, Forms, Controls, Dialogs, ComCtrls, ExtCtrls,
-  Graphics, LCLProc, Menus, LCLType, StdCtrls, strutils, fgl,
-  SynEdit, SynEditMiscClasses, SynEditKeyCmds, SynPluginMultiCaret,
-  SynEditMarkupHighAll, SynEditTypes,
-  Globales, SynFacilUtils, SynFacilCompletion, SynFacilHighlighter,
-  MisUtils, XpresBas;
+  Classes, SysUtils, FileUtil, LazUTF8, LazFileUtils, Forms, Controls, Dialogs,
+  ComCtrls, ExtCtrls, Graphics, LCLProc, Menus, LCLType, StdCtrls, strutils,
+  fgl, Types, SynEdit, SynEditMiscClasses, SynEditKeyCmds, SynPluginMultiCaret,
+  SynEditMarkupHighAll, SynEditTypes, SynPluginSyncroEdit, Globales, SynFacilUtils,
+  SynFacilBasic, SynFacilCompletion, SynFacilHighlighter, MisUtils, XpresBas;
 type
-  {Marcador para resltar errores de sintaxis en SynEdit}
-
   { TMarkup }
-
+  {Marcador para resltar errores de sintaxis en SynEdit}
   TMarkup = class(TSynEditMarkupHighlightMatches)
     public
       procedure SetMark(p1, p2: TPoint);
   end;
 
   { TSynFacilComplet2 }
-  //Versión personalizada de  TSynFacilComplet
+  {Versión personalizada de  TSynFacilComplet, que define palabras claves y
+   hace público el campo SpecIdentifiers}
   TSynFacilComplet2 = class(TSynFacilComplet)
     function IsKeyword(const AKeyword: string): boolean; override;
+  public
+    property SpecIdentif: TArrayTokSpec read SpecIdentifiers;
+//    SpecIdentifiers: TArrayTokSpec;
   end;
 
   { TSynEditor }
@@ -30,11 +31,7 @@ type
   TSynEditor = class(TSynFacilEditor)
   private  //Manejo de edición síncrona
     cursorPos: array of TPOINT;  //guarda posiciones de cursor
-    firstTok : boolean;  //bandera para identificar al primer token
-    tokFind  : String;   //token a buscar
     procedure AddCursorPos(x,y: integer);
-    procedure ExploreLine(lin: string; x1, x2, y: integer);
-    procedure ExploreForSyncro;
     procedure SetCursors;
   private
     FCaption : string;
@@ -42,7 +39,11 @@ type
       var Special: boolean; Markup: TSynSelectedColor);
     procedure SetCaption(AValue: string);
   protected
-    MarkErr: TMarkup;
+    const MAX_NMARK = 4;
+  protected
+    MarkErr: array[0..MAX_NMARK] of TMarkup;   //lista de marcadores
+    MarkFree: integer;  //Índice al marcador libre
+    function GetFreeMark: TMarkup;
     procedure edKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   public  //Inicialización
     SynEdit: TSynEdit;  //Editor SynEdit
@@ -65,6 +66,7 @@ type
     imgBookMarks: TImageList;
     ImgCompletion: TImageList;
     lblBackground: TLabel;
+    mnCloseOthers: TMenuItem;
     mnCloseAll: TMenuItem;
     mnNewTab: TMenuItem;
     mnCloseTab: TMenuItem;
@@ -74,8 +76,10 @@ type
     Panel2: TPanel;
     PopUpTabs: TPopupMenu;
     SaveDialog1: TSaveDialog;
+    SynPluginSyncroEdit1: TSynPluginSyncroEdit;
     UpDown1: TUpDown;
     procedure FrameResize(Sender: TObject);
+    procedure mnCloseOthersClick(Sender: TObject);
     procedure mnCloseAllClick(Sender: TObject);
     procedure mnCloseTabClick(Sender: TObject);
     procedure mnNewTabClick(Sender: TObject);
@@ -84,10 +88,7 @@ type
     xIniTabs : integer;  //Coordenada inicial desde donde se dibujan las lenguetas
     tabDrag  : integer;
     tabSelec : integer;
-    procedure AddListUnits(OpEve: TFaOpenEvent);
     procedure ConfigureSyntax(ed: TSynEditor; Complete: boolean = true);
-    procedure evoLoadItems(opEve: TFaOpenEvent; curEnv: TFaCursorEnviron;
-                           out Cancel: boolean);
     procedure MakeActiveTabVisible;
     procedure Panel1DragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure Panel1DragOver(Sender, Source: TObject; X, Y: Integer;
@@ -109,8 +110,8 @@ type
   private
     FTabIndex  : integer;
     FTabViewMode: integer;
-    lang       : string;
     fMultiCaret: TSynPluginMultiCaret;
+    fSynchro   : TSynPluginSyncroEdit;
     procedure ChangeEditorState;
     procedure editChangeFileInform;
     function GetCanRedo: boolean;
@@ -134,19 +135,24 @@ type
     procedure SelectPrevEditor;
     function HasFocus: boolean;
     procedure SetFocus; override;
-  public  //Administración de archivos
-    tmpPath: string;  //ruta usada para crear archivos temporales para los editores
+  public  //Eventos
     OnChangeEditorState: TSynEditorEvent;
     OnChangeFileInform: procedure of object;
     OnSelectEditor: procedure of object;  //Cuando cambia la selección de editor
     OnRequireSynEditConfig: procedure(ed: TsynEdit) of object;
+    OnRequireFieldsComplet: procedure(ident: string; opEve: TFaOpenEvent;
+                                      tokPos: TSrcPos) of object;
+    OnRequireSetCompletion: procedure(ed: TSynEditor) of object;
+  public  //Administración de archivos
+    tmpPath: string;  //ruta usada para crear archivos temporales para los editores
     property Modified: boolean read GetModified;
     property CanUndo: boolean read GetCanUndo;
     property CanRedo: boolean read GetCanRedo;
     procedure Undo;
     procedure Redo;
     procedure SelectAll;
-    procedure NewFile;
+    procedure NewPasFile;
+    procedure NewLstFile;
     function LoadFile(fileName: string): boolean;
     function SelectOrLoad(fileName: string): boolean;
     function SelectOrLoad(const srcPos: TSrcPos; highlightLine: boolean): boolean;
@@ -155,8 +161,9 @@ type
     function OpenDialog: boolean;
     function SaveAsDialog: boolean;
     function CloseEditor: boolean;
-    function CloseAll: boolean;
+    function CloseAll(out lstClosedFiles: string): boolean;
     procedure LoadLastFileEdited;
+    procedure LoadListFiles(lst: string);
   private  //Manejo de menús recientes
     mnRecents   : TMenuItem;  //Menú de archivos recientes
     RecentFiles : TStringList;  //Lista de archivos recientes
@@ -164,13 +171,13 @@ type
     procedure RecentClick(Sender: TObject);
     procedure ActualMenusReciente(Sender: TObject);
     procedure AgregArcReciente(arch: string);
-  public //Inicialización
+  public   //Inicialización
     procedure UpdateSynEditConfig;
     procedure InitMenuRecents(menRecents0: TMenuItem; RecentList: TStringList;
       MaxRecents0: integer = 5);
     constructor Create(AOwner: TComponent) ; override;
     destructor Destroy; override;
-    procedure SetLanguage(idLang: string);
+    procedure SetLanguage;
   end;
 
 implementation
@@ -220,76 +227,6 @@ begin
   CursorPos[n].x := x;
   CursorPos[n].y := y;
 end;
-procedure TSynEditor.ExploreLine(lin: string; x1, x2, y: integer);
-var
-  xtok: Integer;
-  tok: String;
-begin
-  if x2<x1 then exit;  //no es válido
-  //Hay una línea que debe ser explorada
-//  linAfec := system.Copy(lin, x1, x2-x1+1);  //La parte afectada
-//  DebugLn('--Lin=%s x1=%d,x2=%d', [lin, x1, x2]);
-  hl.SetLine(lin, 0);
-  while not hl.GetEol do begin
-    tok := hl.GetToken; //lee el token
-    //TokenAtt := hl.GetTokenAttribute;  //lee atributo
-    xtok := hl.GetX;
-    if (xtok>=x1) and (xtok<x2) then begin
-      if firstTok then begin
-        //El primer token es la palabra a buscar
-        tokFind := UpCase(tok);   //guarda palabra
-        firstTok := false;
-        AddCursorPos(xtok, y);   //guarda coordenadas
-      end else begin
-        //Es una búsqueda normal
-        if UpCase(tok) = tokFind then begin
-          //Guarda solo si coincide con el primer token
-         AddCursorPos(xtok, y);   //guarda coordenadas
-        end;
-      end;
-    end;
-    //pasa al siguiente
-    hl.Next;
-  end;
-//    MsgBox(lin);
-end;
-procedure TSynEditor.ExploreForSyncro;
-{Explora el texto seleccionado, para habilitar la edición sincronizada, con múltiples
-cursores.}
-var
-  row: integer;
-  xl1, xl2: integer;
-  lin: String;
-begin
-  setlength(cursorPos,0);   //limpia para guardar posiciones
-  firstTok := true;   //Para la búsqeuda correcta
-  for row := ed.BlockBegin.y to ed.BlockEnd.y do begin
-    lin := ed.Lines[row-1];  //linea en la selección
-    //Calcula coordenadas de la línea afectada
-    if row=ed.BlockBegin.y then begin
-      //Línea inicial
-      if row = ed.BlockEnd.y then begin
-        //Es también la línea final
-        xl1 := ed.BlockBegin.x;
-        xl2 := ed.BlockEnd.x-1;
-      end else begin
-        //Es solo línea inicial
-        xl1 := ed.BlockBegin.x;
-        xl2 := length(lin);
-      end;
-    end else if row=ed.BlockEnd.y then begin
-      //Línea final
-      xl1 := 1;
-      xl2 := ed.BlockEnd.x-1;
-    end else begin
-      //Línea interior
-      xl1 := 1;
-      xl2 := length(lin);
-    end;
-    //Explora
-    ExploreLine(lin, xl1, xl2, row);
-  end;
-end;
 procedure TSynEditor.SetCursors;
 var
   i: Integer;
@@ -336,18 +273,16 @@ begin
 end;
 procedure TSynEditor.edKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-var
-  lexState: TFaLexerState;
+//var
+//  lexState: TFaLexerState;
 begin
-  if (Shift = [ssCtrl]) and (Key = VK_J) then begin
-    //Exploramos el texto usando el resaltador
-    //Utilizaremos el mismo resaltador
-    lexState := hl.State; //Guarda, por si acaso, el estado del elxer
-    ExploreForSyncro;     //Explora selección
-    hl.State := lexState; //recupera estado
-    SetCursors;           //Coloca los cursores
-//    ed.CommandProcessor(ecSelWordRight, '', nil);
-  end;
+//  if (Shift = [ssCtrl]) and (Key = VK_J) then begin
+//    //Exploramos el texto usando el resaltador
+//    //Utilizaremos el mismo resaltador
+
+  //    SetCursors;           //Coloca los cursores
+////    ed.CommandProcessor(ecSelWordRight, '', nil);
+//  end;
   if Key = VK_ESCAPE then begin
     //Cancela una posible edición de múltiples cursores
     ed.CommandProcessor(ecPluginMultiCaretClearAll, '', nil);
@@ -362,7 +297,7 @@ begin
   Result := inherited SaveAsDialog(SaveDialog1);
   if Result then exit;
   //Se ha cambiado el nombre del archivo. Actualiza.
-  Caption := ExtractFileName(NomArc);
+  Caption := ExtractFileName(FileName);
 end;
 function TSynEditor.SaveQuery(SaveDialog1: TSaveDialog): boolean;
 {Versión de SaveQuery(), que verifica si el editor tiene nombre.}
@@ -374,14 +309,14 @@ var
 begin
   Result := false;
   if SynEdit.Modified then begin
-    resp := MessageDlg('', Format(MSG_MODIFSAV, [ExtractFileName(NomArc)]),
+    resp := MessageDlg('', Format(MSG_MODIFSAV, [ExtractFileName(FileName)]),
                        mtConfirmation, [mbYes, mbNo, mbCancel],0);
     if resp = mrCancel then begin
       Result := true;   //Sale con "true"
       Exit;
     end;
     if resp = mrYes then begin  //guardar
-      if NomArc='' then begin
+      if FileName='' then begin
         //Es un archivo nuevo
         SaveAsDialog(SaveDialog1);
       end else begin
@@ -390,10 +325,25 @@ begin
     end;
   end;
 end;
-procedure TSynEditor.ClearMarkErr;
-{Limpia el marcador de error.}
+function TSynEditor.GetFreeMark: TMarkup;
+//Devuelve referencia a un marcador no usado. Si no encuentra alguno, devuelve NIL.
 begin
-  MarkErr.Enabled := false;
+  if MarkFree <= MAX_NMARK then begin
+    Result := MarkErr[MarkFree];
+    MarkFree := MarkFree + 1;
+  end else begin
+    Result := nil;
+  end;
+end;
+procedure TSynEditor.ClearMarkErr;
+{Limpia marcadores de error.}
+var
+  i: Integer;
+begin
+  for i:=0 to MAX_NMARK do begin
+    MarkErr[i].Enabled := false;
+  end;
+  MarkFree := 0;
   SynEdit.Invalidate;
 end;
 procedure TSynEditor.MarkError(p1: TPoint);
@@ -408,10 +358,10 @@ porque no se tiene acceso a los lexer que procesan los bloques ASM y Directivas.
     i: Integer;
   begin
     i := col1;  //empìeza por aquí
-    if i>length(lin) then exit;
-    if lin[i] in ['A'..'Z','a'..'z'] then begin
+    if i>length(lin) then exit(length(lin));
+    if lin[i] in ['A'..'Z','a'..'z','_'] then begin
       //Es identificador. Ubica los límites del identificador.
-      while (i<=length(lin)) and (lin[i] in ['A'..'Z','a'..'z','0'..'9']) do begin
+      while (i<=length(lin)) and (lin[i] in ['A'..'Z','a'..'z','0'..'9','_']) do begin
         inc(i);
       end;
     end else begin
@@ -427,10 +377,12 @@ var
   tokIdx, col1, col2: integer;
   curTok: TFaTokInfo;
   lin: String;
+  MarkErr1: TMarkup;
 begin
   hl.ExploreLine(p1, toks, tokIdx);  //Explora la línea aludida
   if tokIdx = -1 then exit;
-  MarkErr.Enabled := true;
+  MarkErr1 := GetFreeMark;
+  if MarkErr1 = nil then exit;
   curTok := toks[tokIdx];  //token actual
   //Obtiene línea actual
   if hl.CurrentLines = nil then begin
@@ -438,31 +390,35 @@ begin
   end else begin
     lin := hl.CurrentLines[p1.y-1];
   end;
+  MarkErr1.Enabled := true;
   //Obtiene en los límites del token actual
   col1 := curTok.posIni+1;
   col2 := curTok.posIni+1+curTok.length;
   if curTok.TokTyp = hl.tnEol then begin
     //Es la marca de final de línea. Extiende para que sea visible
-    MarkErr.SetMark(Point(col1, p1.y),
-                    Point(col2 + 2, p1.y));
+    MarkErr1.SetMark(Point(col1, p1.y),
+                    Point(col2 + 1, p1.y));
   end else if curTok.TokTyp = hl.GetAttribIDByName('Asm') then begin
     //Es bloque ensamblador.
     col2 := LocEndOfWord(lin, p1.x);  //ubica a la palabra actual
-    MarkErr.SetMark(Point(p1.x, p1.y),
+    MarkErr1.SetMark(Point(p1.x, p1.y),
                     Point(col2, p1.y));
   end else if curTok.TokTyp = hl.GetAttribIDByName('Directive') then begin
     //Es directiva
     col2 := LocEndOfWord(lin, p1.x);  //ubica a la palabra actual
-    MarkErr.SetMark(Point(p1.x, p1.y),
+    MarkErr1.SetMark(Point(p1.x, p1.y),
                     Point(col2, p1.y));
   end else begin
     //Es un token normal
-    MarkErr.SetMark(Point(col1, p1.y),
+    MarkErr1.SetMark(Point(col1, p1.y),
                     Point(col2, p1.y));
   end;
 end;
 constructor TSynEditor.Create(AOwner: TComponent; nomDef0, extDef0: string;
   panTabs0: TPanel);
+var
+  i: Integer;
+  mark: TMarkup;
 begin
   SynEdit:= TSynEdit.Create(AOwner);// Crea un editor
 //  inherited Create(SynEdit, nomDef0, extDef0);
@@ -501,16 +457,17 @@ begin
   InicEditorC1(SynEdit);
   SynEdit.Options := SynEdit.Options + [eoTabsToSpaces];  //permite indentar con <Tab>
 
-  //Crea marcador "MarkErr", para erroes de sintaxis
-  MarkErr := TMarkup.Create(SynEdit);
-  MarkErr.MarkupInfo.Background := clNone;
-  MarkErr.MarkupInfo.Foreground := clNone;
-  MarkErr.MarkupInfo.FrameColor := clRed;
-  MarkErr.MarkupInfo.FrameEdges := sfeBottom;
-  MarkErr.MarkupInfo.FrameStyle := slsWaved;
-  SynEdit.MarkupManager.AddMarkUp(MarkErr);   //agrega marcador
-
-  MarkErr.SetMark(Point(3,2), Point(6,2));
+  //Crea marcadores para los errores de sinatxis
+  for i:=0 to MAX_NMARK do begin
+    mark := TMarkup.Create(SynEdit);
+    MarkErr[i] := mark;   //asigna referencia
+    mark.MarkupInfo.Background := clNone;
+    mark.MarkupInfo.Foreground := clNone;
+    mark.MarkupInfo.FrameColor := clRed;
+    mark.MarkupInfo.FrameEdges := sfeBottom;
+    mark.MarkupInfo.FrameStyle := slsWaved;
+    SynEdit.MarkupManager.AddMarkUp(mark);   //agrega marcador
+  end;
 
   NewFile;        //para actualizar estado
 end;
@@ -520,10 +477,8 @@ begin
   FreeAndNil(SynEdit);  //El "Owner", intentará destruirlo, por eso lo ponemos en NIL
 end;
 { TfraEditView }
-procedure TfraEditView.SetLanguage(idLang: string);
+procedure TfraEditView.SetLanguage;
 begin
-  lang := idLang;
-  curLang := idLang;
   {$I ..\language\tra_FrameEditView.pas}
 end;
 procedure TfraEditView.RefreshTabs;
@@ -892,7 +847,7 @@ begin
   ed.OnChangeEditorState := @ChangeEditorState;
   ed.OnChangeFileInform := @editChangeFileInform;
   ed.hl.IconList := ImgCompletion;
-  ed.SetLanguage(lang);
+  ed.SetLanguage(curLanguage);
   //Configura PageControl
   ed.SynEdit.Parent := self;
   ed.SynEdit.Align := alClient;
@@ -923,28 +878,28 @@ begin
   ed.SynEdit.Keystrokes[n].ShiftMask := [];
   ed.SynEdit.Keystrokes.EndUpdate;
 
+  //Crea un "plugin" de edición síncrona
+  fSynchro := TSynPluginSyncroEdit.Create(self);
+  fSynchro.Editor := ed.SynEdit;
+
   //Configura múltiples cursores
   fMultiCaret := TSynPluginMultiCaret.Create(self);
   with fMultiCaret do begin
     Editor := ed.SynEdit;
     with KeyStrokes do begin
-      with Add do begin
-        Command    := ecPluginMultiCaretSetCaret;
-        Key        := VK_INSERT;
-        Shift      := [ssShift, ssCtrl];
-        ShiftMask  := [ssShift,ssCtrl,ssAlt];
-      end;
-      with Add do begin
-        Command    := ecPluginMultiCaretUnsetCaret;
-        Key        := VK_DELETE;
-        Shift      := [ssShift, ssCtrl];
-        ShiftMask  := [ssShift,ssCtrl,ssAlt];
-      end;
+      Add.Command    := ecPluginMultiCaretSetCaret;
+      Add.Key        := VK_INSERT;
+      Add.Shift      := [ssShift, ssCtrl];
+      Add.ShiftMask  := [ssShift,ssCtrl,ssAlt];
+//      Add.Command    := ecPluginMultiCaretUnsetCaret;
+//      Add.Key        := VK_DELETE;
+//      Add.Shift      := [ssShift, ssCtrl];
+//      Add.ShiftMask  := [ssShift,ssCtrl,ssAlt];
     end;
   end;
 
   ed.Caption := NewName(ext);   //Pone nombre diferente
-  ed.NomArc := '';  //Pone sin nombre para saber que no se ha guardado
+  ed.FileName := '';  //Pone sin nombre para saber que no se ha guardado
   if OnRequireSynEditConfig<>nil then  //Configura
     OnRequireSynEditConfig(ed.SynEdit);
   editors.Add(ed);   //agrega a la lista
@@ -1011,7 +966,7 @@ var
 begin
   for i:=0 to editors.Count-1 do begin
     ed := editors[i];
-    if Upcase(ed.NomArc) = UpCase(filname) then exit(i);
+    if Upcase(ed.FileName) = UpCase(filname) then exit(i);
   end;
   exit(-1);
 end;
@@ -1108,48 +1063,12 @@ begin
   ed := ActiveEditor;
   ed.SelectAll;
 end;
-
-procedure TfraEditView.evoLoadItems(opEve: TFaOpenEvent;
-  curEnv: TFaCursorEnviron; out Cancel: boolean);
-begin
-  opEve.ClearAvails;
-debugln('evoLoadItems');
-  opEve.AddAvail('alfa');
-  opEve.AddAvail('unicorn');
-  opEve.AddAvail('usame');
-  opEve.AddAvail('beta');
-
-  Cancel := true;
-end;
-procedure TfraEditView.AddListUnits(OpEve: TFaOpenEvent);
-{Agrega la lista de unidades disponibles, a la lista Items[] de un Evento de apertura.}
-var
-  directorio, nomArc: String;
-  SearchRec: TSearchRec;
-begin
-  if OpEve=nil then exit;
-  directorio := rutUnits;
-  if FindFirst(directorio + '\*.pas', faDirectory, SearchRec) = 0 then begin
-    repeat
-      nomArc := SysToUTF8(SearchRec.Name);
-      if SearchRec.Attr and faDirectory = faDirectory then begin
-        //directorio
-      end else begin //archivo
-        //Argega nombre de archivo
-        nomArc := copy(nomArc, 1, length(nomArc)-4);
-        opEve.AddItem(nomArc, -1);
-      end;
-    until FindNext(SearchRec) <> 0;
-    FindClose(SearchRec);
-  end;
-end;
 procedure TfraEditView.ConfigureSyntax(ed: TSynEditor; Complete: boolean = true);
 var
-  opEve: TFaOpenEvent;
   synFile: String;
   ext: string;
 begin
-  ext := ExtractFileExt(ed.NomArc);
+  ext := ExtractFileExt(ed.FileName);
   case Upcase(ext) of
   '.PAS': begin
       //Es Pascal
@@ -1160,34 +1079,56 @@ begin
       end;
       ed.LoadSyntaxFromFile(synFile);
       if Complete then begin
-        //Configura eventos de apertura.
-        opEve := ed.hl.FindOpenEvent('unit1');
-        opEve.ClearItems;
-        AddListUnits(opEve);  //Configura unidades disponibles
-      //    opEve.OnLoadItems := @evoLoadItems;
-
-        opEve := ed.hl.FindOpenEvent('unit2');
-        opEve.ClearItems;
-        AddListUnits(opEve);  //Configura unidades disponibles
-      //    opEve.OnLoadItems := @evoLoadItems;
-
-        opEve := ed.hl.FindOpenEvent('unit3');
-        opEve.ClearItems;
-        AddListUnits(opEve);  //Configura unidades disponibles
-      //    opEve.OnLoadItems := @evoLoadItems;
+        //Configura eventos de apertura para nombres de unidades.
+        if OnRequireSetCompletion<>nil then OnRequireSetCompletion(ed);
       end;
     end;
+  '.ASM','.LST': begin
+      //Es Ensamblador
+      synFile := rutSyntax + DirectorySeparator + 'PicPas_AsmPic.xml';
+      if not FileExists(synFile) then begin
+        MsgErr(MSG_NOSYNFIL, [synFile]);
+        exit;
+      end;
+      ed.LoadSyntaxFromFile(synFile);
+      if Complete then begin
+        //Configura eventos de apertura.
+     end;
+   end;
+  '.C': begin
+     //Es C
+     synFile := rutSyntax + DirectorySeparator + 'PicPas_C.xml';
+     if not FileExists(synFile) then begin
+       MsgErr(MSG_NOSYNFIL, [synFile]);
+       exit;
+     end;
+     ed.LoadSyntaxFromFile(synFile);
+     if Complete then begin
+        //Configura eventos de apertura.
+      end;
+   end;
   end;
 end;
 //Administración de archivos
-procedure TfraEditView.NewFile;
+procedure TfraEditView.NewPasFile;
 {Abre una nueva ventana de edición.}
 var
   ed: TSynEditor;
 begin
   ed := AddEdit('.pas');
-  ed.NomArc := tmpPath + DirectorySeparator + ed.Caption;
+  ed.FileName := tmpPath + DirectorySeparator + ed.Caption;
   ConfigureSyntax(ed);
+  AgregArcReciente(ed.FileName);
+end;
+procedure TfraEditView.NewLstFile;
+{Abre una nueva ventana de edición.}
+var
+  ed: TSynEditor;
+begin
+  ed := AddEdit('.lst');
+  ed.FileName := tmpPath + DirectorySeparator + ed.Caption;
+  ConfigureSyntax(ed);
+//  AgregArcReciente(ed.FileName);
 end;
 function TfraEditView.LoadFile(fileName: string): boolean;
 //Carga un archivo en el editor. Si encuentra algún error. Devuelve FALSE.
@@ -1253,21 +1194,20 @@ begin
   if not OpenDialog1.Execute then exit(true);    //se canceló
   arc0 := OpenDialog1.FileName;
   LoadFile(arc0);  //legalmente debería darle en UTF-8
-  AgregArcReciente(arc0);
   Result := true;   //sale sin incidencias
 end;
 procedure TfraEditView.SaveFile;
 //Guarda el editor actual
 begin
   if ActiveEditor=nil then exit;
-  if ActiveEditor.NomArc='' then begin
+  if ActiveEditor.FileName='' then begin
     //Es un archivo nuevo
     ActiveEditor.SaveAsDialog(SaveDialog1);
   end else begin
     ActiveEditor.SaveFile;
   end;
   //Actualiza por si acaso, era un archivo nuevo
-  AgregArcReciente(ActiveEditor.NomArc);
+  AgregArcReciente(ActiveEditor.FileName);
 end;
 procedure TfraEditView.SaveAll;
 {Guarda todas las ventanas abiertas en el editor.}
@@ -1277,9 +1217,9 @@ begin
   for i:=0 to editors.Count-1 do begin
     if editors[i].Modified then begin
       //Actualiza por si acaso, era un archivo nuevo
-      AgregArcReciente(editors[i].NomArc);
+      AgregArcReciente(editors[i].FileName);
     end;
-    if editors[i].NomArc<>'' then begin
+    if editors[i].FileName<>'' then begin
       //No deberái pasar que el archivo esté sin nombre.
       editors[i].SaveFile;
     end;
@@ -1288,7 +1228,7 @@ end;
 function TfraEditView.SaveAsDialog: boolean;
 {Muestra la ventana para grabar un archivo. Si se cancela, devuelve TRUE.}
 begin
-  if ActiveEditor=nil then exit;
+  if ActiveEditor=nil then exit(true);
   Result := ActiveEditor.SaveAsDialog(SaveDialog1);
   if Result then exit;   //se canceló
   if OnSelectEditor<>nil then OnSelectEditor;
@@ -1302,11 +1242,14 @@ begin
   DeleteEdit;
   exit(true);
 end;
-function TfraEditView.CloseAll: boolean;
-{Cierra todas las ventanas, pidiendo confirmación. Si se cancela, devuelve TRUE}
+function TfraEditView.CloseAll(out lstClosedFiles: string): boolean;
+{Cierra todas las ventanas, pidiendo confirmación. Si se cancela, devuelve TRUE.
+Se devuelve en "lstOpenedFiles" una lista con los archivos que estaban abiertos.}
 begin
+  lstClosedFiles := '';
   while editors.Count>0 do begin
-    if ActiveEditor=nil then exit;
+    lstClosedFiles := lstClosedFiles + ActiveEditor.FileName + LineEnding;
+    if ActiveEditor=nil then exit(true);
     if ActiveEditor.SaveQuery(SaveDialog1) then exit(true);  //cancelado
     DeleteEdit;
   end;
@@ -1319,13 +1262,28 @@ begin
   ActualMenusReciente(self);
   mnRecents.Items[0].Click;
 end;
+procedure TfraEditView.LoadListFiles(lst: string);
+var
+  a: TStringDynArray;
+  i: Integer;
+  filName: String;
+begin
+  a := Explode(LineEnding, lst);
+  for i:=0 to high(a) do begin
+     filName := trim(a[i]);
+     if filName = '' then continue;
+     LoadFile(filName);
+  end;
+end;
 procedure TfraEditView.RecentClick(Sender: TObject);
 //Se selecciona un archivo de la lista de recientes
 var
-  cap: string;
+  cap, recFile: string;
 begin
   cap := TMenuItem(Sender).Caption;
-  LoadFile(MidStr(cap, 4,150));
+  recFile := MidStr(cap, 4,150);
+  if not FileExistsUTF8(recFile) then exit;
+  LoadFile(recFile);
 end;
 procedure TfraEditView.ActualMenusReciente(Sender: TObject);
 {Actualiza el menú de archivos recientes con la lista de los archivos abiertos
@@ -1377,7 +1335,7 @@ begin
     RecentFiles.Delete(MaxRecents);
 end;
 procedure TfraEditView.UpdateSynEditConfig;
-{India que se desea cambiar la configuración de los SynEdit.}
+{Indica que se desea cambiar la configuración de los SynEdit.}
 var
   i: Integer;
 begin
@@ -1424,7 +1382,7 @@ end;
 //Menú
 procedure TfraEditView.mnNewTabClick(Sender: TObject);
 begin
-  NewFile;
+  NewPasFile;
   SetFocus;
 end;
 procedure TfraEditView.UpDown1Click(Sender: TObject; Button: TUDBtnType);
@@ -1447,6 +1405,26 @@ begin
   end;
   SetFocus;
 end;
+procedure TfraEditView.mnCloseOthersClick(Sender: TObject);
+var
+  nBefore, i, nAfter: Integer;
+begin
+  //Cierra anteriores
+  nBefore := TabIndex;
+  for i:= 1 to nBefore do begin
+    TabIndex := 0;
+    if not CloseEditor then
+      break;  //Se canceló
+  end;
+  //Cierra posteriores
+  nAfter := Count - TabIndex - 1;
+  for i:= 1 to nAfter do begin
+    TabIndex := Count-1;
+    if not CloseEditor then
+      break;  //Se canceló
+  end;
+  SetFocus;
+end;
 procedure TfraEditView.FrameResize(Sender: TObject);
 begin
   //Configura ubciacio de etiquetas
@@ -1456,4 +1434,4 @@ begin
 end;
 
 end.
-//92
+//1482

@@ -5,8 +5,8 @@
 *  (C) AguHDz 05-JUN-2017
 *  Ultima Actualizacion: 23-JUN-2017
 }
+{$PROCESSOR PIC16F84A}
 unit PIC16F84A;
- 
 interface
 var
 // DEFINICION DE BYTES Y BITS DE ZONA MEMORIA SFR.
@@ -71,6 +71,39 @@ var
   EECON1_WR         : bit  absolute EECON1.1;
   EECON1_RD         : bit  absolute EECON1.0;
   EECON2            : byte absolute $0089;
-   
+
+  //Bits Configuration 
+  {$define _CP_ON       =     0x000F}
+  {$define _CP_OFF      =     0x3FFF}
+  {$define _PWRTE_ON    =     0x3FF7}
+  {$define _PWRTE_OFF   =     0x3FFF}
+  {$define _WDT_ON      =     0x3FFF}
+  {$define _WDT_OFF     =     0x3FFB}
+  {$define _LP_OSC      =     0x3FFC}
+  {$define _XT_OSC      =     0x3FFD}
+  {$define _HS_OSC      =     0x3FFE}
+  {$define _RC_OSC      =     0x3FFF}
+ 
+
 implementation
+
+procedure EEPROM_Read(addr:byte):byte;
+begin
+   EEADR:=addr;
+   EECON1_RD:=1;
+   exit(EEDATA);   
+end; 
+
+procedure WriteEEPROM(direccion , valor: byte);
+begin
+  EEADR       := direccion;
+  EEDATA      := valor;
+  EECON1_WREN := 1;
+  EECON2      := $55;
+  EECON2      := $AA;
+  EECON1_WR   := 1;
+  EECON1_WREN := 0;
+  repeat until (EECON1_WR = 0);
+end;
+ 
 end.

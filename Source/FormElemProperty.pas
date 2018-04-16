@@ -31,6 +31,7 @@ type
     procedure butDetailsClick(Sender: TObject);
   private
     elem: TxpElement;
+    procedure SetCalledInfo(elem0: TxpElement);
   public
     OnExplore: procedure(elem0: TxpElement) of object;
     procedure Clear;
@@ -61,28 +62,50 @@ begin
 end;
 procedure TfrmElemProperty.butDetailsClick(Sender: TObject);
 var
-  cal: TxpEleCaller;
+  call: TxpEleCaller;
   tmp, bnkStr, callerStr: String;
 begin
+  //Detalla las llamadas hechas al elemento
   tmp := '';
-  for cal in elem.lstCallers do begin
-    if cal.caller.Parent<>nil then begin
-      callerStr := cal.caller.Parent.name + '-' + cal.caller.name;
+  for call in elem.lstCallers do begin
+    if call.caller.Parent<>nil then begin
+      callerStr := call.caller.Parent.name + '-' + call.caller.name;
     end else begin
-      callerStr := cal.caller.name;
+      callerStr := call.caller.name;
     end;
-    bnkStr := IntToStr(cal.curBnk);
+    bnkStr := IntToStr(call.curBnk);
     tmp := tmp + 'Called by: ' + callerStr + ' from Bank:' + bnkStr +
-           ' Pos:' + cal.curPos.RowColString + LineEnding;
+           ' Pos:' + call.curPos.RowColString + LineEnding;
   end;
   MsgBox(tmp);
 end;
+
+procedure TfrmElemProperty.SetCalledInfo(elem0: TxpElement);
+{Agrega información, sobre las llamadas que se hacen a un elemento }
+var
+  nCalled: Integer;
+begin
+  nCalled := elem0.nCalled;
+  if nCalled = 0 then begin
+    lblElemName3.Caption := 'Status';
+    lblUsed.Font.Color := clGray;
+    lblUsed.Caption := 'Unused';
+    butDetails.Enabled := false;
+  end else begin
+    lblElemName3.Caption := 'Status';
+    lblUsed.Font.Color := clGreen;
+    lblUsed.Caption := 'Used ' + IntToStr(nCalled) + ' times.';
+    butDetails.Enabled := true;
+  end;
+end;
 procedure TfrmElemProperty.Exec(elem0: TxpElement);
 var
-  adicInformation: String;
-  fun: TxpEleFun;
+  adicInformation, dirSolic, tmp, bnkStr: String;
+  xcon: TxpEleCon;
+  xfun: TxpEleFun;
+  xbod: TxpEleBody;
   xvar: TxpEleVar;
-  nCalled: Integer;
+  ecall : TxpExitCall;
 begin
   if elem0 = nil then exit;
   elem := elem0;
@@ -90,51 +113,61 @@ begin
   Image1.Proportional := true;  // to keep width/height ratio
   adicInformation := '';
   txtEleName.Caption := elem.name;
-  if elem.typ = nil then begin
-    txtEleType.Caption := 'Unknown';
-  end else begin
-    txtEleType.Caption := elem.typ.name;
-  end;
   txtEleLocaPath.Caption := ExtractFileDir(elem.srcDec.Fil);
   txtEleLocFile.Caption := ExtractFileName(elem.srcDec.Fil) + elem.srcDec.RowColString;
   BitBtn2.Enabled := true;
-  //Muestra número de llamadas
-  nCalled := elem.nCalled;
-  if nCalled = 0 then begin
-      lblUsed.Font.Color := clGray;
-      lblUsed.Caption := 'Unused';
-      butDetails.Enabled := false;
-  end else begin
-      lblUsed.Font.Color := clGreen;
-      lblUsed.Caption := 'Used ' + IntToStr(nCalled) + ' times.';
-      butDetails.Enabled := true;
-  end;
-  //Ícono e infromación adicional
-  if elem is TxpEleCon then begin
+  //Configura etiqueta y botón de número de llamadas al elemento
+  SetCalledInfo(elem);
+  //Ícono e información adicional
+  if elem.idClass = eltCons then begin
+    xcon := TxpEleCon(elem);
+    if xcon.typ = nil then txtEleType.Caption := 'Unknown'
+    else txtEleType.Caption := xcon.typ.name;
+
     ImageList1.GetBitmap(4, Image1.Picture.Bitmap);
     adicInformation := '';
-  end else if elem is TxpEleVar then begin
-    ImageList1.GetBitmap(2, Image1.Picture.Bitmap);
-
+  end else if elem.idClass = eltVar then begin
     xvar := TxpEleVar(elem);
+    txtEleType.Caption := xvar.typ.name;
+
+    ImageList1.GetBitmap(2, Image1.Picture.Bitmap);
+    if xvar.typ.IsBitSize then begin
+      dirSolic := IntToStr(xvar.adicPar.absAddr) + ':' + IntToStr(xvar.adicPar.absBit);
+    end else begin
+      dirSolic := IntToStr(xvar.adicPar.absAddr);
+    end;
     adicInformation :=
-           'Direcc. Solicitada: ' + IntToStr(xvar.adicPar.absAddr) + ':' +
-                                    IntToStr(xvar.adicPar.absBit) + LineEnding +
+           'Direcc. Solicitada: ' + dirSolic + LineEnding +
            'Direcc. Asignada: ' + xvar.AddrString;
-  end else if elem is TxpEleFun then begin
+  end else if elem.idClass = eltFunc then begin
+    xfun := TxpEleFun(elem);
+    if xfun.typ = nil then txtEleType.Caption := 'Unknown'
+    else txtEleType.Caption := xfun.typ.name;
+
     ImageList1.GetBitmap(3, Image1.Picture.Bitmap);
-    fun := TxpEleFun(elem);
-    adicInformation := 'Dirección: $' + IntToHex(fun.adrr, 3) + LineEnding +
-           'Tamaño: ' + IntToStr(fun.srcSize);
-  end else if elem is TxpEleUnit then begin
+    //Genera reporte de ExitCalls
+    tmp := '';
+    for ecall in xfun.lstExitCalls do begin
+      bnkStr := IntToStr(ecall.curBnk);
+      tmp := tmp + 'exit() in : ' + ecall.srcPos.RowColString + ' from Bank:' + bnkStr +
+             LineEnding;
+    end;
+    //Información adicional
+    adicInformation := 'Address: $' + IntToHex(xfun.adrr, 3) + LineEnding +
+           'Size: ' + IntToStr(xfun.srcSize) + LineEnding + tmp;
+  end else if elem.idClass = eltUnit then begin
+    txtEleType.Caption := 'Unit';
     ImageList1.GetBitmap(6, Image1.Picture.Bitmap);
     adicInformation := '';
-  end else if elem is TxpEleBody then begin
+  end else if elem.idClass = eltBody then begin
+    xbod:= TxpEleBody(elem);
+    txtEleType.Caption := 'Body';
     ImageList1.GetBitmap(12, Image1.Picture.Bitmap);
-    adicInformation := 'Dirección: $' + IntToHex(fun.adrr, 3) + LineEnding +
-           'Tamaño: ' + IntToStr(fun.srcSize)  + LineEnding +
-           'Fin: ' + elem.srcEnd.RowColString;
+    adicInformation := 'Address: $' + IntToHex(xbod.adrr, 3) + LineEnding +
+           'Begin: ' + xbod.srcDec.RowColString  + LineEnding +
+           'End: ' + elem.srcEnd.RowColString;
   end else begin
+    txtEleType.Caption := 'Unknown';
     ImageList1.GetBitmap(13, Image1.Picture.Bitmap);
     adicInformation := '';
   end;

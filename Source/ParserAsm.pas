@@ -27,25 +27,26 @@ type
   { TParserAsm }
   TParserAsm = class(TGenCod)
   private
-    labels: TPicLabel_list; //Lista de etiquetas
-    uJumps: TPicUJump_list; //Lista de instrucciones GOTO o CALL, indefinidas
-    lexAsm: TSynFacilSyn;   //lexer para analizar ASM
-    asmRow: integer;     //número de fila explorada
+    lexAsm : TSynFacilSyn;   //lexer para analizar ASM
+    tokIni : integer;  //Posición inicial del token actual
+    labels : TPicLabel_list; //Lista de etiquetas
+    uJumps : TPicUJump_list; //Lista de instrucciones GOTO o CALL, indefinidas
+    asmRow : integer;     //número de fila explorada
     procedure AddLabel(name: string; addr: integer);
     procedure AddUJump(name: string; addr: integer; idInst: TPIC16Inst);
     function CaptureAddress(const idInst: TPIC16Inst; var a: word): boolean;
-    function CaptureBitVar(var f, b: byte): boolean;
-    function CaptureByte(var k: byte): boolean;
+    function CaptureBitVar(out f, b: byte): boolean;
+    function CaptureByte(out k: byte): boolean;
     function CaptureComma: boolean;
-    function CaptureDestinat(var d: TPIC16destin): boolean;
+    function CaptureDestinat(out d: TPIC16destin): boolean;
     function CaptureNbit(var b: byte): boolean;
-    function CaptureRegister(var f: byte): boolean;
+    function CaptureRegister(out f: byte): boolean;
     procedure EndASM;
     procedure GenErrorAsm(msg: string);
     procedure GenErrorAsm(msg: string; const Args: array of const);
     procedure GenWarnAsm(msg: string);
     function GetFaddress(addr: integer): byte;
-    function HaveByteInformation(var bytePos: byte): boolean;
+    function HaveByteInformation(out bytePos: byte): boolean;
     function IsLabel(txt: string; out dir: integer): boolean;
     function IsStartASM(var lin: string): boolean;
     function IsEndASM(var lin: string): boolean;
@@ -61,7 +62,7 @@ type
     destructor Destroy; override;
   end;
 
-  procedure SetLanguage(idLang: string);
+  procedure SetLanguage;
 
 implementation
 var  //Mensajes
@@ -70,9 +71,8 @@ var  //Mensajes
   ER_EXPECT_W_F, ER_SYNTAX_ERR_, ER_DUPLIC_LBL_, ER_EXPE_NUMBIT: String;
   ER_EXPECT_ADDR, ER_EXPECT_BYTE, WA_ADDR_TRUNC, ER_UNDEF_LABEL_: String;
 
-procedure SetLanguage(idLang: string);
+procedure SetLanguage;
 begin
-  curLang := idLang;
   {$I ..\language\tra_ParserAsm.pas}
 end;
 
@@ -83,7 +83,7 @@ var
   p: TSrcPos;
 begin
   p := cIn.ReadSrcPos;
-  p.col := lexAsm.GetX;  //corrige columna
+  p.col := tokIni + lexAsm.GetX;  //corrige columna
   GenErrorPos(msg, [], p);
 end;
 procedure TParserAsm.GenErrorAsm(msg: string; const Args: array of const);
@@ -91,7 +91,7 @@ var
   p: TSrcPos;
 begin
   p := cIn.ReadSrcPos;
-  p.col := lexAsm.GetX;  //corrige columna
+  p.col := tokIni + lexAsm.GetX;  //corrige columna
   GenErrorPos(msg, Args, p);
 end;
 procedure TParserAsm.GenWarnAsm(msg: string);
@@ -165,7 +165,7 @@ begin
   //No encontró
   exit(false);
 end;
-function TParserAsm.HaveByteInformation(var bytePos: byte): boolean;
+function TParserAsm.HaveByteInformation(out bytePos: byte): boolean;
 begin
 //    state0 := lexAsm.State;  //gaurda posición
   if lexasm.GetToken = '.' then begin
@@ -183,20 +183,44 @@ begin
       //No es ninguno
       exit(false);
     end;
+  end else if lexasm.GetToken = '@' then begin
+    lexAsm.Next;
+    if UpCase(lexasm.GetToken) = '0' then begin
+      bytePos := 0;
+      lexAsm.Next;
+      exit(true);
+    end else if UpCase(lexasm.GetToken) = '1' then begin
+      bytePos := 1;
+      lexAsm.Next;
+      exit(true);
+    end else if UpCase(lexasm.GetToken) = '2' then begin
+      bytePos := 2;
+      lexAsm.Next;
+      exit(true);
+    end else if UpCase(lexasm.GetToken) = '3' then begin
+      bytePos := 3;
+      lexAsm.Next;
+      exit(true);
+    end else begin
+      //No es ninguno
+      exit(false);
+    end;
   end else begin
     //No tiene indicación de campo
     exit(false);
   end;
 end;
-function TParserAsm.CaptureByte(var k: byte): boolean;
-{Captura un byte y devuelve en "k". Si no encuentra devuelve error}
+function TParserAsm.CaptureByte(out k: byte): boolean;
+{Captura un byte y devuelve en "k". Si no encuentra devuelve FALSE.}
 var
   n: Integer;
   xcon: TxpEleCon;
   ele: TxpElement;
   bytePos: byte;
   str: String;
+  xvar: TxpEleVar;
 begin
+  Result := false;
   skipWhites;
   if tokType = lexAsm.tnNumber then begin
     //es una dirección numérica
@@ -216,9 +240,9 @@ begin
       GenErrorAsm(ER_EXP_CON_VAL);
       exit;
     end;
-    if ele is TxpEleCon then begin
+    if ele.idClass = eltCons then begin
       xcon := TxpEleCon(ele);
-      if FirstPass then xcon.AddCaller;  //lleva la cuenta
+      AddCallerTo(xcon);  //lleva la cuenta
       if (xcon.typ = typByte) or (xcon.typ = typChar) then begin
         k := xcon.val.ValInt;
         lexAsm.Next;
@@ -240,6 +264,14 @@ begin
         GenErrorAsm(ER_NOGETVAL_CON);
         exit(false);
       end;
+    end else if ele.idClass = eltVar then begin
+      //Para varaibles, se toma la dirección
+      xvar := TxpEleVar(ele);
+      AddCallerTo(xvar);  //lleva la cuenta
+      n := xvar.addr;
+      k := GetFaddress(n);
+      lexAsm.Next;
+      exit(true);
     end else begin
       //No es constante
       GenErrorAsm(ER_EXP_CON_VAL);
@@ -256,7 +288,7 @@ begin
     exit(false);
   end;
 end;
-function TParserAsm.CaptureDestinat(var d: TPIC16destin): boolean;
+function TParserAsm.CaptureDestinat(out d: TPIC16destin): boolean;
 {Captura el destino de una instrucción y devuelve en "d". Si no encuentra devuelve error}
 var
   dest: String;
@@ -317,7 +349,7 @@ begin
     exit;
   end;
 end;
-function TParserAsm.CaptureBitVar(var f, b: byte): boolean;
+function TParserAsm.CaptureBitVar(out f, b: byte): boolean;
 {Captura una variable de tipo Bit. Si no encuentra, devuelve FALSE (no genera error).}
 var
   ele: TxpElement;
@@ -327,20 +359,20 @@ begin
   if tokType <> lexAsm.tnIdentif then exit(false);  //no es identificador
   //Hay un identificador
   ele := TreeElems.FindFirst(lexAsm.GetToken);  //identifica elemento
-  if ele = nil then exit(false);  //nos e identifica
+  if ele = nil then exit(false);  //no se identifica
   //Se identificó elemento
-  if not (ele is TxpEleVar) then exit(false);
+  if ele.idClass <> eltVar then exit(false);
   //Es variable
-  if (ele.typ <> typBit) and (ele.typ <> typBool) then exit(false);
+  xvar := TxpEleVar(ele);
+  if not xvar.typ.IsBitSize then exit(false);
   //Es variable bit o boolean
   lexAsm.Next;   //toma identificador
-  xvar := TxpEleVar(ele);
-  if FirstPass then xvar.AddCaller;  //lleva la cuenta
+  AddCallerTo(xvar);  //lleva la cuenta
   f := GetFaddress(xvar.adrBit.offs);
   b := xvar.adrBit.bit;
   exit(true);
 end;
-function TParserAsm.CaptureRegister(var f: byte): boolean;
+function TParserAsm.CaptureRegister(out f: byte): boolean;
 {Captura la referencia a un registro y devuelve en "f". Si no encuentra devuelve error}
 var
   n: integer;
@@ -348,6 +380,7 @@ var
   xvar: TxpEleVar;
   bytePos: byte;
 begin
+  Result := false;
   skipWhites;
   if tokType = lexAsm.tnNumber then begin
     //Es una dirección numérica
@@ -365,6 +398,18 @@ begin
     lexAsm.Next;
     Result := true;
     exit;
+  end else if lexAsm.GetToken = '_E' then begin
+    //Es el registro  de trabajo _H
+    f := E_register.offs;
+    lexAsm.Next;
+    Result := true;
+    exit;
+  end else if lexAsm.GetToken = '_U' then begin
+    //Es el registro  de trabajo _H
+    f := U_register.offs;
+    lexAsm.Next;
+    Result := true;
+    exit;
   end else if tokType = lexAsm.tnIdentif then begin
     //Es un identificador, puede ser referencia a una variable
     ele := TreeElems.FindFirst(lexAsm.GetToken);  //identifica elemento
@@ -373,36 +418,62 @@ begin
       GenErrorAsm(ER_EXP_ADR_VAR);
       exit;
     end;
-    if ele is TxpEleVar then begin
+    if ele.idClass = eltVar then begin
       xvar := TxpEleVar(ele);
-      if FirstPass then xvar.AddCaller;  //lleva la cuenta
-      if (xvar.typ = typByte) or (xvar.typ = typChar) then begin
-        n := xvar.AbsAddr;
+      AddCallerTo(xvar);  //lleva la cuenta
+      if xvar.typ.IsByteSize then begin
+        n := xvar.addr;
         f := GetFaddress(n);
         lexAsm.Next;
         Result := true;
         exit;
-      end else if xvar.typ = typWord then begin
+      end else if xvar.typ.IsWordSize then begin
         lexAsm.Next;
         if HaveByteInformation(bytePos) then begin
           //Hay precisión de byte
           if bytePos = 0 then begin  //Byte bajo
             n := xvar.adrByte0.offs;
             f := GetFaddress(n);
-          end else begin        //Byte alto
-             n := xvar.adrByte1.offs;
-             f := GetFaddress(n);
+          end else if bytePos = 1 then begin        //Byte alto
+            n := xvar.adrByte1.offs;
+            f := GetFaddress(n);
+          end else begin
+             GenErrorAsm(ER_NOGETADD_VAR);
+             exit(false);
           end;
         end else begin
-           n := xvar.AbsAddr;
+           n := xvar.addr;
            f := GetFaddress(n);
         end;
-        Result := true;
-        exit;
+        exit(true);
+      end else if xvar.typ.IsDWordSize then begin
+        lexAsm.Next;
+        if HaveByteInformation(bytePos) then begin
+          //Hay precisión de byte
+          if bytePos = 0 then begin  //Byte bajo
+            n := xvar.adrByte0.offs;
+            f := GetFaddress(n);
+          end else if bytePos = 1 then begin        //Byte alto
+            n := xvar.adrByte1.offs;
+            f := GetFaddress(n);
+          end else if bytePos = 2 then begin        //Byte alto
+            n := xvar.adrByte2.offs;
+            f := GetFaddress(n);
+          end else if bytePos = 3 then begin        //Byte alto
+            n := xvar.adrByte3.offs;
+            f := GetFaddress(n);
+          end else begin
+             GenErrorAsm(ER_NOGETADD_VAR);
+             exit(false);
+          end;
+        end else begin
+           n := xvar.addr;
+           f := GetFaddress(n);
+        end;
+        exit(true);
       end else begin
         GenErrorAsm(ER_NOGETADD_VAR);
-        Result := false;
-        exit;
+        exit(false);
       end;
     end else begin
       //No es variable
@@ -418,12 +489,15 @@ begin
   end;
 end;
 function TParserAsm.CaptureAddress(const idInst: TPIC16Inst; var a: word): boolean;
-{Captura una dirección a una instrucción y devuelve en "a". Si no encuentra geenra
+{Captura una dirección a una instrucción y devuelve en "a". Si no encuentra genera
 error y devuelve FALSE.}
 var
   dir: integer;
   offset: byte;
+  ele: TxpElement;
+  xfun: TxpEleFun;
 begin
+  Result := false;
   skipWhites;
   if lexAsm.GetToken = '$' then begin
     //Es una dirección relativa
@@ -470,6 +544,16 @@ begin
     Result := true;
     exit;
   end else if tokType = lexAsm.tnIdentif  then begin
+    ele := TreeElems.FindFirst(lexAsm.GetToken);  //identifica elemento
+    if (ele <> nil) and (ele.idClass = eltFunc) then begin
+      //Es un identificador de función del árbol de sintaxis
+      xfun := TxpEleFun(ele);
+      AddCallerTo(xfun);  //lleva la cuenta
+      a := xfun.adrr;   //lee su dirección
+      lexAsm.Next;
+      Result := true;
+      exit;
+    end;
     //Es un identificador, no definido. Puede definirse luego.
     a := $00;
     //Los saltos indefinidos, se guardan en la lista "uJumps"
@@ -565,7 +649,7 @@ begin
     if not CaptureAddress(idInst, a) then exit;
     pic.codAsmA(idInst, a);
   end;
-  'k': begin
+  'k': begin  //MOVLW
      if not CaptureByte(k) then exit;
      pic.codAsmK(idInst, k);
   end;
@@ -602,7 +686,7 @@ procedure TParserAsm.ProcASM(const AsmLin: string);
       //Definitivamente es una etiqueta
       if IsLabel(lbl, d) then begin
         GenErrorAsm(ER_DUPLIC_LBL_, [lbl]);
-        exit;
+        exit(false);
       end;
       AddLabel(lbl, pic.iFlash);
       lexAsm.Next;
@@ -680,26 +764,32 @@ function TParserAsm.IsEndASM(var  lin: string): boolean;
 begin
   if not AnsiEndsText('end', lin) then
     exit(false);  //definitivamente no es
-  //hay coincidencia pero hay que analziar más
+  //Hay coincidencia pero hay que analziar más
   if length(lin) = 3 then begin
     lin := copy(Lin, 1, length(Lin)-3);  //quita "end"
     exit(true);  //es exacto
   end;
-  //podrìa ser, pero hay que descartar que no sea parte de un identificador
+  //Podrìa ser, pero hay que descartar que no sea parte de un identificador
   if lin[length(lin)-3] in ['a'..'z', 'A'..'Z', '0'..'9', '_'] THEN
     exit(false); //es parte de un identificador
-  //es por descarte
+  //Es por descarte
   lin := copy(Lin, 1, length(Lin)-3);  //quita "end"
   exit(true);
 end;
-procedure TParserAsm.ProcASMlime(const AsmLin: string); //Procesa una línea de código ASM
+procedure TParserAsm.ProcASMlime(const AsmLin: string);
+{Procesa una línea de código ASM. Notar que los bloques ASM pueden tener muchas líneas
+pero el procesamiento, se hace siempre línea por línea, debido a cómo trabaja el
+lexer.}
 var
   lin: String;
 begin
   lin := AsmLin;  //crea copia para poder modificarla
   //Extrae el texto entre los delimitadores de ensamblador
   if IsStartASM(lin) then begin
-    //es la primera línea de ensamblador
+    //Como se ha recortado el "ASM", se debe compensar "tokIni"
+    //Además se debe considerar si el delim. ASM, no inicia en 1.
+    tokIni := 3 + Cin.curCon.lex.GetX - 1;
+    //Es la primera línea de ensamblador
     StartASM;
     //puede incluir también al delimitador "end"
     if IsEndASM(lin) then begin
@@ -709,11 +799,13 @@ begin
       ProcASM(lin);  //procesa por si queda código
     end;
   end else if IsEndASM(lin) then begin
-    //es la última línea de ensamblador
+    //Es la última línea de ensamblador
+    tokIni := 0;   //En el margen izquierdo, porque no está el delimit. inicial "ASM"
     ProcASM(lin);  //procesa por si queda código
     EndASM;
   end else begin
-    //línea común de asm
+    //Es una línea común
+    tokIni := 0;   //una línea común, siempre empieza en al margen izquierdo
     ProcASM(lin);
   end;
 end;

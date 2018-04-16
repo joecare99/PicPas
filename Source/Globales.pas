@@ -14,12 +14,13 @@ const
 var
    //Variables globales
    MsjError    : String;    //Bandera - Mensaje de error
-
+   //Rutas sin "/" final
    rutApp     : string;     //ruta de la aplicación
    rutSamples : string;     //ruta de la carpeta de scripts
    rutUnits   : string;     //ruta para guardar las sintaxis
    rutTemp    : string;     //ruta para los archivos temporales
    rutSyntax  : string;     //ruta de los archivos de sintaxis
+   rutThemes  : string;     //ruta de los archivos de temas
 
    archivoEnt  : string;    //archivo de entrada
    MostrarError: Boolean;   //Bandera para mostrar mensajesde error.
@@ -27,7 +28,7 @@ var
 
 /////////////// Campos para manejo del diccionario //////////
 var
- curLang: string;  //identificador del lenguaje
+ curLanguage: string;  //identificador del lenguaje
 
 //type
 // TTranslation = record
@@ -38,7 +39,7 @@ var
 //const
 // TestRec: TTranslation = (en: 'Something'; es: 'algo'; );
 
-function Trans(const strEn, strEs, strQu, strDe: string): string;
+function Trans(const strEn, strEs, strQu, strDe, strUk, strRu: string): string;
 //////////////////////////////////////////////////////
 function LeerParametros: boolean;
 function NombDifArc(nomBase: String): String;
@@ -48,29 +49,51 @@ const
   WA_DIR_NOEXIST = 'Directory: %s no found. It will be created';
   ER_CANN_READDI = 'Cannot read or create directories.';
 
-function Trans(const strEn, strEs, strQu, strDe: string): string;
+function Trans(const strEn, strEs, strQu, strDe, strUk, strRu: string): string;
+  function ClearLangId(str: string): string;
+  {Limpia la cadena del caracter identificador de lenguaje, de la forma:
+  #en=
+  que se puede usar al inicio de una cadena.}
+  begin
+     if str='' then exit('');
+     if length(str)<4 then exit(str);
+     if (str[1] = '#') and (str[4] = '=') then begin
+       delete(str, 1, 4);
+       exit(str);
+     end else begin
+       exit(str);
+     end;
+  end;
 begin
-  case curLang of
+  case LowerCase(curLanguage) of
   'en': begin
-     Result := strEn;
+     Result := ClearLangId(strEn);
   end;
   'es': begin
-     Result := strEs;
-     if Result = '' then Result := strEn;
+     Result := ClearLangId(strEs);
+     if Result = '' then Result := ClearLangId(strEn);
   end;
   'qu': begin
-     Result := strQu;
+     Result := ClearLangId(strQu);
      if Result = '' then Result := strEs;
   end;  //por defecto
   'de': begin
-     Result := strDe;
-     if Result = '' then Result := strEn;
+     Result := ClearLangId(strDe);
+     if Result = '' then Result := ClearLangId(strEn);
+  end;  //por defecto
+  'uk': begin
+     Result := ClearLangId(strUk);
+     if Result = '' then Result := ClearLangId(strEn);
+  end;  //por defecto
+  'ru': begin
+     Result := ClearLangId(strRu);
+     if Result = '' then Result := ClearLangId(strEn);
   end;  //por defecto
   else
-    Result := strEn;
+    Result := ClearLangId(strEn);
   end;
 end;
-function  LeerParametros: boolean;
+function LeerParametros: boolean;
 {lee la linea de comandos
  Si hay error devuelve TRUE}
 var
@@ -150,6 +173,7 @@ initialization
   rutUnits   := rutApp + 'units';
   rutTemp    := rutApp + 'temp';
   rutSyntax  := rutApp + 'syntax';
+  rutThemes  := rutApp + 'themes';
   archivoEnt := '';    //archivo de entrada
   //verifica existencia de carpetas de trabajo
   try
@@ -169,6 +193,11 @@ initialization
        msgexc(WA_DIR_NOEXIST, [rutSyntax]);
        CreateDir(rutSyntax);
     end;
+    if not DirectoryExists(rutThemes) then begin
+       msgexc(WA_DIR_NOEXIST, [rutThemes]);
+      CreateDir(rutThemes);
+    end;
+
   except
     msgErr(ER_CANN_READDI);
   end;
