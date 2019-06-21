@@ -5,7 +5,7 @@ unit GenCodBas_PIC16;
 interface
 uses
   Classes, SysUtils, XpresElementsPIC, XpresTypesPIC, PicCore, Pic16Utils,
-  Parser, ParserDirec, Globales, MisUtils, LCLType, LCLProc;
+  CompBase, ParserDirec, Globales, CompOperands, MisUtils, LCLType, LCLProc;
 const
   STACK_SIZE = 8;      //tamaño de pila para subrutinas en el PIC
   MAX_REGS_AUX_BYTE = 6;   //cantidad máxima de registros a usar
@@ -449,7 +449,8 @@ begin
   tmpVar:= TxpEleVar.Create;
   tmpVar.name := nam;
   tmpVar.typ := eleTyp;
-  tmpVar.havAdicPar := false;
+  tmpVar.adicPar.hasAdic := decNone;
+  tmpVar.adicPar.hasInit := false;
   tmpVar.IsTmp := true;   //Para que se pueda luego identificar.
   varFields.Add(tmpVar);  //Agrega
   Result := tmpVar;
@@ -748,7 +749,7 @@ begin
   //Valores solicitados. Ya deben estar iniciado este campo.
   varName := nVar.name;
   typ := nVar.typ;
-  if nVar.adicPar.isAbsol then begin
+  if nVar.adicPar.hasAdic = decAbsol then begin
     absAdd := nVar.adicPar.absAddr;
     if typ.IsBitSize then begin
       absBit := nVar.adicPar.absBit;
@@ -802,7 +803,7 @@ begin
       exit;
     end;
     //Asignamos espacio en RAM
-    nbytes := typ.arrSize * typ.refType.size;
+    nbytes := typ.nItems * typ.itmType.size;
     if not pic.GetFreeBytes(nbytes, addr) then begin
       GenError(MSG_NO_ENOU_RAM);
       exit;
@@ -1145,7 +1146,7 @@ para que pueda ser evaluado, sin problemas, por las ROP.
 Si hay error devuelve false.}
 begin
   Result := true;
-  if ope.Sto = stVarRefVar then begin
+  if ope.Sto = stVarRef then begin
     //Se tiene una variable puntero dereferenciada: x^
     {Convierte en expresión, verificando los RT}
     if RTstate<>nil then begin
@@ -1160,7 +1161,7 @@ begin
     ope.SetAsExpres(ope.Typ);  //"ope.Typ" es el tipo al que apunta
     InvertedFromC:=false;
     RTstate := ope.Typ;
-  end else if ope.Sto = stVarRefExp then begin
+  end else if ope.Sto = stExpRef then begin
     //Es una expresión.
     {Se asume que el operando tiene su resultado en los RT. SI estuvieran en la pila
     no se aplicaría.}
@@ -1703,11 +1704,10 @@ kIF_BSET(offset, bit)
 <block of code>
 kIF_BSET_END
 
-This instruction require to call to kEND_BSET() to define the End of the block.
+This instruction require to call to kIF_BSET_END() to define the End of the block.
 
 The block of code can be one or more instructions. The instructions used in the jump
 must be optimized, according to the length of the block.
-Thi sinstruction
 
 EXPLANATION:
 
@@ -1869,7 +1869,7 @@ begin
     if not CaptureTok(',') then exit(false);
   end;
   value := GetExpression(0);  //Captura parámetro. No usa GetExpressionE, para no cambiar RTstate
-  typItem := arrVar.typ.refType;
+  typItem := arrVar.typ.itmType;
   if value.Typ <> typItem then begin  //Solo debería ser byte o char
     if (value.Typ = typByte) and (typItem = typWord) then begin
       //Son tipos compatibles
@@ -1963,7 +1963,7 @@ begin
   stExpres: begin  //ya está en w
     if modReturn then _RETURN;
   end;
-  stVarRefVar: begin
+  stVarRef: begin
     //Se tiene una variable puntero dereferenciada: x^
     varPtr := Op^.rVar;  //Guarda referencia a la variable puntero
     //Mueve a W
@@ -1972,7 +1972,7 @@ begin
     kMOVF(INDF, toW);  //deje en W
     if modReturn then _RETURN;
   end;
-  stVarRefExp: begin
+  stExpRef: begin
     //Es una expresión derefernciada (x+a)^.
     {Se asume que el operando tiene su resultado en los RT. Si estuvieran en la pila
     no se aplicaría.}
@@ -2022,14 +2022,14 @@ begin
         SetResultVariab(tmpVar);
       end;
     stVariab: begin
-        SetResultExpres(arrVar.typ.refType, true);  //Es array de bytes, o Char, devuelve Byte o Char
+        SetResultExpres(arrVar.typ.itmType, true);  //Es array de bytes, o Char, devuelve Byte o Char
         LoadToRT(idx);   //Lo deja en W
         _ADDLW(arrVar.addr0);   //agrega OFFSET
         _MOVWF(04);     //direcciona con FSR
         _MOVF(0, toW);  //lee indexado en W
     end;
     stExpres: begin
-        SetResultExpres(arrVar.typ.refType, false);  //Es array de bytes, o Char, devuelve Byte o Char
+        SetResultExpres(arrVar.typ.itmType, false);  //Es array de bytes, o Char, devuelve Byte o Char
         LoadToRT(idx);   //Lo deja en W
         _ADDLW(arrVar.addr0);   //agrega OFFSET
         _MOVWF(04);     //direcciona con FSR
@@ -2171,34 +2171,34 @@ begin
   stVariab: begin
     xvar := Op^.rVar;  //Se supone que debe ser de tipo ARRAY
     res.SetAsConst(typByte);  //Realmente no es importante devolver un valor
-    res.valInt {%H-}:= xvar.typ.arrSize;  //Devuelve tamaño
-    if xvar.typ.arrSize = 0 then exit;  //No hay nada que limpiar
-    if xvar.typ.arrSize = 1 then begin  //Es de un solo byte
+    res.valInt {%H-}:= xvar.typ.nItems;  //Devuelve tamaño
+    if xvar.typ.nItems = 0 then exit;  //No hay nada que limpiar
+    if xvar.typ.nItems = 1 then begin  //Es de un solo byte
       _BANKSEL(xvar.bank);
       _CLRF(xvar.addr0);
-    end else if xvar.typ.arrSize = 2 then begin  //Es de 2 bytes
+    end else if xvar.typ.nItems = 2 then begin  //Es de 2 bytes
       _BANKSEL(xvar.bank);
       _CLRF(xvar.addr0);
       _CLRF(xvar.addr0+1);
-    end else if xvar.typ.arrSize = 3 then begin  //Es de 3 bytes
+    end else if xvar.typ.nItems = 3 then begin  //Es de 3 bytes
       _BANKSEL(xvar.bank);
       _CLRF(xvar.addr0);
       _CLRF(xvar.addr0+1);
       _CLRF(xvar.addr0+2);
-    end else if xvar.typ.arrSize = 4 then begin  //Es de 4 bytes
+    end else if xvar.typ.nItems = 4 then begin  //Es de 4 bytes
       _BANKSEL(xvar.bank);
       _CLRF(xvar.addr0);
       _CLRF(xvar.addr0+1);
       _CLRF(xvar.addr0+2);
       _CLRF(xvar.addr0+3);
-    end else if xvar.typ.arrSize = 5 then begin  //Es de 5 bytes
+    end else if xvar.typ.nItems = 5 then begin  //Es de 5 bytes
       _BANKSEL(xvar.bank);
       _CLRF(xvar.addr0);
       _CLRF(xvar.addr0+1);
       _CLRF(xvar.addr0+2);
       _CLRF(xvar.addr0+3);
       _CLRF(xvar.addr0+4);
-    end else if xvar.typ.arrSize = 6 then begin  //Es de 6 bytes
+    end else if xvar.typ.nItems = 6 then begin  //Es de 6 bytes
       _BANKSEL(xvar.bank);
       _CLRF(xvar.addr0);
       _CLRF(xvar.addr0+1);
@@ -2206,7 +2206,7 @@ begin
       _CLRF(xvar.addr0+3);
       _CLRF(xvar.addr0+4);
       _CLRF(xvar.addr0+5);
-    end else if xvar.typ.arrSize = 7 then begin  //Es de 7 bytes
+    end else if xvar.typ.nItems = 7 then begin  //Es de 7 bytes
       _BANKSEL(xvar.bank);
       _CLRF(xvar.addr0);
       _CLRF(xvar.addr0+1);
@@ -2219,7 +2219,7 @@ begin
       //Implementa lazo, usando W como índice
       _MOVLW(xvar.adrByte0.offs);  //dirección inicial
       _MOVWF($04);   //FSR
-      _MOVLW(256-xvar.typ.arrSize);
+      _MOVLW(256-xvar.typ.nItems);
 j1:= _PC;
       _CLRF($00);    //Limpia [FSR]
       _INCF($04, toF);    //Siguiente
@@ -2325,7 +2325,7 @@ begin
   stExpres: begin  //se asume que ya está en (H,w)
     if modReturn then _RETURN;
   end;
-  stVarRefVar: begin
+  stVarRef: begin
     //Se tiene una variable puntero dereferenciada: x^
     varPtr := Op^.rVar;  //Guarda referencia a la variable puntero
     //Mueve a W
@@ -2338,7 +2338,7 @@ begin
     _MOVF(0, toW);  //deje en W byte bajo
     if modReturn then _RETURN;
   end;
-  stVarRefExp: begin
+  stExpRef: begin
     //Es una expresión desrefernciada (x+a)^.
     {Se asume que el operando tiene su resultado en los RT. Si estuvieran en la pila
     no se aplicaría.}
@@ -2414,7 +2414,7 @@ begin
 //        _MOVF(add0, toW);  //byte bajo
       end;
     stVariab: begin
-      SetResultExpres(arrVar.typ.refType, true);  //Es array de word, devuelve word
+      SetResultExpres(arrVar.typ.itmType, true);  //Es array de word, devuelve word
       _BCF(_STATUS, _C);
       _RLF(idx.offs, toW);           //Multiplica Idx por 2
       _ADDLW(arrVar.addr0+1);   //Agrega OFFSET + 1
@@ -2425,7 +2425,7 @@ begin
       _MOVF(0, toW);  //lee indexado en W
     end;
     stExpres: begin
-      SetResultExpres(arrVar.typ.refType, false);  //Es array de word, devuelve word
+      SetResultExpres(arrVar.typ.itmType, false);  //Es array de word, devuelve word
       _MOVWF(FSR.offs);     //idx a  FSR (usa como varaib. auxiliar)
       _BCF(_STATUS, _C);
       _RLF(FSR.offs, toW);         //Multiplica Idx por 2

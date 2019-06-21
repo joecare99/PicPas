@@ -4,8 +4,8 @@ unit ParserDirec;
 {$mode objfpc}{$H+}
 interface
 uses
-  Classes, SysUtils, fgl, math, Graphics, Parser, SynFacilHighlighter, XpresBas,
-  MisUtils, Globales, XpresElementsPIC;
+  Classes, SysUtils, fgl, math, Graphics, CompBase, SynFacilHighlighter, XpresBas,
+  MisUtils, Globales, XpresElementsPIC, CompMain;
 type  //Tipos para manejo de expresiones
   TDirDatType = (ddtNumber, ddtString);
 
@@ -73,7 +73,7 @@ type
 
 
   { TParserDirecBase }
-  TParserDirecBase = class(TCompilerBase)
+  TParserDirecBase = class(TCompMain)
   private  //Parser and Expressions evaluation
     tokIni : integer;  //Posición inicial del token actual
     dirOperator: Integer;

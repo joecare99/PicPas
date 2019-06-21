@@ -45,7 +45,7 @@ interface
 uses
   Classes, SysUtils, Graphics, LCLType, LCLProc,
   SynFacilBasic, XpresTypesPIC, XpresElementsPIC, Pic10Utils, GenCodBas_PIC10,
-  Parser, Globales, MisUtils, XpresBas;
+  CompBase, Globales, MisUtils, XpresBas;
 type
     { TGenCod }
     TGenCod = class(TGenCodBas)
@@ -53,10 +53,13 @@ type
       procedure callParam(fun: TxpEleFun);
       procedure callFunct(fun: TxpEleFun);
     private
+      procedure DefineArray(etyp: TxpEleType);
+      procedure DefinePointer(etyp: TxpEleType);
       procedure ROB_byte_mod_byte(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_byte_mul_word(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_word_mul_byte(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_word_mul_word(Opt: TxpOperation; SetRes: boolean);
+      procedure ValidRAMaddr(addr: integer);
     private  //Operaciones con Bit
 //      f_byteXbyte_byte: TxpEleFun;  //índice para función
       f_byte_mul_byte_16: TxpEleFun;  //índice para función
@@ -177,10 +180,8 @@ type
   procedure SetLanguage;
 implementation
 var
-  MSG_NOT_IMPLEM: string;
-  MSG_INVAL_PARTYP: string;
-  MSG_UNSUPPORTED : string;
-  MSG_CANNOT_COMPL: string;
+  MSG_NOT_IMPLEM, MSG_INVAL_PARTYP, MSG_UNSUPPORTED, MSG_CANNOT_COMPL,
+  ER_INV_MAD_DEV, ER_INV_MEMADDR: string;
 
 procedure SetLanguage;
 begin
@@ -295,7 +296,7 @@ begin
     else
       GenError(MSG_UNSUPPORTED); exit;
     end;
-  end else if p1^.Sto = stVarRefExp then begin
+  end else if p1^.Sto = stExpRef then begin
     {Este es un caso especial de asignación a un puntero a byte dereferenciado, pero
     cuando el valor del puntero es una expresión. Algo así como (ptr + 1)^}
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
@@ -334,7 +335,7 @@ begin
     else
       GenError(MSG_UNSUPPORTED); exit;
     end;
-  end else if p1^.Sto = stVarRefVar then begin
+  end else if p1^.Sto = stVarRef then begin
     //Asignación a una variable
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
     case p2^.Sto of
@@ -408,7 +409,7 @@ begin
     else
       GenError(MSG_UNSUPPORTED); exit;
     end;
-  end else if p1^.Sto = stVarRefExp then begin
+  end else if p1^.Sto = stExpRef then begin
     {Este es un caso especial de asignación a un puntero a byte dereferenciado, pero
     cuando el valor del puntero es una expresión. Algo así como (ptr + 1)^}
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
@@ -446,7 +447,7 @@ begin
     else
       GenError(MSG_UNSUPPORTED); exit;
     end;
-  end else if p1^.Sto = stVarRefVar then begin
+  end else if p1^.Sto = stVarRef then begin
     //Asignación a una variable
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
     case p2^.Sto of
@@ -519,7 +520,7 @@ begin
     else
       GenError(MSG_UNSUPPORTED); exit;
     end;
-  end else if p1^.Sto = stVarRefExp then begin
+  end else if p1^.Sto = stExpRef then begin
     {Este es un caso especial de asignación a un puntero a byte dereferenciado, pero
     cuando el valor del puntero es una expresión. Algo así como (ptr + 1)^}
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
@@ -557,7 +558,7 @@ begin
     else
       GenError(MSG_UNSUPPORTED); exit;
     end;
-  end else if p1^.Sto = stVarRefVar then begin
+  end else if p1^.Sto = stVarRef then begin
     //Asignación a una variable
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
     case p2^.Sto of
@@ -605,7 +606,7 @@ var
   rVar: TxpEleVar;
   aux: TPicRegister;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -675,7 +676,7 @@ begin
 end;
 procedure TGenCod.ROB_byte_add_word(Opt: TxpOperation; SetRes: boolean);
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -701,7 +702,7 @@ var
   rVar: TxpEleVar;
   aux: TPicRegister;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -795,7 +796,7 @@ procedure TGenCod.ROB_byte_mul_byte(Opt: TxpOperation; SetRes: boolean);
 var
   rVar: TxpEleVar;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -912,7 +913,7 @@ begin
 end;
 procedure TGenCod.ROB_byte_mul_word(Opt: TxpOperation; SetRes: boolean);
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1065,7 +1066,7 @@ procedure TGenCod.ROB_byte_div_byte(Opt: TxpOperation; SetRes: boolean);
 var
   rVar: TxpEleVar;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1206,7 +1207,7 @@ procedure TGenCod.ROB_byte_mod_byte(Opt: TxpOperation; SetRes: boolean);
 var
   rVar: TxpEleVar;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1333,7 +1334,7 @@ procedure TGenCod.ROB_byte_great_byte(Opt: TxpOperation; SetRes: boolean);
 var
   tmp, aux: TPicRegister;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1436,7 +1437,7 @@ begin
 end;
 procedure TGenCod.ROB_byte_less_byte(Opt: TxpOperation; SetRes: boolean);
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1493,7 +1494,7 @@ procedure TGenCod.ROB_byte_shr_byte(Opt: TxpOperation; SetRes: boolean);  //Desp
 var
   aux, cnt: TPicRegister;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1630,7 +1631,7 @@ procedure TGenCod.ROB_byte_shl_byte(Opt: TxpOperation; SetRes: boolean);   //Des
 var
   aux, cnt: TPicRegister;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1925,7 +1926,7 @@ procedure TGenCod.ROB_word_add_word(Opt: TxpOperation; SetRes: boolean);
 var
   aux: TPicRegister;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -2161,7 +2162,7 @@ procedure TGenCod.ROB_word_sub_word(Opt: TxpOperation; SetRes: boolean);
 var
   aux, aux2: TPicRegister;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -3879,6 +3880,50 @@ begin
   opr:=etyp.CreateBinaryOperator('-',4,'add');  //resta
   opr.CreateOperation(typByte, @ROB_pointer_sub_byte);
 end;
+procedure TGenCod.DefinePointer(etyp: TxpEleType);
+{Set operations that defines pointers aritmethic.}
+var
+  opr: TxpOperator;
+begin
+  //Asignación desde Byte y Puntero
+//  opr:=etyp.CreateBinaryOperator(':=',2,'asig');
+//  opr.CreateOperation(typWord, @ROB_word_asig_word);
+//  opr.CreateOperation(etyp   , @ROB_word_asig_word);
+//  //Agrega a los word, la posibilidad de ser asignados por punteros
+//  typWord.operAsign.CreateOperation(etyp, @ROB_word_asig_word);
+//
+//  opr:=etyp.CreateBinaryOperator('=',3,'equal');  //asignación
+//  opr.CreateOperation(typWord, @ROB_word_equal_word);
+//  opr:=etyp.CreateBinaryOperator('+',4,'add');  //suma
+//  opr.CreateOperation(typWord, @ROB_pointer_add_word);
+//  opr:=etyp.CreateBinaryOperator('-',4,'add');  //resta
+//  opr.CreateOperation(typWord, @ROB_pointer_sub_word);
+//
+//  etyp.CreateUnaryPreOperator('@', 6, 'addr', @ROU_address); //defined in all types
+//  etyp.CreateUnaryPostOperator('^',6, 'deref', @ROU_derefPointer);  //dereferencia
+end;
+procedure TGenCod.DefineArray(etyp: TxpEleType);
+begin
+//  etyp.CreateField('length', @arrayLength, nil);
+//  etyp.CreateField('high'  , @arrayHigh, nil);
+//  etyp.CreateField('low'   , @arrayLow, nil);
+//  etyp.CreateField('item'  , @GenCodArrayGetItem, @GenCodArraySetItem);
+//  etyp.CreateField('clear' , @GenCodArrayClear, nil);
+//  etyp.CreateUnaryPreOperator('@', 6, 'addr', @ROU_address); //defined in all types
+end;
+procedure TGenCod.ValidRAMaddr(addr: integer);
+{Validate a physical RAM address. If error generate error.}
+begin
+  if (addr<0) or (addr>$ffff) then begin
+    //Debe set Word
+    GenError(ER_INV_MEMADDR);
+    exit;
+  end;
+  if not pic.ValidRAMaddr(addr) then begin
+    GenError(ER_INV_MAD_DEV);
+    exit;
+  end;
+end;
 procedure TGenCod.CreateSystemElements;
 {Inicia los elementos del sistema. Se ejecuta cada vez que se compila.}
 var
@@ -3916,6 +3961,10 @@ begin
   f_word_mul_word_16 := CreateSysFunction('word_mul_word_16', nil, nil);
   f_word_mul_word_16.adrr:=$0;
   f_word_mul_word_16.compile := @word_mul_word_16;
+  //Inicializa eventos y funciones del compilador
+  CodDefinePointer:= @DefinePointer;
+  CodDefineArray  := @DefineArray;
+  CodValidRAMaddr := @ValidRAMaddr;
 end;
 end.
 

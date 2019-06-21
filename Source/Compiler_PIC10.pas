@@ -5,21 +5,17 @@ unit Compiler_PIC10;
 interface
 uses
   Classes, SysUtils, lclProc, SynEditHighlighter, types, MisUtils, XpresBas,
-  XpresTypesPIC, XpresElementsPIC, Pic10Utils, Pic10Devices, Parser, ParserDirec,
-  GenCodBas_PIC10, GenCod_PIC10, ParserDirec_PIC10, Globales,
-  FormConfig {Por diseño, parecería que GenCodBas, no debería accederse desde aquí};
+  XpresTypesPIC, XpresElementsPIC, Pic10Utils, Pic10Devices, CompBase,
+  ParserDirec, GenCodBas_PIC10, GenCod_PIC10, ParserDirec_PIC10, Globales,
+  FormConfig, CompOperands {Por diseño, parecería que GenCodBas, no debería accederse desde aquí};
 type
  { TCompiler }
   TCompiler_PIC10 = class(TParserDirec)
   private   //Funciones básicas
-    function AddType(typName: string; srcPos: TSrcPos): TxpEleType;
-    function AddVariable(varName: string; eleTyp: TxpEleType; srcPos: TSrcPos
-      ): TxpEleVar;
     procedure ArrayDeclaration(out itemTyp: TxpEleType; out nEle: integer);
     procedure array_high(const OpPtr: pointer);
     procedure array_low(const OpPtr: pointer);
-    procedure CompileTypeDeclar(IsInterface: boolean; typName: string = '');
-    function GetAdicVarDeclar(out IsBit: boolean): TAdicVarDec;
+    procedure CompileTypeDeclar(elemLocat: TxpEleLocation; typName: string = '');
     procedure cInNewLine(lin: string);
     procedure Cod_JumpIfTrue;
     function CompileStructBody(GenCode: boolean): boolean;
@@ -36,8 +32,6 @@ type
     procedure ProcCommentsNoExec;
     function StartOfSection: boolean;
     procedure ResetFlashAndRAM;
-    procedure getListOfIdent(var itemList: TStringDynArray; out
-      srcPosArray: TSrcPosArray);
     procedure CaptureDecParams(fun: TxpEleFun);
     procedure CompileIF;
     procedure CompileREPEAT;
@@ -52,7 +46,6 @@ type
   private   //Rutinas para la compilación y enlace
     procedure CompileProcBody(fun: TxpEleFun);
   private //Compilación de secciones
-    procedure CompileGlobalConstDeclar;
     procedure CompileVarDeclar(IsInterface: boolean = false);
     procedure CompileProcDeclar(IsImplementation: boolean);
     procedure CompileInstruction;
@@ -88,7 +81,7 @@ implementation
 var
   ER_NOT_IMPLEM_, ER_IDEN_EXPECT, ER_DUPLIC_IDEN, ER_INVAL_FLOAT: string;
   ER_ERR_IN_NUMB, ER_NOTYPDEFNUM, ER_UNDEF_TYPE_: string;
-  ER_INV_MAD_DEV, ER_EXP_VAR_IDE, ER_INV_MEMADDR, ER_BIT_VAR_REF: String;
+  ER_EXP_VAR_IDE, ER_INV_MEMADDR, ER_BIT_VAR_REF: String;
   ER_UNKNOWN_ID_: string;
   ER_IDE_CON_EXP, ER_NUM_ADD_EXP, ER_IDE_TYP_EXP, ER_SEM_COM_EXP: String;
   ER_EQU_COM_EXP, ER_END_EXPECTE, ER_EOF_END_EXP, ER_BOOL_EXPECT: String;
@@ -103,7 +96,7 @@ var
 procedure SetLanguage;
 begin
   ParserDirec_PIC10.SetLanguage;
-{$I ..\language\tra_Parser.pas}
+  {$I ..\language\tra_Compiler.pas}
 end;
 procedure TCompiler_PIC10.cInNewLine(lin: string);
 //Se pasa a una nueva _Línea en el contexto de entrada
@@ -125,38 +118,6 @@ begin
   pic.ClearMemRAM;  //Pone las celdas como no usadas y elimina nombres.
   CurrBank := 0;
   StartRegs;        //Limpia registros de trabajo, auxiliares, y de pila.
-end;
-procedure TCompiler_PIC10.getListOfIdent(var itemList: TStringDynArray; out srcPosArray: TSrcPosArray);
-{Lee una lista de identificadores separados por comas, hasta encontra un caracter distinto
-de coma. Si el primer elemento no es un identificador o si después de la coma no sigue un
-identificador, genera error.
-También devuelve una lista de las posiciones de los identificadores, en el código fuente.}
-var
-  item: String;
-  n: Integer;
-begin
-  setlength(srcPosArray,0 );
-  setlength(itemList, 0);  //hace espacio
-  repeat
-    ProcComments;
-    //ahora debe haber un identificador
-    if cIn.tokType <> tnIdentif then begin
-      GenError(ER_IDEN_EXPECT);
-      exit;
-    end;
-    //hay un identificador
-    item := cIn.tok;
-    //sgrega nombre de ítem
-    n := high(itemList)+1;
-    setlength(itemList, n+1);  //hace espacio
-    setlength(srcPosArray, n+1);  //hace espacio
-    itemList[n] := item;  //agrega nombre
-    srcPosArray[n] := cIn.ReadSrcPos;  //agrega ubicación de declaración
-    cIn.Next;  //lo toma identificador despues, de guardar ubicación
-    ProcComments;
-    if cIn.tok <> ',' then break; //sale
-    cIn.Next;  //toma la coma
-  until false;
 end;
 function TCompiler_PIC10.getParamType: TxpEleType;
 {Lee el tipo que acompaña a una declaración de parámetro de un procedimeinto.
@@ -273,43 +234,6 @@ begin
   if not cIn.Eof then begin
     GenError(ER_NOT_AFT_END);
     exit;       //sale
-  end;
-end;
-function TCompiler_PIC10.AddVariable(varName: string; eleTyp: TxpEleType; srcPos: TSrcPos
-  ): TxpEleVar;
-{Crea un elemento variable y lo agrega en el nodo actual del árbol de sintaxis.
-Si no hay errores, devuelve la referencia a la variable. En caso contrario,
-devuelve NIL.
-Notar que este método, no asigna RAM a la variable. En una creación completa de
-variables, se debería llamar a CreateVarInRAM(), después de agregar la variable.}
-var
-  xvar: TxpEleVar;
-begin
-  //Inicia parámetros adicionales de declaración
-  xvar := CreateVar(varName, eleTyp);
-  xvar.srcDec := srcPos;  //Actualiza posición
-  Result := xvar;
-  if not TreeElems.AddElement(xvar) then begin
-    GenErrorPos(ER_DUPLIC_IDEN, [xvar.name], xvar.srcDec);
-    xvar.Destroy;   //Hay una variable creada
-    exit(nil);
-  end;
-end;
-function TCompiler_PIC10.AddType(typName: string; srcPos: TSrcPos): TxpEleType;
-{Crea un elemento tipo y lo agrega en el nodo actual del árbol de sintaxis.
-Si no hay errores, devuelve la referencia al tipo. En caso contrario,
-devuelve NIL.}
-var
-  xtyp: TxpEleType;
-begin
-  //Inicia parámetros adicionales de declaración
-  xtyp := CreateEleType(typName);
-  xtyp.srcDec := srcPos;  //Actualiza posición
-  Result := xtyp;
-  if not TreeElems.AddElement(xtyp) then begin
-    GenErrorPos(ER_DUPLIC_IDEN, [xtyp.name], xtyp.srcDec);
-    xtyp.Destroy;   //Hay una variable creada
-    exit(nil);
   end;
 end;
 procedure TCompiler_PIC10.CaptureDecParams(fun: TxpEleFun);
@@ -890,179 +814,6 @@ begin
   end;
 end;
 //Compilación de secciones
-procedure TCompiler_PIC10.CompileGlobalConstDeclar;
-var
-  consNames: array of string;  //nombre de variables
-  cons: TxpEleCon;
-  srcPosArray: TSrcPosArray;
-  i: integer;
-begin
-  SetLength(consNames, 0);
-  //Procesa lista de constantes a,b,cons ;
-  getListOfIdent(consNames, srcPosArray);
-  if HayError then begin  //precisa el error
-    GenError(ER_IDE_CON_EXP);
-    exit;
-  end;
-  //puede seguir "=" o identificador de tipo
-  if cIn.tok = '=' then begin
-    cIn.Next;  //pasa al siguiente
-    //Debe seguir una expresiócons constante, que no genere consódigo
-    GetExpressionE(0);
-    if HayError then exit;
-    if res.Sto <> stConst then begin
-      GenError(ER_CON_EXP_EXP);
-    end;
-    //Hasta aquí todo bien, crea la(s) constante(s).
-    for i:= 0 to high(consNames) do begin
-      //crea constante
-      cons := CreateCons(consNames[i], res.Typ);
-      cons.srcDec := srcPosArray[i];  //guarda punto de declaración
-      if not TreeElems.AddElement(cons) then begin
-        GenErrorPos(ER_DUPLIC_IDEN, [cons.name], cons.srcDec);
-        cons.Destroy;   //hay una constante creada
-        exit;
-      end;
-      res.CopyConsValTo(cons); //asigna valor
-    end;
-//  end else if cIn.tok = ':' then begin
-  end else begin
-    GenError(ER_EQU_COM_EXP);
-    exit;
-  end;
-  if not CaptureDelExpres then exit;
-  ProcComments;
-  //puede salir con error
-end;
-function TCompiler_PIC10.GetAdicVarDeclar(out IsBit: boolean): TAdicVarDec;
-{Verifica si lo que sigue es la sintaxis ABSOLUTE ... . Si esa así, procesa el texto,
-pone "IsAbs" en TRUE y actualiza los valores "absAddr" y "absBit". }
-  function ReadAddres(tok: string): word;
-  {Lee una dirección de RAM a partir de una cadena numérica.
-  Puede generar error.}
-  var
-    n: LongInt;
-  begin
-    //COnvierte cadena (soporta binario y hexadecimal)
-    if not TryStrToInt(tok, n) then begin
-      //Podría fallar si es un número muy grande
-      GenError(ER_INV_MEMADDR);
-      {%H-}exit;
-    end;
-    if (n<0) or (n>$ffff) then begin
-      //Debe set Word
-      GenError(ER_INV_MEMADDR);
-      {%H-}exit;
-    end;
-    Result := n;
-    if not pic.ValidRAMaddr(Result) then begin
-      GenError(ER_INV_MAD_DEV);
-      {%H-}exit;
-    end;
-  end;
-  function ReadAddresBit(tok: string): byte;
-  {Lee la parte del bit de una dirección de RAM a partir de una cadena numérica.
-  Puede generar error.}
-  var
-    n: Longint;
-  begin
-    if not TryStrToInt(tok, n) then begin
-      GenError(ER_INV_MEMADDR);
-      {%H-}exit;
-    end;
-    if (n<0) or (n>7) then begin
-      GenError(ER_INV_MEMADDR);
-      {%H-}exit;
-    end;
-    Result := n;   //no debe fallar
-  end;
-var
-  xvar: TxpEleVar;
-  n: integer;
-  Op: TOperand;
-begin
-  Result.srcDec  := cIn.PosAct;  //Posición de inicio de posibles parámetros adic.
-  Result.isAbsol := false;       //Bandera
-  Result.absVar := nil;          //Por defecto
-  if (cIn.tokL <> 'absolute') and (cIn.tok <> '@') then begin
-    exit;  //no es variable absoluta
-  end;
-  //// Hay especificación de dirección absoluta ////
-  Result.isAbsol := true;    //marca bandera
-  cIn.Next;
-  ProcComments;
-  if cIn.tokType = tnNumber then begin
-    if (cIn.tok[1]<>'$') and ((pos('e', cIn.tok)<>0) or (pos('E', cIn.tok)<>0)) then begin
-      //La notación exponencial, no es válida.
-      GenError(ER_INV_MEMADDR);
-      exit;
-    end;
-    n := pos('.', cIn.tok);   //no debe fallar
-    if n=0 then begin
-      //Número entero sin parte decimal
-      Result.absAddr := ReadAddres(cIn.tok);
-      cIn.Next;  //Pasa con o sin error, porque esta rutina es "Pasa siempre."
-      //Puede que siga la parte de bit
-      if cIn.tok = '.' then begin
-        cIn.Next;
-        IsBit := true;  //Tiene parte de bit
-        Result.absBit := ReadAddresBit(cIn.tok);  //Parte decimal
-        cIn.Next;  //Pasa con o sin error, porque esta rutina es "Pasa siempre."
-      end else begin
-        IsBit := false;  //No tiene parte de bit
-      end;
-    end else begin
-      //Puede ser el formato <dirección>.<bit>, en un solo token, que es válido.
-      IsBit := true;  //Se deduce que tiene punto decimal
-      //Ya sabemos que tiene que ser decimal, con punto
-      Result.absAddr := ReadAddres(copy(cIn.tok, 1, n-1));
-      //Puede haber error
-      Result.absBit := ReadAddresBit(copy(cIn.tok, n+1, 100));  //Parte decimal
-      cIn.Next;  //Pasa con o sin error, porque esta rutina es "Pasa siempre."
-    end;
-  end else if cIn.tokType = tnIdentif then begin
-    //Puede ser variable
-    GetOperandIdent(Op); //
-    if HayError then exit;
-    if Op.Sto <> stVariab then begin
-      GenError(ER_EXP_VAR_IDE);
-      cIn.Next;  //Pasa con o sin error, porque esta rutina es "Pasa siempre."
-      exit;
-    end;
-    //Mapeado a variable. Notar que puede ser una variable temporal, si se usa: <var_byte>.0
-    xvar := Op.rVar;
-    if Op.rVarBase=nil then begin
-      Result.absVar := Op.rVar;  //Guarda referencia
-    end else begin
-      {Es un caso como "<Variab.Base>.0", conviene devolver la referencia a <Variab.Base>,
-      en lugar de a la variable "<Variab.Base>.0", considerando que:
-      * GetOperandIdent() usa <Variab.Base>, para registrar la llamada.
-      * Esta referencia se usará luego para ver variables no usadas en
-        TCompiler.CompileLinkProgram().}
-      Result.absVar := Op.rVarBase;  //Guarda referencia
-    end;
-    //Ya tiene la variable en "xvar".
-    if xvar.typ.IsBitSize then begin //boolean o bit
-      IsBit := true;  //Es una dirección de bit
-      Result.absAddr := xvar.addr;  //debe ser absoluta
-      Result.absBit := xvar.adrBit.bit;
-    end else begin
-      //Es cualquier otra variable, que no sea bit. Se intentará
-      IsBit := false;  //Es una dirección normal (byte)
-      Result.absAddr := xvar.addr;  //debe ser absoluta
-    end;
-    if Result.absAddr = ADRR_ERROR then begin
-      //No se puede obtener la dirección.
-      GenError('Cannot locate variable at: %s', [xvar.name]);
-//      GenError('Internal Error: TxpEleVar.AbsAddr.');
-      exit;
-    end;
-  end else begin   //error
-    GenError(ER_NUM_ADD_EXP);
-    cIn.Next;    //pasa siempre
-    exit;
-  end;
-end;
 procedure TCompiler_PIC10.array_length(const OpPtr: pointer);
 //Devuelve la cantidad de elementos de un arreglo
 var
@@ -1076,7 +827,7 @@ begin
     xvar := Op^.rVar;  //Se supone que debe ser de tipo ARRAY
     //Se devuelve una constante, byte
     res.SetAsConst(typByte);
-    res.valInt := xvar.typ.arrSize;
+    res.valInt := xvar.typ.nItems;
   end;
   else
     GenError('Syntax error.');
@@ -1095,7 +846,7 @@ begin
     xvar := Op^.rVar;  //Se supone que debe ser de tipo ARRAY
     //Se devuelve una constante, byte
     res.SetAsConst(typByte);
-    res.valInt {%H-}:= xvar.typ.arrSize-1;
+    res.valInt {%H-}:= xvar.typ.nItems-1;
   end;
   else
     GenError('Syntax error.');
@@ -1196,7 +947,7 @@ begin
 //  totSize := nEle * itemTyp.size;  //tamaño en bytes
 
 end;
-procedure TCompiler_PIC10.CompileTypeDeclar(IsInterface: boolean; typName: string = '');
+procedure TCompiler_PIC10.CompileTypeDeclar(elemLocat: TxpEleLocation; typName: string = '');
 {Compila la sección de declaración de un tipo, y genera un elemento TxpEleType, en el
 árbol de sintaxis.
 Si se especifica typName, se obvia la extracción de la parte " nombreTipo = ", y se
@@ -1236,7 +987,7 @@ begin
     tiene otras reglas de alcance.}
     etyp.copyOf := systyp;  //Indica que es una copia
     etyp.catType := systyp.catType; //tctAtomic. No debería ser necesario
-    etyp.InInterface := IsInterface; //No debería ser necesario
+    etyp.location:= elemLocat; //No debería ser necesario
   end else if cIn.tokL = 'array' then begin
     //Es un arreglo
     ArrayDeclaration(itemTyp, nEle);
@@ -1245,9 +996,9 @@ begin
     etyp := AddType(typName, srcpos);
     if HayError then exit;     //Sale para ver otros errores
     etyp.catType := tctArray;  //Tipo arreglo
-    etyp.arrSize := nEle;      //Número de ítems
-    etyp.refType := itemTyp;   //Tipo de dato
-    etyp.InInterface := IsInterface; //No debería ser necesario
+    etyp.nItems := nEle;      //Número de ítems
+    etyp.itmType := itemTyp;   //Tipo de dato
+    etyp.location:= elemLocat; //No debería ser necesario
     //Crea campos comunes del arreglo
     etyp.CreateField('length', @array_length);
     etyp.CreateField('high', @array_high);
@@ -1278,8 +1029,8 @@ begin
     etyp := AddType(typName, srcpos);  //Crae el elemento tipo
     if HayError then exit;       //Sale para ver otros errores
     etyp.catType := tctPointer;  //Tipo puntero
-    etyp.refType := reftyp;      //El tipo a donde apunta
-    etyp.InInterface := IsInterface; //No debería ser necesario
+    etyp.itmType := reftyp;      //El tipo a donde apunta
+    etyp.location:= elemLocat; //No debería ser necesario
     //Fija operaciones para la aritmética del puntero
     DefPointerArithmetic(etyp);
     etyp.CreateUnaryPostOperator('^',6,'deref', @ROU_derefPointer);  //dereferencia
@@ -1387,9 +1138,9 @@ begin
     //Lee el tipo de la variable
     typEleDec := GetTypeVarDeclar;
     //Lee información aicional de la declaración (ABSOLUTE)
-    adicVarDec := GetAdicVarDeclar(IsBit);
+    GetAdicVarDeclar(IsBit, adicVarDec);
     if HayError then exit;
-    if adicVarDec.isAbsol then begin  //valida tamaño
+    if adicVarDec.hasAdic = decAbsol then begin  //valida tamaño
       //Es una declaración ABSOLUTE
       if typEleDec.IsBitSize and (not Isbit) then begin
         //Se esperaba un bit, en el ABSOLUTE.
@@ -1412,7 +1163,7 @@ begin
       xvar := AddVariable(varNames[i], typEleDec, srcPosArray[i]);
       if HayError then break;        //Sale para ver otros errores
       xvar.adicPar := adicVarDec;    //Actualiza propiedades adicionales
-      xvar.InInterface := IsInterface;  //Actualiza bandera
+      xvar.location := curLocation;  //Actualiza bandera
       {Técnicamente, no sería necesario, asignar RAM a la variable aquí (y así se
       optimizaría), porque este método, solo se ejecuta en la primera pasada, y no
       es vital tener las referencias a memoria, en esta pasada.
@@ -1529,7 +1280,7 @@ begin
       if not (Parent.elements[i].idClass = eltFunc) then continue;
       funcX := TxpEleFun(Parent.elements[i]);
       if (UpCase(funcX.name) = Upcase(fun.name)) and
-         (fun.SameParams(funcX)) then begin
+         (fun.SameParamsType(funcX.pars)) then begin
          Found := true;
          break;
       end;
@@ -1746,6 +1497,7 @@ begin
   end;
   cIn.Next;   //toma
   ProcComments;
+  curLocation := locInterface;
   if cIn.Eof then begin
     GenError('Expected "uses", "var", "type", "const" or "implementation".');
     exit;
@@ -1771,7 +1523,7 @@ begin
     end else if cIn.tokL = 'type' then begin
       cIn.Next;    //lo toma
       while not StartOfSection and (cIn.tokL <>'implementation') do begin
-        CompileTypeDeclar(true);
+        CompileTypeDeclar(locInterface);
         if HayError then exit;
       end;
     end else if cIn.tokL = 'const' then begin
@@ -1784,7 +1536,7 @@ begin
       cIn.Next;    //lo toma
       CompileProcHeader(fun);   //Se ingresa al árbol de sintaxis
       if HayError then exit;
-      fun.InInterface := true;  //marca ubicación
+      fun.location:= locInterface;  //marca ubicación
       TreeElems.CloseElement;   //CompileProcHeader, deja abierto el elemento
     end else begin
       GenError(ER_NOT_IMPLEM_, [cIn.tok]);
@@ -1800,6 +1552,7 @@ begin
   /////////////////  IMPLEMENTATION /////////////////////
   ProcComments;
   //Explora las declaraciones e implementaciones
+  curLocation := locImplement;
   //Empiezan las declaraciones
   while StartOfSection do begin
     if cIn.tokL = 'var' then begin
@@ -1826,7 +1579,7 @@ begin
   //Verifica si todas las funciones de INTERFACE, se implementaron
   for elem in TreeElems.curNode.elements do if elem.idClass = eltFunc then begin
     fun := TxpEleFun(elem);
-    if fun.InInterface and not fun.Implemented then begin
+    if (fun.location = locInterface) and not fun.Implemented then begin
       GenErrorPos('Function %s not implemented.', [fun.name], fun.srcDec);
       exit;
     end;
@@ -1959,6 +1712,7 @@ begin
   end;
   ProcComments;
   Cod_StartProgram;  //Se pone antes de codificar procedimientos y funciones
+  curLocation := locMain;
   if HayError then exit;
   //Empiezan las declaraciones
   while StartOfSection do begin
@@ -1971,7 +1725,7 @@ begin
     end else if cIn.tokL = 'type' then begin
       cIn.Next;    //lo toma
       while not StartOfSection and (cIn.tokL <>'begin') do begin
-        CompileTypeDeclar(false);
+        CompileTypeDeclar(locMain);
         if HayError then exit;
       end;
     end else if cIn.tokL = 'const' then begin
@@ -2158,7 +1912,7 @@ Esto es lo más cercano a un enlazador, que hay en PicPas.}
     IsBit  : boolean;
   begin
 //debugln('  Asignando espacio a %s', [xvar.name]);
-    if xvar.adicPar.isAbsol then begin
+    if xvar.adicPar.hasAdic = decAbsol then begin
 //debugln('Abs: xvar=%s at %d', [xvar.name, xvar.adicPar.absAddr]);
       {Tiene declaración absoluta. Mejor compilamos de nuevo la declaración, porque
       puede haber referencia a variables que han cambiado de ubicación, por
@@ -2171,7 +1925,7 @@ Esto es lo más cercano a un enlazador, que hay en PicPas.}
       TreeElems.curNode := xvar.Parent;   {Posiciona el árbol, tal cual estaría en la
                                            primera pasada, para una correcta resolución
                                            de nombres}
-      adicVarDec := GetAdicVarDeclar(IsBit);
+      GetAdicVarDeclar(IsBit, adicVarDec);
       //No debería dar error, porque ya pasó la primera pasada
       xvar.adicPar := adicVarDec;
       cIn.PosAct := posAct;
@@ -2352,7 +2106,7 @@ begin
   cIn.curCon.SetStartPos;   //retorna al inicio
   exit(false);
 end;
-procedure TCompiler_PIC10.Compile(NombArc: string; Link: boolean = true);
+procedure TCompiler_PIC10.Compile(NombArc: string; Link: boolean);
 //Compila el contenido de un archivo.
 var
   p: SizeInt;
@@ -2380,6 +2134,12 @@ begin
     end;
     {-------------------------------------------------}
     TreeElems.Clear;
+    //Asigna nombre y archivo a elemento
+    TreeElems.main.name := ExtractFileName(mainFile);
+    p := pos('.',TreeElems.main.name);
+    if p <> 0 then TreeElems.main.name := copy(TreeElems.main.name, 1, p-1);
+    TreeElems.main.srcDec.fil := mainFile;
+    //Continúa con preparación
     TreeDirec.Clear;
     TreeElems.OnAddElement := @Tree_AddElement;   //Se va a modificar el árbol
     listFunSys.Clear;
@@ -2397,9 +2157,6 @@ begin
       //Hay que compilar una unidad
       consoleTickStart;
 //      debugln('*** Compiling unit: Pass 1.');
-      TreeElems.main.name := ExtractFileName(mainFile);
-      p := pos('.',TreeElems.main.name);
-      if p <> 0 then TreeElems.main.name := copy(TreeElems.main.name, 1, p-1);
       FirstPass := true;
       CompileUnit(TreeElems.main);
       consoleTickCount('** First Pass.');
@@ -2407,7 +2164,7 @@ begin
       //Debe ser un programa
       CompiledUnit := false;
       {Se hace una primera pasada para ver, a modo de exploración, para ver qué
-      procedimientos, y varaibles son realmente usados, de modo que solo estos, serán
+      procedimientos, y variables son realmente usados, de modo que solo estos, serán
       codificados en la segunda pasada. Así evitamos incluir, código innecesario.}
       consoleTickStart;
 //      debugln('*** Compiling program: Pass 1.');
@@ -2416,8 +2173,7 @@ begin
       CompileProgram;  //puede dar error
       if HayError then exit;
       consoleTickCount('** First Pass.');
-      if Link then begin
-//        debugln('*** Compiling/Linking: Pass 2.');
+      if Link then begin  //El enlazado solo es válido para programas
         {Compila solo los procedimientos usados, leyendo la información del árbol de sintaxis,
         que debe haber sido actualizado en la primera pasada.}
         FirstPass := false;
@@ -2728,4 +2484,4 @@ initialization
 finalization
 
 end.
-//2161
+//2730

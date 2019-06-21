@@ -10,8 +10,8 @@ unit FramePICDiagram;
 interface
 uses
   Classes, SysUtils, FileUtil, fgl, Types, Forms, Controls, ExtCtrls, Graphics,
-  Menus, ActnList, LCLProc, ogMotEdicion, ogMotGraf2D, ogDefObjGraf, PicCore,
-  Parser, MisUtils;
+  Menus, ActnList, LCLProc, ogEditionMot, ogMotGraf2D, ogDefObjGraf, PicCore,
+  CompBase, MisUtils;
 type
   { TPinGraph }
   {Objeto que modela a un pin físico de un componente electrónico.
@@ -76,7 +76,7 @@ type
     procedure PCtlDisconnect(pCtl: TPtoCtrl; pCnx: TPtoConx);
     function ConnectedTo(ogCon: TOgConector): boolean;
   public
-    function LoSelecciona(xr, yr: Integer): Boolean; override;
+    function IsSelectedBy(xr, yr: Integer): Boolean; override;
     procedure Draw; override;
     constructor Create(mGraf: TMotGraf); override;
     destructor Destroy; override;
@@ -214,7 +214,7 @@ type
   private
     Fpic: TPicCore;
     ogPic: TOgPic;
-    motEdi: TModEdicion;
+    motEdi: TEditionMot;
     procedure ConnectAction(Sender: TObject);
     procedure fraPICDiagramKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -546,7 +546,7 @@ begin
   if ConnectedSameConexionPoint(pcEND, ogCon.pcEND) then exit(true);
   exit(false);
 end;
-function TOgConector.LoSelecciona(xr, yr: Integer): Boolean;
+function TOgConector.IsSelectedBy(xr, yr: Integer): Boolean;
 var
   x0, y0, x1, y1: Integer;
 begin
@@ -573,13 +573,13 @@ begin
   //Cuerpo
   col := GetThevCol(nodParent.vt, nodParent.rt);  //Se supone que el nodo padre ya está actualizado
   v2d.SetPen(psSolid, 1, col);
-  v2d.Linea(pcBEGIN.x, pcBEGIN.y, pcEND.x, pcEND.y);
+  v2d.Line(pcBEGIN.x, pcBEGIN.y, pcEND.x, pcEND.y);
   //Implementamos nosotros el remarcado y selección, para personalizar mejor
   //---------------Draw mark --------------
   if Marked and Highlight then begin
     //Resaltado
     v2d.SetPen(psSolid, 2, clBlue);   //RGB(128, 128, 255)
-    v2d.Linea(pcBEGIN.x, pcBEGIN.y, pcEND.x, pcEND.y);
+    v2d.Line(pcBEGIN.x, pcBEGIN.y, pcEND.x, pcEND.y);
     //Marcador de Voltaje
     v2d.SetPen(psSolid, 1, clBlack);   //RGB(128, 128, 255)
     v2d.SetBrush(clYellow);
@@ -824,8 +824,8 @@ begin
   //Dibuja cuerpo
   v2d.SetPen(psSolid, 2, COL_GND);
   //Línea vertioal y conexión a tierra
-  v2d.Linea(x+12, y, x+12, y2);
-  v2d.Linea(x+5, y2, x+19, y2);
+  v2d.Line(x+12, y, x+12, y2);
+  v2d.Line(x+5, y2, x+19, y2);
   //Resistencia
   v2d.SetPen(psSolid, 1, COL_GND);
   v2d.SetBrush(COL_RES);
@@ -932,15 +932,15 @@ begin
   //conexión a tierra
   v2d.SetPen(psSolid, 1, COL_GND);
   y2 := y + height + 10;
-  v2d.Linea(x+30, y+height, x+30, y2);
-  v2d.Linea(x+24, y2, x+36, y2);
+  v2d.Line(x+30, y+height, x+30, y2);
+  v2d.Line(x+24, y2, x+36, y2);
   //Dibuja los pines
   v2d.SetPen(psSolid, 1, COL_GND);
   for pCnx in PtosConex do begin
     pin := TPinGraph(pCnx);
     //En el PIC, los pines se pintan con el color del modelo interno
     v2d.SetBrush(clWhite);  //Rellena de acuerdo al estado
-    v2d.Linea(pin.x, pin.y, pin.x+7, pin.y);
+    v2d.Line(pin.x, pin.y, pin.x+7, pin.y);
     v2d.Texto(x+pin.xLbl, y+pin.yLbl, pin.lbl);
   end;
   inherited;
@@ -999,8 +999,8 @@ begin
 
   //Línea vertioal y conexión a tierra
   v2d.SetPen(psSolid, 2, COL_GND);
-  v2d.Linea(x+12, y, x+12, y2);
-  v2d.Linea(x+5, y2, x+19, y2);
+  v2d.Line(x+12, y, x+12, y2);
+  v2d.Line(x+5, y2, x+19, y2);
   //Resistencia
   v2d.SetPen(psSolid, 1, COL_GND);
   v2d.SetBrush(COL_RES);
@@ -1044,7 +1044,7 @@ begin
       nod.UpdateModel;
     end;
   end; //Protección
-  motEdi.Refrescar;
+  motEdi.Refresh;
 end;
 procedure TfraPICDiagram.SetCompiler(cxp0: TCompilerBase);
 begin
@@ -1203,7 +1203,7 @@ var
 begin
   if motEdi.seleccion.Count = 1 then begin
     //Hay uno seleccionado
-    if motEdi.Selected.LoSelecciona(X,Y) then begin
+    if motEdi.Selected.IsSelectedBy(X,Y) then begin
       //Click sobre un objeto seleccionado
       if motEdi.Selected is TOgLogicState then begin
         LogInp := TOgLogicState(motEdi.Selected);
@@ -1242,7 +1242,7 @@ var
 begin
   if motEdi.seleccion.Count = 1 then begin
     //Hay un componente seleccionado
-    if motEdi.Selected.LoSelecciona(X,Y) then begin
+    if motEdi.Selected.IsSelectedBy(X,Y) then begin
       if motEdi.Selected is TOgLogicState then begin
         LogInp := TOgLogicState(motEdi.Selected);
         LogInp.pin.vThev := 0;
@@ -1330,7 +1330,7 @@ constructor TfraPICDiagram.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   //crea motor de edición
-  motEdi := TModEdicion.Create(PaintBox1);
+  motEdi := TEditionMot.Create(PaintBox1);
   nodeList := TNodeList.Create(true);
   //agrega objeto
   ogPic := TOgPic.Create(motEdi.v2d);

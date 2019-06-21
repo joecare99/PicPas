@@ -681,7 +681,7 @@ procedure TGenCod.ROB_byte_and_byte(Opt: TxpOperation; SetRes: boolean);
 var
   rVar: TxpEleVar;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -772,7 +772,7 @@ procedure TGenCod.ROB_byte_or_byte(Opt: TxpOperation; SetRes: boolean);
 var
   rVar: TxpEleVar;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -863,7 +863,7 @@ procedure TGenCod.ROB_byte_xor_byte(Opt: TxpOperation; SetRes: boolean);
 var
   rVar: TxpEleVar;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -926,7 +926,7 @@ procedure TGenCod.ROB_byte_equal_byte(Opt: TxpOperation; SetRes: boolean);
 var
   rVar: TxpEleVar;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1045,7 +1045,7 @@ begin
     else
       GenError(MSG_UNSUPPORTED); exit;
     end;
-  end else if p1^.Sto = stVarRefVar then begin
+  end else if p1^.Sto = stVarRef then begin
     //Asignación a una variable
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
     case p2^.Sto of
@@ -1145,7 +1145,7 @@ var
   tmp: TPicRegister;
   sale: integer;
 begin
-  if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+  if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
     GenError('Too complex pointer expression.'); exit;
   end;
   if not ChangePointerToExpres(p1^) then exit;
@@ -1277,7 +1277,7 @@ end;
 
 procedure TGenCod.ROB_word_mul_byte(Opt: TxpOperation; SetRes: boolean);
 begin
-   if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+   if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
      GenError('Too complex pointer expression.'); exit;
    end;
    if not ChangePointerToExpres(p1^) then exit;
@@ -1397,7 +1397,7 @@ begin
 end;
 procedure TGenCod.ROB_word_mul_word(Opt: TxpOperation; SetRes: boolean);
 begin
-   if (p1^.Sto = stVarRefExp) and (p2^.Sto = stVarRefExp) then begin
+   if (p1^.Sto = stExpRef) and (p2^.Sto = stExpRef) then begin
      GenError('Too complex pointer expression.'); exit;
    end;
    if not ChangePointerToExpres(p1^) then exit;

@@ -8,7 +8,7 @@ interface
 uses
   Classes, SysUtils, SynEdit, SynEditTypes, LazUTF8, Forms, Controls, Dialogs,
   Menus, ComCtrls, ActnList, StdActns, ExtCtrls, LCLIntf, LCLType, LCLProc,
-  StdCtrls, SynFacilHighlighter, SynFacilUtils, MisUtils, XpresBas, Parser,  //Para tener acceso a TCompilerBase
+  StdCtrls, SynFacilHighlighter, SynFacilUtils, MisUtils, XpresBas, CompBase,  //Para tener acceso a TCompilerBase
   Compiler_PIC10,
   Compiler_PIC16,
   Compiler_PIC17,

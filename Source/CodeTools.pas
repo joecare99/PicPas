@@ -5,7 +5,7 @@ interface
 uses
   Classes, SysUtils, LCLType, LCLProc, SynEdit, SynEditHighlighter, LazUTF8,
   MisUtils, SynFacilCompletion, SynFacilHighlighter, SynFacilBasic, XpresBas,
-  XpresElementsPIC, FrameEditView, Parser, Globales;
+  XpresElementsPIC, FrameEditView, CompBase, Globales;
 type
   { TCodeTool }
   TCodeTool = class
@@ -377,7 +377,9 @@ begin
   cxp.TreeElems.curNode := ele;  //Se posiciona en ese nodo
   //Realiza la búsqueda con FindFirst, usando evento OnFindElement
   opEve0 := opEve;      //Para que el evento identifique al opEve
+  //Configura evento oara que agregue elemento encontrado a opEve0.
   cxp.TreeElems.OnFindElement := @cxpTreeElemsFindElement;
+  //Hace la búsqueda a todos los elementos accesibles desde la posición actual.
   cxp.TreeElems.FindFirst('#');  //Nunca lo va a encontrar pero va a explorar todo el árbol
   cxp.TreeElems.OnFindElement := nil;
 
