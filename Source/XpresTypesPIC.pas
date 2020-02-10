@@ -32,10 +32,15 @@ type  //tipos enumerados
     ValFloat: extended; //Para alojar a los valores t_float
     ValBool : boolean;  //Para alojar a los valores t_boolean
     ValStr  : string;   //Para alojar a los valores t_string
+    items   : array of TConsValue;  //Lista de items cuando sea array
+    nItems  : integer;  //Number of items
   end;
 
   //Operand storage
   TStoOperand = (
+    //Without storage
+    stNull    = %1111, //Operand is not stored
+    //Basic storage
     stConst  = %000, {Operand is constant and its value is stored directly in the Operand
                       without use CPU resources. Includes evaluated constant expressions.}
     stExpres = %001, {Operand value is stored in RT. Generally is the result of a
@@ -53,17 +58,14 @@ type  //tipos enumerados
     stConst_Const    = %000000,
     stConst_Expres   = %000001,
     stConst_Variab   = %000010,
-    stConst_VarRef   = %000011,
 
     stExpres_Const   = %001000,
     stExpres_Expres  = %001001,
     stExpres_Variab  = %001010,
-    stExpres_VarRef  = %001011,
 
     stVariab_Const   = %010000,
     stVariab_Expres  = %010001,
-    stVariab_Variab  = %010010,
-    stVariab_VarRef  = %010011
+    stVariab_Variab  = %010010
   );
 
 
@@ -77,16 +79,28 @@ type  //tipos enumerados
     opkUnaryPost,  //operador Unario Post
     opkBinary      //operador Binario
   );
+
+type  //Type Methods
+
   {Evento para llamar al código de procesamiento de un campo.
   "OpPtr" debería ser "TOperand", pero aún no se define "TOperand".}
   TTypFieldProc = procedure(const OpPtr: pointer) of object;
 
   TTypField = class
     Name : string;  //Nombre del campo
-    proc : TTypFieldProc;  //rutina de procesamiento
+    procGet : TTypFieldProc;  //routine to process when reading
+    procSet : TTypFieldProc;  //routine to process when writing
   end;
   TTypFields = specialize TFPGObjectList<TTypField>;
 
+
+const  //Prefixes used to name the anonym type declarations
+  //Short string are used to don't afect the speed of searchings
+  PREFIX_ARR = 'arr';
+  PREFIX_PTR = 'ptr';
+  PREFIX_OBJ = 'obj';
+
+type
   //Types categories
   TxpCatType = (
     tctAtomic,  //Tipo básico como (byte, word, char)

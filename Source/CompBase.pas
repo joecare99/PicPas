@@ -22,13 +22,11 @@ TPosExpres = (pexINDEP,  //Expresión independiente
               pexASIG,   //Expresión de asignación
               pexPROC,   //Expresión de procedimiento
               pexSTRUC,  //Expresión de estructura
-              pexPARAM,  //Expresión de parámetro de función
-              pexPARSY   //Expresión de parámetro de función de sistema
+              pexPARAM  //Expresión de parámetro de función
               );
 TOperType = (operUnary,  //Operación Unaria
              operBinary  //Operación Binaria
              );
-
 { TCompilerBase }
 {Clase base para crear a los objetos compiladores.
 Esta clase debe ser el ancestro común de todos los compialdores a usar en PicPas.
@@ -43,66 +41,71 @@ protected  //Variables de expresión.
                            ha obtenido, en la última subexpresion, copaindo el bit C al
                            bit Z, con inversión lógica. Se usa para opciones de
                            optimziación de código.}
-protected
-  procedure getListOfIdent(out itemList: TStringDynArray; out
-    srcPosArray: TSrcPosArray);
-  procedure IdentifyField(xOperand: TOperand);
-  procedure LogExpLevel(txt: string);
-  function IsTheSameBitVar(var1, var2: TxpEleVar): boolean; inline;
-  function AddCallerTo(elem: TxpElement): TxpEleCaller;
-  function AddCallerTo(elem: TxpElement; callerElem: TxpElement): TxpEleCaller;
-  function AddCallerTo(elem: TxpElement; const curPos: TSrcPos): TxpEleCaller;
+protected  //Elements creation
+   procedure ClearSystemTypes;
+   function CreateSysType(nom0: string; cat0: TTypeGroup; siz0: smallint
+     ): TxpEleType;
+   function FindSysEleType(TypName: string): TxpEleType;
+   function CreateCons(consName: string; eletyp: TxpEleType): TxpEleCon;
+   function CreateVar(varName: string; eleTyp: TxpEleType): TxpEleVar;
+   function CreateEleType(const typName: string; const srcPos: TSrcPos;
+     catType: TxpCatType): TxpEleType;
+   function CreateEleTypeArray(const typName: string; const srcPos: TSrcPos;
+                          itmType: TxpEleType; nItems: integer ): TxpEleType;
+   function CreateEleTypePtr(const typName: string; const srcPos: TSrcPos;
+                          ptrType: TxpEleType): TxpEleType;
+   function CreateEleTypeObject(const typName: string; const srcPos: TSrcPos): TxpEleType;
+   function CreateFunction(funName: string; typ: TxpEleType;
+     procParam: TxpProcParam; procCall: TxpProcCall): TxpEleFun;
+   function CreateSysFunction(funName: string; procParam: TxpProcParam;
+     procCall: TxpProcCall): TxpEleFun;
+   function AddVariable(varName: string; eleTyp: TxpEleType; srcPos: TSrcPos
+     ): TxpEleVar;
+   function AddConstant(conName: string; eleTyp: TxpEleType; srcPos: TSrcPos
+     ): TxpEleCon;
+   procedure CreateFunctionParams(var funPars: TxpParFuncArray);
+   function AddFunctionUNI(funName: string; eleTyp: TxpEleType; const srcPos: TSrcPos;
+     const pars: TxpParFuncArray; Interrup: boolean): TxpEleFun;
+   function AddFunctionDEC(funName: string; eleTyp: TxpEleType;
+     const srcPos: TSrcPos; const pars: TxpParFuncArray; Interrup: boolean
+   ): TxpEleFunDec;
+   function AddFunctionIMP(funName: string; eleTyp: TxpEleType;
+     const srcPos: TSrcPos; functDeclar: TxpEleFunDec): TxpEleFun;
+
 protected
   ExprLevel  : Integer;  //Nivel de anidamiento de la rutina de evaluación de expresiones
   RTstate    : TxpEleType;    {Estado de los RT. Si es NIL, indica que los RT, no tienen
                          ningún dato cargado, sino indican el tipo cargado en los RT.}
   function CaptureDelExpres: boolean;
-  procedure ProcComments; virtual; abstract;
+  procedure ProcComments;
+  procedure ProcCommentsNoExec;
   procedure TipDefecNumber(var Op: TOperand; toknum: string); virtual; abstract;
   procedure TipDefecString(var Op: TOperand; tokcad: string); virtual; abstract;
   procedure TipDefecBoolean(var Op: TOperand; tokcad: string); virtual; abstract;
   function EOExpres: boolean;
   function EOBlock: boolean;
-  //Manejo de tipos
-  procedure ClearTypes;
-  function CreateSysType(nom0: string; cat0: TTypeGroup; siz0: smallint
-    ): TxpEleType;
-  function FindSysEleType(TypName: string): TxpEleType;
-  //Manejo de constantes
-  function CreateCons(consName: string; eletyp: TxpEleType): TxpEleCon;
-  function CreateVar(varName: string; eleTyp: TxpEleType): TxpEleVar;
-  function CreateEleType(typName: string): TxpEleType;
-  function CreateFunction(funName: string; typ: TxpEleType; procParam,
-    procCall: TProcExecFunction): TxpEleFun;
-  function ValidateFunction: boolean;
-  function CreateSysFunction(funName: string; procParam,
-    procCall: TProcExecFunction): TxpEleFun;
-  function AddVariable(varName: string; eleTyp: TxpEleType; srcPos: TSrcPos
-    ): TxpEleVar;
-//  function AddConstant(conName: string; eleTyp: TxpEleType; srcPos: TSrcPos
-//    ): TxpEleCon;
-  function AddType(typName: string; srcPos: TSrcPos): TxpEleType;
 
-  procedure CaptureParamsFinal(fun: TxpEleFun);
+  procedure CaptureParamsFinal(var funPars: TxpParFuncArray);
   function CaptureTok(tok: string): boolean;
   function CaptureStr(str: string): boolean;
-  procedure CaptureParams(func0: TxpEleFun);
+  procedure CaptureParams(out funPars: TxpParFuncArray);
+
   //Manejo del cuerpo del programa
   function CreateBody: TxpEleBody;
   //Manejo de Unidades
   function CreateUnit(uniName: string): TxpEleUnit;
-  //Manejo de expresiones
-  procedure GetOperandIdent(var Op: TOperand);
-  function GetOperand: TOperand; virtual;
-  function GetOperandPrec(pre: integer): TOperand;
-  function GetOperator(const Op: Toperand): TxpOperator;
-  procedure GetExpressionE(const prec: Integer; posExpres: TPosExpres = pexINDEP);
 public  //Containers
   TreeElems  : TXpTreeElements; //Árbol de sintaxis del lenguaje
   TreeDirec  : TXpTreeElements; //Árbol de sinatxis para directivas
   listFunSys : TxpEleFuns;   //lista de funciones del sistema
   listTypSys : TxpEleTypes;  //lista de tipos del sistema
-protected  //Eventos del compilador
+
+  usedFuncs  : TxpEleFuns;    //Store only used functions
+  unusedFuncs: TxpEleFuns;    //Store only unused functions
+  interruptFunct: TxpEleFun;  //Store ths only Interrupt function
+  procedure UpdateFunLstCalled;
+  procedure SeparateUsedFunctions;
+protected  //Compiler event
   {This is the way the Parser can communicate with the Code Generator, considering this
   unit is independent of Code Generation.}
   OnExprStart: procedure of object;  {Se genera al iniciar la
@@ -111,23 +114,50 @@ protected  //Eventos del compilador
                                                                evaluar una expresión.}
   OnReqStopCodeGen: procedure of object;   //Required stop the Code Generation
   OnReqStartCodeGen: procedure of object;  //Required start the Code Generation
+protected //Calls to Assembler Module (ParserAsm.pas)
+  callProcASMlime  : procedure(const AsmLin: string) of object;
+protected //Call to Directive Module (ParserDirec.pas)
+  callProcDIRline  : procedure(const AsmLin: string; out ctxChanged: boolean) of object;
+protected //Calls to Code Generator (GenCodeBas)
+  callCurrFlash   : function(): integer of object;
+  callResetFlashAndRAM: procedure of object;
+  callCreateVarInRAM: procedure(xVar: TxpEleVar; shared: boolean = false) of object;
+  callSetSharedUnused: procedure of object;
+  callSetSharedUsed: procedure of object;
+
+  callReturnAttribIn  : function(typ: TxpEleType; const Op: TOperand; offs: integer): boolean of object;
+  callDeviceError  : function(): string of object;
+  callClearDeviceError : procedure of object;
+
+  callCompileProcBody: procedure(fun: TxpEleFun) of object;
+  callFunctParam  : procedure(fun: TxpEleFunBase) of object;
+  callFunctCall   : procedure(fun: TxpEleFunBase; out AddrUndef: boolean) of object;
+  callStartCodeSub: procedure(fun: TxpEleFun) of object;
+  callEndCodeSub  : procedure() of object;
+
+  callCompileIF    : procedure of object;
+  callCompileWHILE : procedure of object;
+  callCompileREPEAT: procedure of object;
+  callCompileFOR   : procedure of object;
 protected //Calls to Code Generator
   {These are routines that must be implemented in Code-generator.}
-  //Implement code-generator routines to implemet Arrays.
-  CodDefineArray : procedure(etyp: TxpEleType) of object;
-  //Implement code-generator routines to implemet Pointers.
-  CodDefinePointer : procedure(etyp: TxpEleType) of object;
+  callDefineArray : procedure(etyp: TxpEleType) of object;
+  callDefinePointer : procedure(etyp: TxpEleType) of object;
   //Validate phisycal address
-  CodValidRAMaddr : procedure(addr: integer) of object;
-  //Create vars
-  CodCreateVarInRAM: procedure(xVar: TxpEleVar; shared: boolean = false) of object;
-  //Load to register
+  callValidRAMaddr : procedure(addr: integer) of object;
+  callStartProgram: procedure of object;
+  callEndProgram  : procedure of object;
+protected //ROP and expressions
   procedure LoadToRT(Op: TOperand; modReturn: boolean = false);
-  function GetExpression(const prec: Integer): TOperand;
-  //LLamadas a las rutinas de operación
   procedure Oper(var Op1: TOperand; opr: TxpOperator; var Op2: TOperand);
   procedure OperPre(var Op1: TOperand; opr: TxpOperator);
   procedure OperPost(var Op1: TOperand; opr: TxpOperator);
+  //Expresions manage
+  procedure GetOperandIdent(out Op: TOperand; ToSet: boolean);
+  procedure GetOperand(out Op: Toperand; ToSet: boolean); virtual;
+  function GetOperator(const Op: Toperand): TxpOperator;
+  function GetExpression(const prec: Integer): TOperand;
+  procedure GetExpressionE(posExpres: TPosExpres);
 public   //Tipos de datos a implementar
   {No es obligatorio implementar todos los tipos de datos, para todos los compiladoreslo }
   typBit  : TxpEleType;
@@ -136,6 +166,7 @@ public   //Tipos de datos a implementar
   typChar : TxpEleType;
   typWord : TxpEleType;
   typDWord: TxpEleType;
+  typString: TxpEleType;
 public
   ID       : integer;     //Identificador para el compilador.
   Compiling: boolean;     //Bandera para el compilado
@@ -192,6 +223,15 @@ public
   property ProplistRegAux: TPicRegister_list read listRegAux;
   property ProplistRegAuxBit: TPicRegisterBit_list read listRegAuxBit;
 protected
+  procedure getListOfIdent(out itemList: TStringDynArray; out
+    srcPosArray: TSrcPosArray);
+  procedure IdentifyField(xOperand: TOperand; ToSet: boolean);
+  procedure LogExpLevel(txt: string);
+  function IsTheSameBitVar(var1, var2: TxpEleVar): boolean; inline;
+  function AddCallerTo(elem: TxpElement): TxpEleCaller;
+  function AddCallerTo(elem: TxpElement; callerElem: TxpElement): TxpEleCaller;
+  function AddCallerTo(elem: TxpElement; const curPos: TSrcPos): TxpEleCaller;
+protected
   procedure RefreshAllElementLists;
   procedure RemoveUnusedFunc;
   procedure RemoveUnusedVars;
@@ -203,14 +243,17 @@ public    //Inicialización
   destructor Destroy; override;
 end;
 
+procedure SetLanguage;
+
 implementation
 uses Graphics;
 var
   ER_NOT_IMPLEM_ , ER_IDEN_EXPECT, ER_DUPLIC_IDEN , ER_UNDEF_TYPE_, ER_IDE_TYP_EXP,
-  ER_SEMIC_EXPEC , ER_STR_EXPECTED, ER_TYP_PARM_ER_,
-  ER_UNKNOWN_IDE_, ER_IN_EXPRESSI , ER_OPERAN_EXPEC,
-  ER_ILLEG_OPERA_, ER_UND_OPER_TY_, ER_CAN_AP_OPER_,
-  ER_IN_CHARACTER, ER_INV_COD_CHAR, ER_ONLY_ONE_REG  : string;
+  ER_SEMIC_EXPEC , ER_STR_EXPECTED, ER_TYP_PARM_ER_, ER_UNKNOWN_IDE_,
+  ER_IN_EXPRESSI , ER_OPERAN_EXPEC, ER_ILLEG_OPERA_, ER_UND_OPER_TY_,
+  ER_CAN_AP_OPER_, ER_IN_CHARACTER, ER_INV_COD_CHAR, ER_ONLY_ONE_REG,
+  ER_RA_HAV_USED
+  : string;
 
 procedure SetLanguage;
 begin
@@ -248,8 +291,62 @@ begin
   end;
 
 end;
+procedure TCompilerBase.ProcComments;
+{Procesa comentarios, directivas y bloques ASM. Los bloques ASM, se processan también
+como comentarios o directivas, para poder ubicarlos dentro de instrucciones, y poder
+darle mayor poder, en el futuro.
+Notar que este procedimiento puede detectar varios errores en el mismo bloque, y que
+pasa al siguiente token, aún cuando detecta errores. Esto permite seguir proesando
+el texto, después de que ya se han generado errores dentro de este blqoue. Así, no
+sería necesario verificar error después de esta rutina, y se podrían detectar errores
+adicionales en el código fuente.}
+var
+  ctxChanged: Boolean;  //Manejamos variables locales para permitir recursividad
+begin
+  cIn.SkipWhites;
+  while (cIn.tokType = tnDirective) or (cIn.tokType = tnAsm) do begin
+    if cIn.tokType = tnAsm then begin
+      //Es una línea ASM
+      callProcASMlime(cIn.tok);  //procesa línea
+      if HayError then begin
+        cIn.Next;   //Pasa, porque es un error ya ubicado, y mejor buscamos otros
+        cIn.SkipWhites;
+        continue;
+      end;
+    end else begin
+      //Es una directiva
+     callProcDIRline(cIn.tok, ctxChanged);  //procesa línea
+      if HayError then begin
+        cIn.Next;   //Pasa, porque es un error ya ubicado, y mejor buscamos otros
+        cIn.SkipWhites;
+        continue;
+      end;
+      if ctxChanged then begin
+        {Hubo cambio de contexto. Procesamos nuevamente, porque ahora estamos ya en
+        otro contexto y se supone que esta llamada a ProcComments(), se hace precisamente
+        para saltar blancos, comentarios, directivas, o bloques ASM.}
+//        cIn.SkipWhites;   {En el nuevo contexto puede haber nuevos comentarios.}
+        ProcComments;   {En el nuevo contexto puede haber nuevos comentarios o bloques Asm.}
+        exit;
+      end;
+    end;
+    //Pasa a siguiente
+    cIn.Next;
+    cIn.SkipWhites;  //limpia blancos
+  end;
+end;
+procedure TCompilerBase.ProcCommentsNoExec;
+{Similar a ProcComments(), pero no ejecuta directivas o bloques ASM.}
+begin
+  cIn.SkipWhites;
+  while (cIn.tokType = tnDirective) or (cIn.tokType = tnAsm) do begin
+    //Pasa a siguiente
+    cIn.Next;
+    cIn.SkipWhites;  //limpia blancos
+  end;
+end;
 //Manejo de tipos
-procedure TCompilerBase.ClearTypes;  //Limpia los tipos del sistema
+procedure TCompilerBase.ClearSystemTypes;  //Limpia los tipos del sistema
 begin
   listTypSys.Clear;
 end;
@@ -309,18 +406,49 @@ begin
   Result := xVar;
 end;
 //Manejo de tipos
-function TCompilerBase.CreateEleType(typName: string): TxpEleType;
+function TCompilerBase.CreateEleType(const typName: string; const srcPos: TSrcPos;
+                                           catType: TxpCatType): TxpEleType;
 var
   xTyp: TxpEleType;
 begin
   xTyp := TxpEleType.Create;
-  xTyp.name := typName;
-//  xTyp.typ := typ;
+  xTyp.name    := typName;
+  xTyp.srcDec  := srcPos;
+  xTyp.catType := catType;
   Result := xTyp;
 end;
+
+function TCompilerBase.CreateEleTypeArray(const typName: string;
+  const srcPos: TSrcPos; itmType: TxpEleType; nItems: integer): TxpEleType;
+var
+  xtyp: TxpEleType;
+begin
+  xtyp := CreateEleType(typName, srcPos, tctArray);
+  xtyp.itmType := itmType; //Item type
+  xtyp.nItems  := nItems;   //number of items
+  callDefineArray(xtyp);   //Define operations to array
+  exit(xtyp);
+end;
+function TCompilerBase.CreateEleTypePtr(const typName: string;
+  const srcPos: TSrcPos; ptrType: TxpEleType): TxpEleType;
+var
+  xtyp: TxpEleType;
+begin
+  xtyp := CreateEleType(typName, srcPos, tctPointer);
+  xtyp.ptrType := ptrType; //Item type
+  callDefinePointer(xtyp);   //Define operations to array
+  exit(xtyp);
+end;
+function TCompilerBase.CreateEleTypeObject(const typName: string;
+  const srcPos: TSrcPos): TxpEleType;
+begin
+  Result := CreateEleType(typName, srcPos, tctObject);
+
+end;
+
 //Manejo de funciones
 function TCompilerBase.CreateFunction(funName: string; typ: TxpEleType;
-  procParam, procCall: TProcExecFunction): TxpEleFun;
+  procParam: TxpProcParam; procCall: TxpProcCall): TxpEleFun;
 {Crea una nueva función y devuelve la referecnia a la función.}
 var
   fun : TxpEleFun;
@@ -333,19 +461,8 @@ begin
   fun.ClearParams;
   Result := fun;
 end;
-function TCompilerBase.ValidateFunction: boolean;
-{Valida la última función introducida, verificando que no haya otra función con el
- mismo nombre y mismos parámetros. De ser así devuelve FALSE.
- Se debe llamar después de haber leido los parámetros de la función. }
-begin
-  if not TreeElems.ValidateCurElement then begin
-    GenError('Duplicated function: %s',[TreeElems.CurNodeName]);
-    exit(false);
-  end;
-  exit(true);  //validación sin error
-end;
 function TCompilerBase.CreateSysFunction(funName: string;
-  procParam, procCall: TProcExecFunction): TxpEleFun;
+  procParam: TxpProcParam; procCall: TxpProcCall): TxpEleFun;
 {Crea una función del sistema. A diferencia de las funciones definidas por el usuario,
 una función del sistema se crea, sin crear espacios de nombre. La idea es poder
 crearlas rápidamente. "procParam", solo es necesario, cuando la función del sistema
@@ -372,50 +489,155 @@ variables, se debería llamar a CreateVarInRAM(), después de agregar la variabl
 var
   xvar: TxpEleVar;
 begin
-  //Inicia parámetros adicionales de declaración
   xvar := CreateVar(varName, eleTyp);
   xvar.srcDec := srcPos;  //Actualiza posición
-  Result := xvar;
-  if not TreeElems.AddElement(xvar) then begin
+  //Verifica si hay conflicto. Solo es necesario buscar en el nodo actual.
+  if xvar.ExistsIn(TreeElems.curNode.elements) then begin
     GenErrorPos(ER_DUPLIC_IDEN, [xvar.name], xvar.srcDec);
     xvar.Destroy;   //Hay una variable creada
     exit(nil);
   end;
+  TreeElems.AddElement(xvar);
+  Result := xvar;
 end;
-//function TCompilerBase.AddConstant(conName: string; eleTyp: TxpEleType; srcPos: TSrcPos
-//  ): TxpEleCon;
-//{Crea un elemento constante y lo agrega en el nodo actual del árbol de sintaxis.
-//Si no hay errores, devuelve la referencia a la variable. En caso contrario,
-//devuelve NIL. }
-//var
-//  xcons: TxpEleCon;
-//begin
-//  xcons := CreateCons(conName, eleTyp);
-//  xcons.srcDec := srcPos;
-//  if xcons.ExistsIn(TreeElems.curNode.elements) then begin
-//    GenErrorPos(ER_DUPLIC_IDEN, [xcons.name], xcons.srcDec);
-//    xcons.Destroy;   //hay una constante creada
-//    exit;
-//  end;
-//  TreeElems.AddElement(xcons);
-//  Result := xcons;
-//end;
-function TCompilerBase.AddType(typName: string; srcPos: TSrcPos): TxpEleType;
-{Crea un elemento tipo y lo agrega en el nodo actual del árbol de sintaxis.
-Si no hay errores, devuelve la referencia al tipo. En caso contrario,
-devuelve NIL.}
+function TCompilerBase.AddConstant(conName: string; eleTyp: TxpEleType; srcPos: TSrcPos
+  ): TxpEleCon;
+{Crea un elemento constante y lo agrega en el nodo actual del árbol de sintaxis.
+Si no hay errores, devuelve la referencia a la variable. En caso contrario,
+devuelve NIL. }
 var
-  xtyp: TxpEleType;
+  xcons: TxpEleCon;
 begin
-  //Inicia parámetros adicionales de declaración
-  xtyp := CreateEleType(typName);
-  xtyp.srcDec := srcPos;  //Actualiza posición
-  Result := xtyp;
-  if not TreeElems.AddElement(xtyp) then begin
-    GenErrorPos(ER_DUPLIC_IDEN, [xtyp.name], xtyp.srcDec);
-    xtyp.Destroy;   //Hay una variable creada
-    exit(nil);
+  xcons := CreateCons(conName, eleTyp);
+  xcons.srcDec := srcPos;
+  if xcons.ExistsIn(TreeElems.curNode.elements) then begin
+    GenErrorPos(ER_DUPLIC_IDEN, [xcons.name], xcons.srcDec);
+    xcons.Destroy;   //hay una constante creada
+    exit;
   end;
+  TreeElems.AddElement(xcons);
+  Result := xcons;
+end;
+//function TCompilerBase.AddType(typName: string; srcPos: TSrcPos;
+//                               catType: TxpCatType): TxpEleType;
+//{Crea un elemento tipo y lo agrega en el nodo actual del árbol de sintaxis.
+//Si no hay errores, devuelve la referencia al tipo. En caso contrario, devuelve NIL.
+//}
+//var
+//  xtyp: TxpEleType;
+//begin
+//  //Inicia parámetros adicionales de declaración
+//  xtyp := CreateEleType(typName, srcPos, catType);
+//  Result := xtyp;
+//  if not TreeElems.AddElement(xtyp) then begin
+//    GenErrorPos(ER_DUPLIC_IDEN, [xtyp.name], xtyp.srcDec);
+//    xtyp.Destroy;   //Hay una variable creada
+//    exit(nil);
+//  end;
+//end;
+procedure TCompilerBase.CreateFunctionParams(var funPars: TxpParFuncArray);
+{Crea los parámetros de una función como variables globales, a partir de un arreglo
+TxpParFunc. }
+var
+  i: Integer;
+  par: TxpParFunc;
+  xvar: TxpEleVar;
+  regWused: boolean = false;
+begin
+  for i := 0 to high(funPars) do begin
+      par := funPars[i];
+      xvar := AddVariable({fun.name + '_' + }par.name, par.typ, par.srcPos);
+      if HayError then exit;
+      xvar.IsParameter := true;  //Marca bandera
+      xvar.adicPar := par.adicVar;  //Copy aditional settings
+      case par.adicVar.hasAdic of
+      decRegis: begin
+        //Parameters REGISTER use: A or H,A register. Only can be used once.
+        if regWused then begin
+          GenErrorPos(ER_RA_HAV_USED, [], par.srcPos);
+          exit;
+        end;
+        regWused := true;  //Activa bandera
+      end;
+//      decRegisA: begin
+//        //Parameter REGISTER A
+//        if regWused then begin
+//          GenErrorPos(ER_RA_HAV_USED, [], par.srcPos);
+//          exit;
+//        end;
+//        regWused := true;  //Activa bandera
+//      end;
+      end;
+      //Actualiza referencia a la variable que almacena el parámetro.
+      funPars[i].pvar := xvar;
+  end;
+end;
+function TCompilerBase.AddFunctionUNI(funName: string; eleTyp: TxpEleType;
+  const srcPos: TSrcPos; const pars: TxpParFuncArray; Interrup: boolean
+  ): TxpEleFun;
+{Create a new function, in normal mode (In the Main program or a like a private function
+in Implementation section) and add it to the Syntax Tree in the current node.}
+var
+  xfun: TxpEleFun;
+begin
+  xfun := CreateFunction(funName, eleTyp, callFunctParam, callFunctCall);
+  xfun.srcDec := srcPos;   //Toma ubicación en el código
+  xfun.declar := nil;   //This is declaration
+  xfun.pars := pars;    //Copy parameters
+  xfun.IsInterrupt := Interrup;
+  //La validación de duplicidad no se puede hacer hasta tener los parámetros.
+  TreeElems.AddElementAndOpen(xfun);  //Se abre un nuevo espacio de nombres
+  Result := xfun;
+  //Crea parámetros en el nuevo espacio de nombres de la función
+  CreateFunctionParams(xfun.pars);
+end;
+
+function TCompilerBase.AddFunctionDEC(funName: string; eleTyp: TxpEleType;
+  const srcPos: TSrcPos; const pars: TxpParFuncArray; Interrup: boolean): TxpEleFunDec;
+{Create a new function, in DECLARATION mode (Forward or Interface) and add it
+to the Syntax Tree in the current node. No new node is opened.}
+var
+  xfundec: TxpEleFunDec;
+begin
+  xfundec := TxpEleFunDec.Create;
+  xfundec.name:= funName;
+  xfundec.typ := eletyp;
+  xfundec.procCall := callFunctCall;
+  xfundec.procParam := callFunctParam;
+//  xfun.ClearParams;
+
+  xfundec.srcDec := srcPos;   //Toma ubicación en el código
+  xfundec.implem := nil;  //Not yet implemented
+  xfundec.pars := pars;   //Copy parameters
+  xfundec.IsInterrupt := Interrup;
+  TreeElems.AddElement(xfundec);  //Doesn't open the element
+  Result := xfundec;
+  //Note that variables for parameters are not created here.
+end;
+function TCompilerBase.AddFunctionIMP(funName: string; eleTyp: TxpEleType;
+  const srcPos: TSrcPos; functDeclar: TxpEleFunDec): TxpEleFun;
+{Create a new function, in IMPLEMENTATION mode (Forward or Interface) and add it
+to the Syntax Tree in the current node. }
+var
+  xfun: TxpEleFun;
+  tmp: TxpListCallers;
+begin
+  xfun := CreateFunction(funName, eleTyp, callFunctParam, callFunctCall);
+  xfun.srcDec := srcPos;       //Take position in code.
+  functDeclar.implem := xfun;  //Complete reference
+  xfun.declar := functDeclar;  //Reference to declaration
+  xfun.pars := functDeclar.pars;     //Copy from declaration
+  xfun.IsInterrupt := functDeclar.IsInterrupt; //Copy from declaration
+  //La validación de duplicidad no se puede hacer hasta tener los parámetros.
+  TreeElems.AddElementAndOpen(xfun);  //Se abre un nuevo espacio de nombres
+  Result := xfun;
+  //Crea parámetros en el nuevo espacio de nombres de la función
+  CreateFunctionParams(xfun.pars);
+  //Pass calls list form declaration to implementation.
+  tmp := functDeclar.lstCallers;
+  functDeclar.lstCallers := xfun.lstCallers;
+  xfun.lstCallers := tmp;
+  //New calls will be added to implementation since now.
 end;
 
 function TCompilerBase.CaptureTok(tok: string): boolean;
@@ -490,8 +712,15 @@ begin
   cin.Next;
   exit(true);
 end;
-procedure TCompilerBase.CaptureParams(func0: TxpEleFun);
-//Lee los parámetros de una función en la función interna funcs[0]
+procedure TCompilerBase.CaptureParams(out funPars: TxpParFuncArray);
+{Lee los parámetros (tipo) con la que una función es llamada. EL resultado lo
+devuelve en "funPars". Solo actualiza el campo de tipo de "funPars".
+Notar la similitud de este procedimiento con la rutina implementada en ReadProcHeader()
+en la unidad "Compiler_PIC16". }
+const
+  BLOCK_SIZE = 10;    //Tamaño de bloque.
+var
+  curSize, n: Integer;
 begin
   //func0.ClearParams;
   if EOBlock or EOExpres then begin
@@ -503,11 +732,22 @@ begin
       exit;
     end;
     cIn.Next;  //Toma paréntesis
+    //Debe haber parámetros. Prepara espacio para leer.
+    curSize := BLOCK_SIZE;    //Tamaño inicial de bloque
+    setlength(funPars, curSize);  //Tamaño inicial
+    n := 0;
     repeat
-      GetExpressionE(0, pexPARAM);  //captura parámetro
+      res := GetExpression(0);  //captura parámetro
       if HayError then exit;   //aborta
-      //guarda tipo de parámetro
-      func0.CreateParam('',res.Typ, nil);
+      //Guarda tipo de parámetro
+      funPars[n].typ   := res.Typ;
+      //Prepara siguiente lectura
+      inc(n);
+      if n >= curSize then begin
+        curSize += BLOCK_SIZE;   //Incrementa tamaño en bloque
+        setlength(funPars, curSize);  //hace espacio en bloque
+      end;
+      //Busca delimitador
       if cIn.tok = ',' then begin
         cIn.Next;   //toma separador
         cIn.SkipWhites;
@@ -520,9 +760,11 @@ begin
     until false;
     //busca paréntesis final
     if not CaptureTok(')') then exit;
+    //Asigna tamaño final
+    setlength(funPars, n);
   end;
 end;
-procedure TCompilerBase.CaptureParamsFinal(fun: TxpEleFun);
+procedure TCompilerBase.CaptureParamsFinal(var funPars: TxpParFuncArray);
 {Captura los parámetros asignándolos a las variables de la función que representan a los
 parámetros. No hace falta verificar, no debería dar error, porque ya se verificó con
 CaptureParams. }
@@ -534,8 +776,8 @@ var
 begin
   if EOBlock or EOExpres then exit;  //sin parámetros
   CaptureTok('(');   //No debe dar error porque ya se verificó
-  for i := 0 to high(fun.pars) do begin
-    par := fun.pars[i];
+  for i := 0 to high(funPars) do begin
+    par := funPars[i];
     {Ya sirvió "RTstate", ahora lo limpiamos, no vaya a pasar que las rutinas de
     asignación, piensen que los RT están ocupados, cuando la verdad es que han sido
     liberados, precisamente para ellas.}
@@ -550,16 +792,19 @@ begin
       cIn.SkipWhites;
     end;
     //Genera código para la asignación
-    if par.pvar.IsRegister then begin
+    if par.adicVar.hasAdic = decRegis then begin
       {Cuando es parámetro registro, no se asigna, se deja en el registro(s) de
        trabajo.}
       LoadToRT(Op2);
-    end else begin
-      //Crea un operando-variable para generar código de asignación
+    end else if par.adicVar.hasAdic in [decNone, decAbsol] then begin
+      //Cretae operand-variable to generate assignment code.
       Op1.SetAsVariab(par.pvar); //Apunta a la variable
       AddCallerTo(par.pvar);  //Agrega la llamada
       op := Op1.Typ.operAsign;
       Oper(Op1, op, Op2);   //Codifica la asignación
+    end else begin
+      GenError('Not implemented.');
+      exit;
     end;
   end;
   if not CaptureTok(')') then exit;
@@ -580,6 +825,66 @@ begin
   uni.name := uniName;
   Result := uni;
 end;
+
+procedure TCompilerBase.UpdateFunLstCalled;
+{Actualiza la lista lstCalled de las funciones, para saber, a qué fúnciones llama
+ cada función.}
+var
+  fun    : TxpEleFun;
+  itCall : TxpEleCaller;
+  whoCalls: TxpEleBody;
+  n: Integer;
+begin
+  for fun in TreeElems.AllFuncs do begin
+    if fun.nCalled = 0 then continue;  //No usada
+    //Procesa las llamadas hechas desde otras funciones, para llenar
+    //su lista "lstCalled", y así saber a quienes llama
+    for itCall in fun.lstCallers do begin
+      //Agrega la referencia de la llamada a la función
+      if itCall.caller.idClass <> eltBody then begin
+        //Según diseño, itCall.caller debe ser TxpEleBody
+        GenError('Design error.');
+        exit;
+      end;
+      whoCalls := TxpEleBody(itCall.caller);
+      //Se agregan todas las llamadas (así sean al mismo porcedimiento) pero luego
+      //AddCalled(), los filtra.
+      whoCalls.Parent.AddCalled(fun);  //Agrega al procediminto
+    end;
+  end;
+  {Actualizar la lista fun.lstCalledAll con la totalidad de llamadas a todas
+   las funciones, sean de forma directa o indirectamente.}
+  for fun in TreeElems.AllFuncs do begin
+    n := fun.UpdateCalledAll;
+    if n<0 then begin
+      GenErrorPos('Recursive call or circular recursion in %s', [fun.name], fun.srcDec);
+    end;
+  end;
+  if HayError then exit;
+  //Actualiza el programa principal
+  TreeElems.main.UpdateCalledAll;  //No debería dar error de recursividad, porque ya se verificaron las funciones
+  if TreeElems.main.maxNesting>128 then begin
+    {Stack is 256 bytes size, and it could contain 128 max. JSR calls, without
+    considering stack instructions.}
+    GenError('Not enough stack.');
+  end;
+end;
+procedure TCompilerBase.SeparateUsedFunctions;
+{Fill the list usedFuncs with all used functions, including Interrupt function.
+Set interruptFunct to point to the interrupt function (Only one).
+Must be called after call to RemoveUnusedFunc().}
+var
+  fun : TxpEleFun;
+begin
+  usedFuncs.Clear;
+  unusedFuncs.Clear;
+  interruptFunct := nil;
+  for fun in TreeElems.AllFuncs do begin
+    if fun.nCalled>0 then usedFuncs.Add(fun) else unusedFuncs.Add(fun);
+    if fun.IsInterrupt then interruptFunct := fun;
+  end;
+end;
+
 procedure TCompilerBase.getListOfIdent(out itemList: TStringDynArray; out
   srcPosArray: TSrcPosArray);
 {Lee una lista de identificadores separados por comas, hasta encontra un caracter distinto
@@ -624,28 +929,51 @@ begin
   setlength(itemList   , n+1);
   setlength(srcPosArray, n+1);
 end;
-procedure TCompilerBase.IdentifyField(xOperand: TOperand);
+procedure TCompilerBase.IdentifyField(xOperand: TOperand; ToSet: boolean);
 {Identifica el campo de una variable. Si encuentra algún problema genera error.
 Notar que el parámetro es por valor, es decir, se crea una copia, por seguridad.
 Puede generar código de evaluación. Devuelve el resultado en "res". }
+  function CallProc(const field: TTypField): boolean; inline;
+  {Call the Getter or Setter, of the field acordding to "ToSet". If gives error
+  return FALSE}
+  begin
+    if ToSet then begin
+      //Mode Setter
+      if field.procSet= nil then begin
+        GenError('Cannot assign to this operand.');
+        exit(false);
+      end;
+      field.procSet(@xOperand)
+    end else begin
+      //Mode Setter
+      if field.procGet= nil then begin
+        GenError('Cannot read this operand.');
+        exit(false);
+      end;
+      field.procGet(@xOperand);  //Devuelve resultado en "res"
+    end;
+    exit(true);
+  end;
 var
   field: TTypField;
   identif: String;
+  att: TTypAttrib;
 begin
   if cIn.tok = '[' then begin
     //Caso especial de llamada a Item().
     for field in xOperand.Typ.fields do begin
       if LowerCase(field.Name) = 'item' then begin
-        field.proc(@xOperand);  //Devuelve resultado en "res"
+        //Find de method
+        if not CallProc(field) then exit;
         if cIn.tok = '.' then begin
           //Aún hay más campos, seguimos procesando
           //Como "IdentifyField", crea una copia del parámetro, no hay cruce con el resultado
-          IdentifyField(res);
+          IdentifyField(res, ToSet);
         end;
         exit;
       end;
     end;
-    //No encontró setitem()
+    //setitem() not found
     GenError('Cannot access to index in: %s', [xOperand.txt]);
     exit;
   end;
@@ -657,32 +985,42 @@ begin
   end;
   //Hay un identificador
   identif :=  cIn.tokL;
-  //Prueba con campos del tipo
+  //Test with methods
   for field in xOperand.Typ.fields do begin
     if LowerCase(field.Name) = identif then begin
-      //Encontró el campo
-      field.proc(@xOperand);  //Devuelve resultado en "res"
-      //cIn.Next;    //Coge identificador
+      //Find de method
+      if not CallProc(field) then exit;
       if cIn.tok = '.' then begin
         //Aún hay más campos, seguimos procesando
         //Como "IdentifyField", crea una copia del parámetro, no hay cruce con el resultado
-        IdentifyField(res);
+        IdentifyField(res, ToSet);
       end;
       exit;
     end;
   end;
-  //No encontró
-  GenError('Unknown identifier: %s', [identif]);
+  //Test with attributes
+  for att in xOperand.Typ.attribs do begin
+    if LowerCase(att.Name) = identif then begin
+      //Attribute found
+      if not callReturnAttribIn(att.typ, xOperand, att.offs) then exit;
+      cIn.Next;  //Take tonen
+      if cIn.tok = '.' then begin
+        //Aún hay más campos, seguimos procesando
+        //Como "IdentifyField", crea una copia del parámetro, no hay cruce con el resultado
+        IdentifyField(res, ToSet);
+      end;
+      exit;
+    end;
+  end;
+  //No found
+  GenError(ER_UNKNOWN_IDE_, [identif]);
 end;
 //Manejo de expresiones
-procedure TCompilerBase.GetOperandIdent(var Op: TOperand);
-{Lee un operando de tipo identificador, devuelve en "Op". Esta rutina era inicialmente
-parte de GetOperand(), pero se separó porque:
-* Es una rutina larga y se piensa agregar más código, aún.
-* Porque se piensa usarla también, de forma independiente.
-Se declara como procedimiento, en lugar de función, para evitar crear copias del
-operando y mejorar así el desempeño. Incluso se espera que GetOperand(), se declare
-luego de la misma forma.}
+procedure TCompilerBase.GetOperandIdent(out Op: TOperand; ToSet: boolean);
+{Read an operand spcified by one identifier. Return in "Op". This routine was part of
+GetOperand(), but it was splitted because:
+* This is a big code and could grow more.
+* It's used separately too. }
 var
   ele     : TxpElement;
   xvar    : TxpEleVar;
@@ -690,16 +1028,16 @@ var
   posCall : TSrcPos;
   posPar  : TPosCont;
   RTstate0: TxpEleType;
-  xfun    : TxpEleFun;
-  Found   : Boolean;
-  func0   : TxpEleFun;   //función interna para almacenar parámetros
+  xfun    : TxpEleFunBase;
+  Found   , AddrUndef: Boolean;
+  pars: TxpParFuncArray;
 begin
 //cIn.ShowCurContInformat;
 //debugln(' ++CurNode:' + TreeElems.curNode.Path);
   ele := TreeElems.FindFirst(cIn.tok);  //identifica elemento
   if ele = nil then begin
     //No identifica a este elemento
-    GenError('Unknown identifier: %s', [cIn.tok]);
+    GenError(ER_UNKNOWN_IDE_, [cIn.tok]);
     exit;
   end;
 //debugln(' --Element ' + cIn.tok + ':' + ele.Path);
@@ -711,24 +1049,27 @@ begin
     puede apuntar a otra variable, si es que se tiene la forma: <variable>.<campo> }
     AddCallerTo(xvar);
     cIn.Next;    //Pasa al siguiente
-    if xvar.IsRegister then begin
-      //Es una variables REGISTER
+    case xvar.adicPar.hasAdic of
+    decRegis: begin //Is a REGISTER variable
       Op.SetAsExpres(xvar.typ);
-      //Faltaría asegurarse de que los registros estén disponibles
       Op.DefineRegister;
-    end else begin
+    end;
+    decNone, decAbsol: begin
       //Es una variable común
       Op.SetAsVariab(xvar);   //Guarda referencia a la variable (y actualiza el tipo).
       {$IFDEF LogExpres} Op.txt:= xvar.name; {$ENDIF}   //toma el texto
       //Verifica si tiene referencia a campos con "."
       if (cIn.tok = '.') or (cIn.tok = '[') then begin
-        IdentifyField(Op);
+        IdentifyField(Op, ToSet);
         Op := res;  //notar que se usa "res".
         if HayError then exit;
         {Como este operando es de tipo <variable>.<algo>... , actualizamos el campo
         "rVarBase", y se hace al final porque los métodos Op.SetAsXXXX() }
         Op.rVarBase := xvar;    //Fija referencia a la variable base
       end;
+    end else
+      GenError('Not implemented.');
+      exit;
     end;
   end else if ele.idClass = eltCons then begin  //es constante
     //es una constante
@@ -740,121 +1081,137 @@ begin
     {$IFDEF LogExpres} Op.txt:= xcon.name; {$ENDIF}   //toma el texto
     //Verifica si tiene referencia a campos con "."
     if (cIn.tok = '.') or (cIn.tok = '[') then begin
-      IdentifyField(Op);
+      IdentifyField(Op, ToSet);
       Op := res;  //notar que se usa "res".
       if HayError then exit;;
     end;
-  end else if ele.idClass = eltFunc then begin  //es función
+  end else if ele.idClass in [eltFunc, eltFuncDec] then begin  //es función
     {Se sabe que es función, pero no se tiene la función exacta porque puede haber
      versiones, sobrecargadas de la misma función.}
-    posCall := cIn.ReadSrcPos;   //gaurda la posición de llamada.
-    cIn.Next;    //Toma identificador
-    cIn.SkipWhites;  //Quita posibles blancos
+    posCall := cIn.ReadSrcPos;   //guarda la posición de llamada.
+    cIn.Next;               //Toma identificador
+    cIn.SkipWhites;         //Quita posibles blancos
     posPar := cIn.PosAct;   //Guarda porque va a pasar otra vez por aquí
-    OnReqStopCodeGen();
+    OnReqStopCodeGen();     //Para que no se genere el código(Por ejemplo cuando se leen parámetros de tipo expresión.)
     RTstate0 := RTstate;    //Guarda porque se va a alterar con CaptureParams().
-    {Crea func0 localmente, para permitir la recursividad en las llamadas a las funciones.
-    Adicionalmenet, deberái plantearse otor método en la exploración de parámetros, tal
-    vez la creeación de un árbol de funciones sobrecargdas. Y así se podría incluso
-    implementar más fácilmente la adpatación de parámetros como byte->word.}
-    try
-      func0 := TxpEleFun.Create;  //crea la función 0, para uso interno
-      CaptureParams(func0);  //primero lee parámetros
-      if HayError then begin
-        exit;
-      end;
-      //Aquí se identifica la función exacta, que coincida con sus parámetros
-      xfun := TxpEleFun(ele);
-      //Primero vemos si la primera función encontrada, coincide:
-      if func0.SameParamsType(xfun.pars) then begin
-        //Coincide
-        Found := true;
-      end else begin
-        //No es, es una pena. Ahora tenemos que seguir buscando en el árbol de sintaxis.
-        repeat
-          //Usar FindNextFunc, es la forma es eficiente, porque retoma la búsqueda anterior.
-          xfun := TreeElems.FindNextFunc;
-        until (xfun = nil) or func0.SameParamsType(xfun.pars);
-        Found := (xfun <> nil);
-      end;
-      if Found then begin
-        //Ya se identificó a la función que cuadra con los parámetros
-        {$IFDEF LogExpres} Op.txt:= cIn.tok; {$ENDIF}   //toma el texto
-        {Ahora que ya sabe cúal es la función referenciada, captura de nuevo los
-        parámetros, pero asignándola al parámetro que corresponde.}
-        cIn.PosAct := posPar;
-        OnReqStartCodeGen();
-        RTstate := RTstate0;
-        xfun.procParam(xfun);  //Antes de leer los parámetros
-        if high(func0.pars)+1>0 then
-          CaptureParamsFinal(xfun);  //evalúa y asigna
-        //Se hace después de leer parámetros, para tener información del banco.
-        AddCallerTo(xfun, posCall);  {Corrige posición de llamada, sino estaría apuntando
-                                      al final de los parámetros}
-        xfun.procCall(xfun); //codifica el "CALL"
-        RTstate := xfun.typ;  //para indicar que los RT están ocupados
-        Op.SetAsExpres(xfun.typ);
-        exit;
-      end else begin
-        //Encontró la función, pero no coincidió con los parámetros
-        GenError('Type parameters error on %s', [ele.name + '()']);
-        exit;
-      end;
-    finally
-      func0.Destroy;
+    CaptureParams(pars);    //Primero lee parámetros en "pars".
+    if HayError then begin
+      exit;
     end;
-//  end else if DefinedMacro(cIn.tok) then begin  //verifica macro
-//    //Es una macro
+    //Aquí se identifica la función exacta, que coincida con sus parámetros
+    xfun := TxpEleFunBase(ele);  //The ancestor of eltFunc and eltFuncDec
+    //Primero vemos si la primera función encontrada, coincide:
+    if xfun.SameParamsType(pars) then begin
+      //Coincide
+      Found := true;
+    end else begin
+      //No es, es una pena. Ahora tenemos que seguir buscando en el árbol de sintaxis.
+      repeat
+        //Usar FindNextFunc, es la forma es eficiente, porque retoma la búsqueda anterior.
+        xfun := TreeElems.FindNextFuncName;
+      until (xfun = nil) or xfun.SameParamsType(pars);
+      Found := (xfun <> nil);
+    end;
+    if Found then begin
+      //Ya se identificó a la función que cuadra con los parámetros
+      {$IFDEF LogExpres} Op.txt:= cIn.tok; {$ENDIF}   //toma el texto
+      {Ahora que ya sabe cúal es la función referenciada, captura de nuevo los
+      parámetros, pero asignándola al parámetro que corresponde.}
+      cIn.PosAct := posPar;
+      OnReqStartCodeGen();   //Reactiva la generación de código
+      RTstate := RTstate0;
+      xfun.procParam(xfun);  //Antes de leer los parámetros
+      if high(pars)+1>0 then begin
+        CaptureParamsFinal(xfun.pars);  //evalúa y asigna
+      end;
+      //Se hace después de leer parámetros.
+      AddCallerTo(xfun, posCall);  {Corrige posición de llamada, sino estaría apuntando
+                                    al final de los parámetros}
+      xfun.procCall(xfun, AddrUndef); //codifica el "JSR"
+      if AddrUndef then begin
+        //"xfun" doesn't have been implemented.
+//        GenError('Cannot get address of %s', [xfun.name]);
+//        exit;
+      end;
+      RTstate := xfun.typ;  //para indicar que los RT están ocupados
+      Op.SetAsExpres(xfun.typ);
+      exit;
+    end else begin
+      //Encontró la función, pero no coincidió con los parámetros
+      GenError(ER_TYP_PARM_ER_, [ele.name + '()']);
+      exit;
+    end;
   end else begin
-    GenError('Not implemented.');
+    GenError(ER_NOT_IMPLEM_, [ele.name]);
     exit;
   end;
 end;
-function TCompilerBase.GetOperand: TOperand;
+procedure TCompilerBase.GetOperand(out Op: Toperand; ToSet: boolean);
 {Parte de la funcion analizadora de expresiones que genera codigo para leer un operando.
 Debe devolver el tipo del operando y también el valor. En algunos casos, puede modificar
 "res".}
 var
   xfun  : TxpEleFun;
-  tmp, oprTxt: String;
-  Op    : TOperand;
+  tmp, oprTxt, typName, str: String;
+  Op1    : TOperand;
   posAct: TPosCont;
   opr   : TxpOperator;
-  cod   : Longint;
+  cod   , ascCode: Longint;
+  ReadType, endWithComma, AddrUndef: Boolean;
+  itType: TxpEleType;
+  xtyp : TxpEleType;
+  srcpos: TSrcPos;
+  nElem: Integer;
 begin
   //cIn.SkipWhites;
   ProcComments;
-  Result.Inverted := false;   //inicia campo
+  Op.Inverted := false;   //inicia campo
   if cIn.tokType = tnNumber then begin  //constantes numéricas
-    {$IFDEF LogExpres} Result.txt:= cIn.tok; {$ENDIF}   //toma el texto
-    TipDefecNumber(Result, cIn.tok); //encuentra tipo de número, tamaño y valor
+    {$IFDEF LogExpres} Op.txt:= cIn.tok; {$ENDIF}   //toma el texto
+    TipDefecNumber(Op, cIn.tok); //encuentra tipo de número, tamaño y valor
     if HayError then exit;  //verifica
     cIn.Next;    //Pasa al siguiente
   end else if cIn.tokType = tnChar then begin  //constante caracter
-    {$IFDEF LogExpres} Result.txt:= cIn.tok; {$ENDIF}   //toma el texto
+    {$IFDEF LogExpres} Op.txt:= cIn.tok; {$ENDIF}   //toma el texto
     if not TryStrToInt(copy(cIn.tok, 2), cod) then begin
-      GenError('Error in character.');   //tal vez, sea muy grande
+      GenError(ER_IN_CHARACTER);   //tal vez, sea muy grande
       exit;
     end;
     if (cod<0) or (cod>255) then begin
-      GenError('Invalid code for char.');
+      GenError(ER_INV_COD_CHAR);
       exit;
     end;
-    Result.SetAsConst(typChar);
-    Result.valInt := cod;
+    Op.SetAsConst(typChar);
+    Op.valInt := cod;
     cIn.Next;    //Pasa al siguiente
   end else if cIn.tokType = tnString then begin  //constante cadena
-    if length(cIn.tok)<=2 then begin  //Es ' o ''
-      GenError('Char expected.');
-      exit;
-    end else if length(cIn.tok)>3 then begin  //Es 'aaaa...'
-      GenError('Too long string for a Char.');
-      exit;
-    end;
-    {$IFDEF LogExpres} Result.txt:= cIn.tok; {$ENDIF}   //toma el texto
-    Result.SetAsConst(typChar);
-    Result.valInt := ord(cIn.tok[2]);
+    nElem := length(cIn.tok) - 2;  //Don't consider quotes
+    str := copy(cIn.tok, 2, nElem);
     cIn.Next;    //Pasa al siguiente
+    if cIn.tokType = tnChar then  begin  //like #255
+      //Concat the next char to simulate concat, considering there is not a
+      //string type.
+      ascCode := StrToInt(Copy(cIn.tok,2,3));
+      str += chr(ascCode and $FF);
+      cIn.Next;    //Pasa al siguiente
+    end;
+    {$IFDEF LogExpres} Op.txt:= cIn.tok; {$ENDIF}   //toma el texto
+    if length(str) = 1 then begin
+      //De un caracter. Se asume de tipo Char
+      Op.SetAsConst(typChar);
+      Op.valInt := ord(str[1]);
+    end else begin
+      //Will be considered as array of char
+      if not TreeElems.ExistsArrayType(typChar, nElem, xtyp) then begin
+        //There is not a similar type. We create a new type.
+        typName := GenArrayTypeName('char', nElem); //Op.nItems won't work
+        xtyp := CreateEleTypeArray(typName, srcPos, typChar, nElem);
+      end;
+      Op.SetAsConst(xtyp);
+      Op.StringToArrayOfChar( str );
+      //Op.SetAsConst(typString);
+      //Op.valStr := copy(cIn.tok, 2, length(cIn.tok)-2);
+    end;
   end else if (cIn.tokType = tnSysFunct) or //función del sistema
               (cIn.tokL = 'bit') or    //"bit" es de tipo "tnType"
               (cIn.tokL = 'boolean') or //"boolean" es de tipo "tnType"
@@ -867,7 +1224,7 @@ begin
     cIn.Next;    //Toma identificador
     //Busca la función
     for xfun in listFunSys do begin
-      if (Upcase(xfun.name) = tmp) then begin
+      if (xfun.uname = tmp) then begin
         {Encontró. Llama a la función de procesamiento, quien se encargará de
         extraer los parámetros y analizar la sintaxis.}
         if xfun.compile<>nil then begin
@@ -875,49 +1232,108 @@ begin
            INLINE, no vale la pena, gastar recursos.}
           AddCallerTo(xfun);
         end;
-        xfun.procCall(xfun);  //Para que devuelva el tipo y codifique el _CALL o lo implemente
+        xfun.procCall(xfun, AddrUndef);  //Para que devuelva el tipo y codifique el _CALL o lo implemente
         //Puede devolver typNull, si no es una función.
-        Result := res;  //copia tipo, almacenamiento y otros campos relevantes
-        {$IFDEF LogExpres} Result.txt:= tmp; {$ENDIF}    //toma el texto
+        Op := res;  //copia tipo, almacenamiento y otros campos relevantes
+        {$IFDEF LogExpres} Op.txt:= tmp; {$ENDIF}    //toma el texto
         exit;
       end;
     end;
-    GenError('Not implemented.');
+    GenError(ER_NOT_IMPLEM_);
   end else if cIn.tokType = tnIdentif then begin  //puede ser variable, constante, función
-    GetOperandIdent(Result);
+    GetOperandIdent(Op, ToSet);
     //Puede salir con error.
   end else if cIn.tokType = tnBoolean then begin  //true o false
     {$IFDEF LogExpres} Result.txt:= cIn.tok; {$ENDIF}   //toma el texto
-    TipDefecBoolean(Result, cIn.tok); //encuentra tipo y valor
+    TipDefecBoolean(Op, cIn.tok); //encuentra tipo y valor
     if HayError then exit;  //verifica
     cIn.Next;    //Pasa al siguiente
   end else if cIn.tok = '(' then begin  //"("
     cIn.Next;
     Inc(ExprLevel);  //cuenta el anidamiento
-    Result := GetExpression(0);
+    Op := GetExpression(0);
     Dec(ExprLevel);
     if HayError then exit;
     If cIn.tok = ')' Then begin
        cIn.Next;  //lo toma
         if (cIn.tok = '.') or (cIn.tok = '[') then begin
-         IdentifyField(Result);
-         Result := res;  //notar que se usa "res".
+         IdentifyField(Op, ToSet);
+         Op := res;  //notar que se usa "res".
          if HayError then exit;;
        end;
     end Else begin
-       GenError('Error in expression. ")" expected.');
+       GenError(ER_IN_EXPRESSI);
        Exit;       //error
     end;
-{  end else if (cIn.tokType = tkString) then begin  //constante cadena
-    Result.Sto:=stConst;     //constante es Mono Operando
-    TipDefecString(Result, cIn.tok); //encuentra tipo de número, tamaño y valor
-    if pErr.HayError then exit;  //verifica
-    if Result.typ = nil then begin
-       GenError('No hay tipo definido para albergar a esta constante cadena');
-       exit;
-     end;
-    cIn.Next;    //Pasa al siguiente
-}
+  end else if cIn.tok = '[' then begin  //Constant array
+   //Here we only know the operand is an array
+    srcpos := cIn.ReadSrcPos;
+    cIn.Next;
+    ProcComments;
+    //Start reading the items
+    ReadType := true;  //Set flag to read the item type
+    Op.InitItems;  //Prepare filling constant items
+    while not cIn.Eof and (cIn.tok <> ']') do begin
+      //Must be an item
+      Op1 := GetExpression(0);  //read item
+      if HayError then exit;
+      if Op1.Sto <> stConst then begin
+        GenError('Expected constant item');
+        exit;
+      end;
+      if ReadType then begin
+         //First item
+         itType := Op1.Typ;  //Now We have the type of the item
+         ReadType := false;  //Already read
+      end;
+      //Asure all items have the same type
+      if Op1.Typ <> itType then begin
+        GenError('Expected item of type: %s', [itType.name]);
+        exit;
+      end;
+      //Add the item to the operand
+      Op.AddConsItem(Op1.Value);
+      //Verify delimiter
+      endWithComma := false;
+      if cIn.tok = ',' then begin
+        cIn.Next;
+        ProcComments;
+        endWithComma := true;
+      end;
+    end;
+    if endWithComma then begin
+      GenError('Expected item.');
+      exit;
+    end;
+    if cIn.tok = ']' then begin
+      //Raise the end of array. Now we can create new type.
+      Op.CloseItems;  //Resize
+      //Now we can know the type of the item and of the array
+      cIn.Next;  //Take ']'.
+      nElem := Op.Value.nItems;
+      if nElem = 0 then itType := typNull;  //Something like []
+      if not TreeElems.ExistsArrayType(itType, nElem, xtyp) then begin
+        //The type doesn't exist. We need to create.
+        typName := GenArrayTypeName(itType.name, nElem); //Op.nItems won't work
+        xtyp := CreateEleTypeArray(typName, srcPos, itType, nElem);
+        //Add to the syntax tree
+        xtyp.location := curLocation;   //Ubicación del tipo (Interface/Implementation/...)
+        if TreeElems.curNode.idClass = eltBody then begin
+          //When the array is declared in some code-section.
+          TreeElems.AddElementParent(xtyp, true);  //Add at the beginning
+        end else begin
+          //In declaration section.
+          TreeElems.AddElement(xtyp);
+        end;
+      end;
+      //Finally we set the operand type.
+      Op.SetAsConst(xtyp);
+    end else if cIn.Eof then begin
+      GenError('Unexpected end of file');
+      exit;
+    end else begin  //Only happen when break loop
+      exit;
+    end;
   end else if cIn.tokType = tnOperator then begin
     {Si sigue un operador puede ser un operador Unario.
     El problema que tenemos, es que no sabemos de antemano el tipo, para saber si el
@@ -926,22 +1342,22 @@ begin
     posAct := cIn.PosAct;   //Esto puede ser pesado en términos de CPU
     oprTxt := cIn.tok;   //guarda el operador
     cIn.Next; //pasa al siguiente
-    Op := GetOperand();   //toma el operando. ¡¡¡Importante los peréntesis!!!
+    GetOperand(Op1, ToSet);   //Takes the operand.
     if HayError then exit;
     //Ahora ya tenemos el tipo. Hay que ver si corresponde el operador
-    opr := Op.Typ.FindUnaryPreOperator(oprTxt);
+    opr := Op1.Typ.FindUnaryPreOperator(oprTxt);
     if opr = nullOper then begin
       {Este tipo no permite este operador Unario (a lo mejor ni es unario)}
       cIn.PosAct := posAct;
-      GenError('Cannot apply the operator "%s" to type "%s"', [oprTxt, Op.Typ.name]);
+      GenError(ER_CAN_AP_OPER_, [oprTxt, Op1.Typ.name]);
       exit;
     end;
     //Sí corresponde. Así que apliquémoslo
-    OperPre(Op, opr);
-    Result := res;
+    OperPre(Op1, opr);
+    Op := res;
   end else begin
     //No se reconoce el operador
-    GenError('Operand expected.');
+    GenError(ER_OPERAN_EXPEC);
   end;
 end;
 procedure TCompilerBase.LogExpLevel(txt: string);
@@ -1077,46 +1493,6 @@ begin
    res.txt := Op1.txt + opr.txt;   //indica que es expresión
    {$ENDIF}
 end;
-function TCompilerBase.GetOperandPrec(pre: integer): TOperand;
-//Toma un operando realizando hasta encontrar un operador de precedencia igual o menor
-//a la indicada
-var
-  Op1: TOperand;
-  Op2: TOperand;
-  opr: TxpOperator;
-  pos: TPosCont;
-begin
-  {$IFDEF LogExpres}
-//  LogExpLevel('GetOperandP('+IntToStr(pre)+')');
-  {$ENDIF}
-  Op1 :=  GetOperand;  //toma el operador
-  if HayError then exit;
-  //verifica si termina la expresion
-  pos := cIn.PosAct;    //Guarda por si lo necesita
-  cIn.SkipWhites;
-  opr := GetOperator(Op1);
-  if opr = nil then begin  //no sigue operador
-    Result:=Op1;
-  end else if opr=nullOper then begin  //hay operador pero, ..
-    //no está definido el operador siguente para el Op1, (no se puede comparar las
-    //precedencias) asumimos que aquí termina el operando.
-    cIn.PosAct := pos;   //antes de coger el operador
-    GenError('Undefined operator: %s for type: %s', [opr.txt, Op1.Typ.name]);
-    exit;
-//    Result:=Op1;
-  end else begin  //si está definido el operador (opr) para Op1, vemos precedencias
-    If opr.prec > pre Then begin  //¿Delimitado por precedencia de operador?
-      //es de mayor precedencia, se debe Oper antes.
-      Op2 := GetOperandPrec(pre);  //toma el siguiente operando (puede ser recursivo)
-      if HayError then exit;
-      Oper(Op1, opr, Op2);  //devuelve en "res"
-      Result:=res;
-    End else begin  //la precedencia es menor o igual, debe salir
-      cIn.PosAct := pos;   //antes de coger el operador
-      Result:=Op1;
-    end;
-  end;
-end;
 function TCompilerBase.GetOperator(const Op: Toperand): TxpOperator;
 {Busca la referencia a un operador de "Op", leyendo del contexto de entrada
 Si no encuentra un operador en el contexto, devuelve NIL, pero no lo toma.
@@ -1132,17 +1508,19 @@ begin
   cIn.Next;   //toma el token
 end;
 function TCompilerBase.GetExpression(const prec: Integer): TOperand; //inline;
-{Analizador de expresiones. Esta es probablemente la función más importante del
- compilador. Procesa una expresión en el contexto de entrada llama a los eventos
- configurados para que la expresión se evalúe (intérpretes) o se compile (compiladores).
- Devuelve un operando con información sobre el resultado de la expresión.}
+{Expression analyzer. This is probably, the most important function of the compiler
+ It process an expression in the current input context, and call events in order to
+ the expression be compiled (or interpreted if we implement an interpreter).
+ Returns an operand containing information about the result of the expression.
+ Expression evaluation stops when no more operators founds or found an operator
+ with precedence smaller than parameter "prec".}
 var
   Op1, Op2  : TOperand;   //Operandos
   opr1: TxpOperator;  //Operadores
   p: TPosCont;
 begin
   //----------------coger primer operando------------------
-  Op1 := GetOperand;
+  GetOperand(Op1, false);
   if HayError then exit;
   //Verifica si termina la expresion
   cIn.SkipWhites;
@@ -1157,7 +1535,7 @@ begin
   //------- sigue un operador ---------
   //verifica si el operador aplica al operando
   if opr1 = nullOper then begin
-    GenError('Undefined operator: %s for type: %s', [opr1.txt, Op1.Typ.name]);
+    GenError(ER_UND_OPER_TY_, [opr1.txt, Op1.Typ.name]);
     exit;
   end;
   //inicia secuencia de lectura: <Operador> <Operando>
@@ -1175,7 +1553,7 @@ begin
       cIn.SkipWhites;
       //Verificación
       if (cIn.tok = '.') or (cIn.tok = '[') then begin
-        IdentifyField(Op1);
+        IdentifyField(Op1, False);
         if HayError then exit;;
         Op1 := res;  //notar que se usa "res".
         cIn.SkipWhites;
@@ -1199,23 +1577,64 @@ begin
   end;  //hasta que ya no siga un operador
   Result := Op1;  //aquí debe haber quedado el resultado
 end;
-procedure TCompilerBase.GetExpressionE(const prec: Integer;
-  posExpres: TPosExpres);
-{Se usa para compilar expresiones completas, no subexpresiones.
-Toma una expresión del contexto de entrada y devuelve el resultado em "res".
-"isParam" indica que la expresión evaluada es el parámetro de una función.}
+procedure TCompilerBase.GetExpressionE(posExpres: TPosExpres);
+{Used to compile complete expressions. It means expressions that can be considered as
+complete Pascal instructions, like:
+  x := 1;        //Assigment
+  proc1(1,2,3);  //Call to procedure/fucntion
+  p^ := 1 + x;   //Assigment
+  obj.field := funct1();  //Assigment
+To process subexpresions (ROB o ROU) or function parameters, it must be used
+GetExpression().
+No result are returned, because for definition, instructions doesn't return values.
+}
+var
+  Op1, Op2: TOperand;
+  opr1: TxpOperator;
 begin
-  Inc(ExprLevel);  //cuenta el anidamiento
+  Inc(ExprLevel);  //Count the nesting
   {$IFDEF LogExpres} LogExpLevel('>Inic.expr'); {$ENDIF}
-  if OnExprStart<>nil then OnExprStart;  //llama a evento
-  res := GetExpression(prec);
-  if HayError then exit;
-  if OnExprEnd<>nil then OnExprEnd(posExpres);    //llama al evento de salida
-  {$IFDEF LogExpres} LogExpLevel('>Fin.expr'); {$ENDIF}
-  Dec(ExprLevel);
-  {$IFDEF LogExpres}
-  if ExprLevel = 0 then debugln('');
-  {$ENDIF}
+  OnExprStart;  //Call event
+  try
+    {First we stop code generation, because we don't know if the instruction is a getter:
+      proc()
+    or a setter:
+      a := b;
+    }
+    //First operand compiled always as setter, because it's supposed to be
+    //de first part of an assigment.
+    GetOperand(Op1, true);  //Compile as setter.
+    if HayError then exit;
+    ProcComments;
+    opr1 := GetOperator(Op1); //We can validate assigment
+    if opr1 = nil then begin
+      //Not following an operator. We assume instruction ends;
+      if (Op1.Sto  = stConst) {and (Op1.Typ<>typNull)} then begin
+        //Instruction alone is not valid
+        GenError('Constants are not allowed here.');
+      end;
+    end else begin
+      //We have an operator.
+      case opr1.txt of
+      ':=', '+=', '-=' : begin  end;  //Expected
+      else
+        GenError('Expected ":=", "+=" or "-=".');
+        exit;
+      end;
+      Op2 := GetExpression(Opr1.prec); //Value to assign
+      if HayError then exit;
+      //Call de operation
+      Oper(Op1, opr1, Op2);    //Compile operation
+      //Can generate error
+    end;
+  finally
+    OnExprEnd(posExpres);    //Call end event
+    {$IFDEF LogExpres} LogExpLevel('>Fin.expr'); {$ENDIF}
+    Dec(ExprLevel);
+    {$IFDEF LogExpres}
+    if ExprLevel = 0 then debugln('');
+    {$ENDIF}
+  end;
 end;
 procedure TCompilerBase.LoadToRT(Op: TOperand; modReturn: boolean = false);
 {Carga un operando a los Registros de Trabajo (RT).
@@ -1263,12 +1682,9 @@ procedure TCompilerBase.RefreshAllElementLists;
 begin
   //TreeElems.RefreshAllFuncs;
   //TreeElems.RefreshAllCons;
-  //TreeElems.RefreshAllUnits;
+  TreeElems.RefreshAllUnits;   //Caso especial
   //TreeElems.RefreshAllVars;
   //TreeElems.RefreshAllTypes;
-
-  //Si esta rutina trabaja bien. las anteriores son inenesarias.
-  TreeElems.RefreshAllElementLists;
 end;
 procedure TCompilerBase.RemoveUnusedFunc;
 {Explora las funciones, para quitarle las referencias de funciones no usadas.
@@ -1316,7 +1732,10 @@ y a RemoveUnusedFunc(). }
   function RemoveUnusedVarReferences: integer;
   {Explora las variables de todo el programa, de modo que a cada una:
   * Le quita las referencias hechas por variables no usadas.
-  Devuelve la cantidad de variables no usadas.}
+  Devuelve la cantidad de variables no usadas.
+  Para que esta función trabaje bien, debe estar actualizada "TreeElems.AllVars" y
+  "TreeElems.AllFuncs", e inclusive "TreeElems.AllVars" debe estar ya filtrada
+  con las funciones no usadas. }
   var
     xvar, xvar2: TxpEleVar;
     fun: TxpEleFun;
@@ -1515,19 +1934,19 @@ El objetivo final es determinar los accesos a las unidades.}
     uni : TxpEleUnit;
     cal , c: TxpEleCaller;
   begin
-debugln('+Scanning in:'+nod.name);
+//debugln('+Scanning in:'+nod.name);
     if nod.elements<>nil then begin
       for ele in nod.elements do begin
         //Solo se explora a las unidades
         if ele.idClass = eltUnit then begin
-debugln('  Unit:'+ele.name);
+//debugln('  Unit:'+ele.name);
           //"ele" es una unidad de "nod". Verifica si es usada
           uni := TxpEleUnit(ele);    //Accede a la unidad.
           uni.ReadInterfaceElements; //Accede a sus campos
           {Buscamos por los elementos de la interfaz de la unidad para ver si son
            usados}
           for eleInter in uni.InterfaceElements do begin
-debugln('    Interface Elem:'+eleInter.name);
+//debugln('    Interface Elem:'+eleInter.name);
             //Explora por los llamadores de este elemento.
             for cal in eleInter.lstCallers do begin
               eleUnit := cal.CallerUnit;   //Unidad o programa
@@ -1536,10 +1955,9 @@ debugln('    Interface Elem:'+eleInter.name);
                 la unidad.}
                 c := AddCallerTo(uni);
                 c.caller := cal.caller;
-                c.curBnk := cal.curBnk;
                 c.curPos := cal.curPos;
-                debugln('      Added caller to %s from %s (%d,%d)',
-                        [uni.name, c.curPos.fil, c.curPos.row, c.curPos.col]);
+//                debugln('      Added caller to %s from %s (%d,%d)',
+//                        [uni.name, c.curPos.fil, c.curPos.row, c.curPos.col]);
               end;
             end;
           end;
@@ -1589,9 +2007,14 @@ begin
   tnBoolean  := xLex.NewTokType('Boolean', tkBoolean);  //constantes booleanas
   tnSysFunct := xLex.NewTokType('SysFunct', tkSysFunct); //funciones del sistema
   tnType     := xLex.NewTokType('Types', tkType);    //tipos de datos
+  //Containers for functions
+  usedFuncs := TxpEleFuns.Create(false);     //Only references
+  unusedFuncs:= TxpEleFuns.Create(false);
 end;
 destructor TCompilerBase.Destroy;
 begin
+  unusedFuncs.Destroy;
+  usedFuncs.Destroy;
   cIn.Destroy; //Limpia lista de Contextos
   xLex.Free;
   listTypSys.Destroy;

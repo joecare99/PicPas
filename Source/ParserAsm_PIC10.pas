@@ -395,19 +395,19 @@ begin
     exit;
   end else if lexAsm.GetToken = '_H' then begin
     //Es el registro  de trabajo _H
-    f := H_register.offs;
+    f := H.offs;
     lexAsm.Next;
     Result := true;
     exit;
   end else if lexAsm.GetToken = '_E' then begin
     //Es el registro  de trabajo _H
-    f := E_register.offs;
+    f := E.offs;
     lexAsm.Next;
     Result := true;
     exit;
   end else if lexAsm.GetToken = '_U' then begin
     //Es el registro  de trabajo _H
-    f := U_register.offs;
+    f := U.offs;
     lexAsm.Next;
     Result := true;
     exit;
@@ -832,6 +832,8 @@ begin
   lexAsm.DefTokDelim(';','', lexAsm.tnComment);
   lexAsm.DefTokDelim('''','''', lexAsm.tnString);
   lexAsm.Rebuild;
+
+  callProcASMlime := @ProcASMlime;
 end;
 destructor TParserAsm.Destroy;
 begin

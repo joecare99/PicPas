@@ -96,7 +96,7 @@ begin
   fraRegWat.SetLanguage;
 end;
 procedure TfrmDebugger.Timer1Timer(Sender: TObject);
-{temporizador para eleditor de diagramas }
+{Temporizador para el editor de diagramas }
 var
   stopped: boolean;
 begin

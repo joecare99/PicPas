@@ -49,10 +49,8 @@ uses
 type
     { TGenCod }
     TGenCod = class(TGenCodBas)
-    protected
-      procedure callParam(fun: TxpEleFun);
-      procedure callFunct(fun: TxpEleFun);
     private
+      procedure codif_delay_ms2(fun: TxpEleFun);
       procedure DefineArray(etyp: TxpEleType);
       procedure DefinePointer(etyp: TxpEleType);
       procedure ROB_byte_mod_byte(Opt: TxpOperation; SetRes: boolean);
@@ -62,14 +60,16 @@ type
       procedure ValidRAMaddr(addr: integer);
     private  //Operaciones con Bit
 //      f_byteXbyte_byte: TxpEleFun;  //índice para función
+      f_delay_msB: TxpELeFun;
+      f_delay_msW: TxpELeFun;
       f_byte_mul_byte_16: TxpEleFun;  //índice para función
       f_byte_div_byte: TxpEleFun;  //índice para función
       f_word_mul_word_16: TxpEleFun;  //índice para función
       procedure byte_div_byte(fun: TxpEleFun);
       procedure mul_byte_16(fun: TxpEleFun);
       procedure CopyInvert_C_to_Z;
-      procedure fun_Byte(fun: TxpEleFun);
-      procedure fun_DWord(fun: TxpEleFun);
+      procedure fun_Byte(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_DWord(fun: TxpEleFunBase; out AddrUndef: boolean);
       procedure ROB_bit_asig_bit(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_bit_asig_byte(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_bit_and_bit(Opt: TxpOperation; SetRes: boolean);
@@ -84,10 +84,9 @@ type
       procedure ROB_bit_dif_byte(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_byte_div_byte(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_byte_mul_byte(Opt: TxpOperation; SetRes: boolean);
-      procedure ROU_addr_word(Opr: TxpOperator; SetRes: boolean);
       procedure ROU_not_bit(Opr: TxpOperator; SetRes: boolean);
       procedure ROU_not_byte(Opr: TxpOperator; SetRes: boolean);
-      procedure ROU_addr_byte(Opr: TxpOperator; SetRes: boolean);
+      procedure ROU_address(Opr: TxpOperator; SetRes: boolean);
 
       procedure ROB_word_and_byte(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_word_umulword_word(Opt: TxpOperation; SetRes: boolean);
@@ -144,6 +143,9 @@ type
       procedure ROB_char_asig_char(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_char_equal_char(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_char_difer_char(Opt: TxpOperation; SetRes: boolean);
+
+      procedure ROB_string_add_char(Opt: TxpOperation; SetRes: boolean);
+      procedure ROB_string_add_string(Opt: TxpOperation; SetRes: boolean);
     protected //Operaciones con punteros
       procedure ROB_pointer_add_byte(Opt: TxpOperation; SetRes: boolean);
       procedure ROB_pointer_sub_byte(Opt: TxpOperation; SetRes: boolean);
@@ -153,21 +155,18 @@ type
       procedure codif_delay_ms(fun: TxpEleFun);
       procedure expr_end(posExpres: TPosExpres);
       procedure expr_start;
-      procedure fun_delay_ms(fun: TxpEleFun);
-      procedure fun_Exit(fun: TxpEleFun);
-      procedure fun_Inc(fun: TxpEleFun);
-      procedure fun_Dec(fun: TxpEleFun);
-      procedure fun_Ord(fun: TxpEleFun);
-      procedure fun_Chr(fun: TxpEleFun);
-      procedure fun_Bit(fun: TxpEleFun);
-      procedure fun_Bool(fun: TxpEleFun);
-      procedure fun_SetAsInput(fun: TxpEleFun);
-      procedure fun_SetAsOutput(fun: TxpEleFun);
-      procedure fun_Word(fun: TxpEleFun);
-      procedure fun_SetBank(fun: TxpEleFun);
+      procedure fun_Exit(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_Inc(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_Dec(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_Ord(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_Chr(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_Bit(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_Bool(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_SetAsInput(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_SetAsOutput(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_Word(fun: TxpEleFunBase; out AddrUndef: boolean);
+      procedure fun_SetBank(fun: TxpEleFunBase; out AddrUndef: boolean);
     protected
-      procedure StartCodeSub(fun: TxpEleFun);
-      procedure EndCodeSub;
       procedure Cod_StartProgram;
       procedure Cod_EndProgram;
       procedure CreateSystemElements;
@@ -188,40 +187,6 @@ begin
   GenCodBas_PIC17.SetLanguage;
   {$I ..\language\tra_GenCod.pas}
 end;
-procedure TGenCod.StartCodeSub(fun: TxpEleFun);
-{debe ser llamado para iniciar la codificación de una subrutina}
-begin
-//  iFlashTmp :=  pic.iFlash; //guarda puntero
-//  pic.iFlash := curBloSub;  //empieza a codificar aquí
-end;
-procedure TGenCod.EndCodeSub;
-{debe ser llamado al terminar la codificaión de una subrutina}
-begin
-//  curBloSub := pic.iFlash;  //indica siguiente posición libre
-//  pic.iFlash := iFlashTmp;  //retorna puntero
-end;
-procedure TGenCod.callParam(fun: TxpEleFun);
-{Rutina genérica, que se usa antes de leer los parámetros de una función.}
-begin
-  {Haya o no, parámetros se debe proceder como en cualquier expresión, asumiendo que
-  vamos a devolver una expresión.}
-  SetResultExpres(fun.typ);  //actualiza "RTstate"
-end;
-procedure TGenCod.callFunct(fun: TxpEleFun);
-{Rutina genérica para llamar a una función definida por el usuario.}
-begin
-  fun.iniBnk := CurrBank;   //fija el banco inicial
-  //Por ahora, no se implementa paginación, pero despuñes habría que considerarlo.
-  _CALL(fun.adrr);  //codifica el salto
-  //Verifica la optimizaicón de cambio de banco
-  if OptBnkAftPro then begin
-    //Se debe optimizar, fijando el banco que deja la función
-    CurrBank := fun.ExitBank;
-  end else begin
-    //Se debe incluir siempre instrucciones de cambio de banco
-    _BANKRESET;
-  end;
-end;
 procedure TGenCod.CopyInvert_C_to_Z;
 begin
   //El resultado está en C (invertido), hay que pasarlo a Z
@@ -238,6 +203,7 @@ end;
 procedure TGenCod.Cod_EndProgram;
 //Codifica la parte inicial del programa
 begin
+  _SLEEP();   //agrega instrucción final
   //Code('END');   //inicia la sección de código
 end;
 procedure TGenCod.expr_start;
@@ -246,8 +212,7 @@ begin
   //Inicia banderas de estado para empezar a calcular una expresión
   W.used := false;        //Su ciclo de vida es de instrucción
   Z.used := false;        //Su ciclo de vida es de instrucción
-  if H<>nil then
-    H.used := false;      //Su ciclo de vida es de instrucción
+  //H.used := false;      //Su ciclo de vida es de instrucción
   RTstate := nil;         //Inicia con los RT libres.
   //Limpia tabla de variables temporales
   varFields.Clear;
@@ -288,6 +253,7 @@ begin
     end;
     stVariab: begin
       kMOVF(byte2, toW);
+//      kMOVF(p2^.rVar.addr0, toW);
       kMOVWF(byte1);
     end;
     stExpres: begin  //ya está en w
@@ -302,33 +268,33 @@ begin
     SetResultNull;  //Fomalmente, una aisgnación no devuelve valores en Pascal
     case p2^.Sto of
     stConst : begin
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       if value2=0 then begin
         //caso especial
-        kCLRF(INDF);
+        kCLRF(INDF.addr);
       end else begin
         kMOVLW(value2);
-        kMOVWF(INDF);
+        kMOVWF(INDF.addr);
       end;
     end;
     stVariab: begin
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       kMOVF(byte2, toW);
-      kMOVWF(INDF);
+      kMOVWF(INDF.addr);
     end;
     stExpres: begin
       //La dirección está en la pila y la expresión en W
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //Salva W (p2)
+      kMOVWF(aux.addr);   //Salva W (p2)
       //Apunta con p1
       rVar := GetVarByteFromStk;
-      kMOVF(rVar.adrByte0, toW);  //Opera directamente al dato que había en la pila. Deja en W
-      kMOVWF(FSR);  //direcciona
+      kMOVF(rVar.addr0, toW);  //Opera directamente al dato que había en la pila. Deja en W
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
-      kMOVF(aux, toW);
-      kMOVWF(INDF);
+      kMOVF(aux.addr, toW);
+      kMOVWF(INDF.addr);
       aux.used := false;
       exit;
     end;
@@ -342,34 +308,34 @@ begin
     stConst : begin
       //Caso especial de asignación a puntero desreferenciado: variable^
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       if value2=0 then begin
         //caso especial
-        kCLRF(INDF);
+        kCLRF(INDF.addr);
       end else begin
         kMOVLW(value2);
-        kMOVWF(INDF);
+        kMOVWF(INDF.addr);
       end;
     end;
     stVariab: begin
       //Caso especial de asignación a puntero derefrrenciado: variable^
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       kMOVF(byte2, toW);
-      kMOVWF(INDF);
+      kMOVWF(INDF.addr);
     end;
     stExpres: begin  //ya está en w
       //Caso especial de asignación a puntero derefrrenciado: variable^
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //Salva W (p2)
+      kMOVWF(aux.addr);   //Salva W (p2)
       //Apunta con p1
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
-      kMOVF(aux, toW);
-      kMOVWF(INDF);
+      kMOVF(aux.addr, toW);
+      kMOVWF(INDF.addr);
       aux.used := false;
     end;
     else
@@ -420,13 +386,13 @@ begin
       if value2=0 then begin
         //Caso especial. No hace nada
       end else begin
-        kMOVWF(FSR);  //direcciona
+        kMOVWF(FSR.addr);  //direcciona
         kMOVLW(value2);
         _ADDWF(0, toF);
       end;
     end;
     stVariab: begin
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       kMOVF(byte2, toW);
       _ADDWF(0, toF);
@@ -434,13 +400,13 @@ begin
     stExpres: begin
       //La dirección está en la pila y la expresión en W
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //Salva W (p2)
+      kMOVWF(aux.addr);   //Salva W (p2)
       //Apunta con p1
       rVar := GetVarByteFromStk;
-      kMOVF(rVar.adrByte0, toW);  //opera directamente al dato que había en la pila. Deja en W
-      kMOVWF(FSR);  //direcciona
+      kMOVF(rVar.addr0, toW);  //opera directamente al dato que había en la pila. Deja en W
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
-      kMOVF(aux, toW);
+      kMOVF(aux.addr, toW);
       _ADDWF(0, toF);
       aux.used := false;
       exit;
@@ -459,7 +425,7 @@ begin
       end else begin
         //Caso especial de asignación a puntero dereferenciado: variable^
         kMOVF(byte1, toW);
-        kMOVWF(FSR);  //direcciona
+        kMOVWF(FSR.addr);  //direcciona
         kMOVLW(value2);
         _ADDWF(0, toF);
       end;
@@ -467,7 +433,7 @@ begin
     stVariab: begin
       //Caso especial de asignación a puntero derefrrenciado: variable^
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       kMOVF(byte2, toW);
       _ADDWF(0, toF);
@@ -475,12 +441,12 @@ begin
     stExpres: begin  //ya está en w
       //Caso especial de asignación a puntero derefrrenciado: variable^
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //Salva W (p2)
+      kMOVWF(aux.addr);   //Salva W (p2)
       //Apunta con p1
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
-      kMOVF(aux, toW);
+      kMOVF(aux.addr, toW);
       _ADDWF(0, toF);
       aux.used := false;
     end;
@@ -531,13 +497,13 @@ begin
       if value2=0 then begin
         //Caso especial. No hace nada
       end else begin
-        kMOVWF(FSR);  //direcciona
+        kMOVWF(FSR.addr);  //direcciona
         kMOVLW(value2);
         _SUBWF(0, toF);
       end;
     end;
     stVariab: begin
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       kMOVF(byte2, toW);
       _SUBWF(0, toF);
@@ -545,13 +511,13 @@ begin
     stExpres: begin
       //La dirección está en la pila y la expresión en W
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //Salva W (p2)
+      kMOVWF(aux.addr);   //Salva W (p2)
       //Apunta con p1
       rVar := GetVarByteFromStk;
-      kMOVF(rVar.adrByte0, toW);  //opera directamente al dato que había en la pila. Deja en W
-      kMOVWF(FSR);  //direcciona
+      kMOVF(rVar.addr0, toW);  //opera directamente al dato que había en la pila. Deja en W
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
-      kMOVF(aux, toW);
+      kMOVF(aux.addr, toW);
       _SUBWF(0, toF);
       aux.used := false;
       exit;
@@ -570,7 +536,7 @@ begin
       end else begin
         //Caso especial de asignación a puntero dereferenciado: variable^
         kMOVF(byte1, toW);
-        kMOVWF(FSR);  //direcciona
+        kMOVWF(FSR.addr);  //direcciona
         kMOVLW(value2);
         _SUBWF(0, toF);
       end;
@@ -578,7 +544,7 @@ begin
     stVariab: begin
       //Caso especial de asignación a puntero derefrrenciado: variable^
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
       kMOVF(byte2, toW);
       _SUBWF(0, toF);
@@ -586,12 +552,12 @@ begin
     stExpres: begin  //ya está en w
       //Caso especial de asignación a puntero derefrrenciado: variable^
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //Salva W (p2)
+      kMOVWF(aux.addr);   //Salva W (p2)
       //Apunta con p1
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona
+      kMOVWF(FSR.addr);  //direcciona
       //Asignación normal
-      kMOVF(aux, toW);
+      kMOVF(aux.addr, toW);
       _SUBWF(0, toF);
       aux.used := false;
     end;
@@ -659,7 +625,7 @@ begin
     SetROBResultExpres_byte(Opt);
     //La expresión p1 debe estar salvada y p2 en el acumulador
     rVar := GetVarByteFromStk;
-    kADDWF(rVar.adrByte0, toW);  //opera directamente al dato que había en la pila. Deja en W
+    kADDWF(rVar.addr0, toW);  //opera directamente al dato que había en la pila. Deja en W
     FreeStkRegisterByte;   //libera pila porque ya se uso
   end;
   else
@@ -740,7 +706,7 @@ begin
     SetROBResultExpres_byte(Opt);
     //la expresión p1 debe estar salvada y p2 en el acumulador
     rVar := GetVarByteFromStk;
-    kSUBWF(rVar.adrByte0, toW);  //opera directamente al dato que había en la pila. Deja en W
+    kSUBWF(rVar.addr0, toW);  //opera directamente al dato que había en la pila. Deja en W
     FreeStkRegisterByte;   //libera pila porque ya se uso
   end;
   else
@@ -814,7 +780,7 @@ begin
   end;
   stConst_Expres: begin  //la expresión p2 se evaluó y esta en W
     SetROBResultExpres_word(opt);
-    kMOVWF(E);
+    kMOVWF(E.addr);
     kMOVLW(value1);
     _CALL(f_byte_mul_byte_16.adrr);
     AddCallerTo(f_byte_mul_byte_16);
@@ -867,7 +833,7 @@ begin
     rVar := GetVarByteFromStk;
     _BANKSEL(E.bank);
     _MOVWF(E.offs);  //p2 -> E
-    kMOVF(rVar.adrByte0, toW); //p1 -> W
+    kMOVF(rVar.addr0, toW); //p1 -> W
     _CALL(f_byte_mul_byte_16.adrr);
     FreeStkRegisterByte;   //libera pila porque se usará el dato ahí contenido
     {Se podría ahorrar el paso de mover la variable de la pila a W (y luego a una
@@ -986,8 +952,8 @@ begin
 //    rVar := GetVarByteFromStk;
 //    _BANKSEL(E.bank);
 //    _MOVWF(E.offs);  //p2 -> E
-//    _BANKSEL(rVar.adrByte0.bank);
-//    _MOVF(rVar.adrByte0.offs, toW); //p1 -> W
+//    _BANKSEL(rVar.addr0.bank);
+//    _MOVF(rVar.addr0.offs, toW); //p1 -> W
 //    _CALL(f_byte_mul_byte_16.adrr);
 //    FreeStkRegisterByte;   //libera pila porque se usará el dato ahí contenido
 //    {Se podría ahorrar el paso de mover la variable de la pila a W (y luego a una
@@ -1146,7 +1112,7 @@ begin
     _BANKSEL(E.bank);
     _MOVWF(E.offs);
     //pila -> H
-    kMOVF(rVar.adrByte0, toW); //p1 -> W
+    kMOVF(rVar.addr0, toW); //p1 -> W
     _BANKSEL(H.bank);
     _MOVWF(H.offs);  //dividendo
     //divisor -> W
@@ -1190,11 +1156,11 @@ begin
     end;
     SetROBResultExpres_byte(Opt);
     kMOVLW(value1);
-    kMOVWF(H);
+    kMOVWF(H.addr);
     kMOVF(byte2, toW);
     _CALL(f_byte_div_byte.adrr);
     //¿Y el banco de salida?
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     AddCallerTo(f_byte_div_byte);
   end;
   stConst_Expres: begin  //la expresión p2 se evaluó y esta en W
@@ -1203,13 +1169,13 @@ begin
       exit;
     end;
     SetROBResultExpres_byte(Opt);
-    kMOVWF(E);  //guarda divisor
+    kMOVWF(E.addr);  //guarda divisor
     kMOVLW(value1);
-    kMOVWF(H);  //dividendo
+    kMOVWF(H.addr);  //dividendo
 
-    kMOVF(E, toW);  //divisor
+    kMOVF(E.addr, toW);  //divisor
     _CALL(f_byte_div_byte.adrr);
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     AddCallerTo(f_byte_div_byte);
   end;
   stVariab_Const: begin
@@ -1219,32 +1185,32 @@ begin
     end;
     SetROBResultExpres_byte(Opt);
     kMOVF(byte1, toW);
-    kMOVWF(H);
+    kMOVWF(H.addr);
     kMOVLW(value2);
     _CALL(f_byte_div_byte.adrr);
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     AddCallerTo(f_byte_div_byte);
   end;
   stVariab_Variab:begin
     SetROBResultExpres_byte(Opt);
     kMOVF(byte1, toW);
-    kMOVWF(H);
+    kMOVWF(H.addr);
     kMOVF(byte2, toW);
     _CALL(f_byte_div_byte.adrr);
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     AddCallerTo(f_byte_div_byte);
   end;
   stVariab_Expres:begin   //la expresión p2 se evaluó y esta en W
     SetROBResultExpres_byte(Opt);
     //guarda divisor
-    kMOVWF(E);
+    kMOVWF(E.addr);
     //p1 -> H
     kMOVF(byte1, toW); //p1 -> W
-    kMOVWF(H);  //dividendo
+    kMOVWF(H.addr);  //dividendo
 
-    kMOVF(E, toW);  //divisor
+    kMOVF(E.addr, toW);  //divisor
     _CALL(f_byte_div_byte.adrr);
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     AddCallerTo(f_byte_div_byte);
   end;
   stExpres_Const: begin   //la expresión p1 se evaluó y esta en W
@@ -1253,18 +1219,18 @@ begin
       exit;
     end;
     SetROBResultExpres_byte(Opt);
-    kMOVWF(H);  //p1 -> H
+    kMOVWF(H.addr);  //p1 -> H
     kMOVLW(value2); //p2 -> W
     _CALL(f_byte_div_byte.adrr);
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     AddCallerTo(f_byte_div_byte);
   end;
   stExpres_Variab:begin  //la expresión p1 se evaluó y esta en W
     SetROBResultExpres_byte(Opt);
-    kMOVWF(H);  //p1 -> H
+    kMOVWF(H.addr);  //p1 -> H
     kMOVF(byte2, toW); //p2 -> W
     _CALL(f_byte_div_byte.adrr);
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     AddCallerTo(f_byte_div_byte);
   end;
   stExpres_Expres:begin
@@ -1272,14 +1238,14 @@ begin
     //la expresión p1 debe estar salvada y p2 en el acumulador
     rVar := GetVarByteFromStk;
     //guarda divisor
-    kMOVWF(E);
+    kMOVWF(E.addr);
     //pila -> H
-    kMOVF(rVar.adrByte0, toW); //p1 -> W
-    kMOVWF(H);  //dividendo
+    kMOVF(rVar.addr0, toW); //p1 -> W
+    kMOVWF(H.addr);  //dividendo
     //divisor -> W
-    kMOVF(E, toW);  //p2 -> E
+    kMOVF(E.addr, toW);  //p2 -> E
     _CALL(f_byte_div_byte.adrr);
-    kMOVF(U, toW);  //Resultado en W
+    kMOVF(U.addr, toW);  //Resultado en W
     FreeStkRegisterByte;   //libera pila porque se usará el dato ahí contenido
     {Se podría ahorrar el paso de mover la variable de la pila a W (y luego a una
     variable) temporal, si se tuviera una rutina de multiplicación que compilara a
@@ -1352,10 +1318,10 @@ begin
   stVariab_Expres:begin   //la expresión p2 se evaluó y esta en W
     SetROBResultExpres_bool(Opt, false);   //Se pide Z para el resultado
     tmp := GetAuxRegisterByte;  //Se pide registro auxiliar
-    kMOVWF(tmp);    //guarda resultado de expresión
+    kMOVWF(tmp.addr);    //guarda resultado de expresión
     //Ahora es como stVariab_Variab
     kMOVF(byte1, toW);
-    kSUBWF(tmp, toW);  //Si p1 > tmp: C=0.
+    kSUBWF(tmp.addr, toW);  //Si p1 > tmp: C=0.
     CopyInvert_C_to_Z; //Pasa C a Z (invirtiendo)
     tmp.used := false;  //libera
   end;
@@ -1439,7 +1405,7 @@ loop1 := _PC;
   _BTFSC(Z.offs, Z.bit);
   _GOTO_PEND(dg);     //Dio, cero, termina
   //Desplaza
-  if toRight then kSHIFTR(target, toF) else kSHIFTL(target, toF);
+  if toRight then kSHIFTR(target.addr, toF) else kSHIFTL(target.addr, toF);
   _GOTO(loop1);
   //Terminó el lazo
   pic.codGotoAt(dg, _PC);   //termina de codificar el salto
@@ -1486,37 +1452,37 @@ begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kSHIFTR(byte1, toW);  //desplaza y mueve
-      kMOVWF(aux);
-      kSHIFTR(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);
+      kSHIFTR(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 3 then begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kSHIFTR(byte1, toW);  //desplaza y mueve
-      kMOVWF(aux);
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 4 then begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kSHIFTR(byte1, toW);  //desplaza y mueve
-      kMOVWF(aux);
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else begin
       //Caso general
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kMOVF(byte1, toW);
-      kMOVWF(aux);
+      kMOVWF(aux.addr);
       //copia p2 a W
       kMOVLW(value2);
       //lazo de rotación
       CodifShift_by_W(aux, true);
-      kMOVF(aux, toW);  //deja en W
+      kMOVF(aux.addr, toW);  //deja en W
       aux.used := false;
     end;
   end;
@@ -1525,12 +1491,12 @@ begin
     aux := GetAuxRegisterByte;
     //copia p1 a "aux"
     kMOVF(byte1, toW);
-    kMOVWF(aux);
+    kMOVWF(aux.addr);
     //copia p2 a W
     kMOVF(byte2, toW);
     //lazo de rotación
     CodifShift_by_W(aux, true);
-    kMOVF(aux, toW);  //deja en W
+    kMOVF(aux.addr, toW);  //deja en W
     aux.used := false;
   end;
 //  stVariab_Expres:begin   //la expresión p2 se evaluó y esta en W
@@ -1542,39 +1508,39 @@ begin
       //solo devuelve lo mismo en W
     end else if value2 = 1 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);
-      kSHIFTR(aux, toW);  //devuelve desplazado en W
+      kMOVWF(aux.addr);
+      kSHIFTR(aux.addr, toW);  //devuelve desplazado en W
       aux.used := false;
     end else if value2 = 2 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //copia p1 a "aux"
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);   //copia p1 a "aux"
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 3 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //copia p1 a "aux"
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);   //copia p1 a "aux"
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 4 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //copia p1 a "aux"
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toF);  //desplaza
-      kSHIFTR(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);   //copia p1 a "aux"
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toF);  //desplaza
+      kSHIFTR(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
-      kMOVWF(aux);
+      kMOVWF(aux.addr);
       //copia p2 a W
       kMOVLW(value2);
       //lazo de rotación
       CodifShift_by_W(aux, true);
-      kMOVF(aux, toW);  //deja en W
+      kMOVF(aux.addr, toW);  //deja en W
       aux.used := false;
     end;
   end;
@@ -1614,36 +1580,36 @@ begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kSHIFTL(byte1, toW);  //desplaza y mueve
-      kMOVWF(aux);
-      kSHIFTL(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);
+      kSHIFTL(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 3 then begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kSHIFTL(byte1, toW);  //desplaza y mueve
-      kMOVWF(aux);
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 4 then begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kSHIFTL(byte1, toW);  //desplaza y mueve
-      kMOVWF(aux);
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
       kMOVF(byte1, toW);
-      kMOVWF(aux);
+      kMOVWF(aux.addr);
       //copia p2 a W
       kMOVLW(value2);
       //lazo de rotación
       CodifShift_by_W(aux, false);
-      kMOVF(aux, toW);  //deja en W
+      kMOVF(aux.addr, toW);  //deja en W
       aux.used := false;
     end;
   end;
@@ -1652,12 +1618,12 @@ begin
     aux := GetAuxRegisterByte;
     //copia p1 a "aux"
     kMOVF(byte1, toW);
-    kMOVWF(aux);
+    kMOVWF(aux.addr);
     //copia p2 a W
     kMOVF(byte2, toW);
     //lazo de rotación
     CodifShift_by_W(aux, false);
-    kMOVF(aux, toW);  //deja en W
+    kMOVF(aux.addr, toW);  //deja en W
     aux.used := false;
   end;
 //  stVariab_Expres:begin   //la expresión p2 se evaluó y esta en W
@@ -1669,39 +1635,39 @@ begin
       //solo devuelve lo mismo en W
     end else if value2 = 1 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);
-      kSHIFTL(aux, toW);  //devuelve desplazado en W
+      kMOVWF(aux.addr);
+      kSHIFTL(aux.addr, toW);  //devuelve desplazado en W
       aux.used := false;
     end else if value2 = 2 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //copia p1 a "aux"
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);   //copia p1 a "aux"
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 3 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //copia p1 a "aux"
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);   //copia p1 a "aux"
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else if value2 = 4 then begin
       aux := GetAuxRegisterByte;
-      kMOVWF(aux);   //copia p1 a "aux"
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toF);  //desplaza
-      kSHIFTL(aux, toW);  //desplaza y devuelve en W
+      kMOVWF(aux.addr);   //copia p1 a "aux"
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toF);  //desplaza
+      kSHIFTL(aux.addr, toW);  //desplaza y devuelve en W
       aux.used := false;
     end else begin
       aux := GetAuxRegisterByte;
       //copia p1 a "aux"
-      kMOVWF(aux);
+      kMOVWF(aux.addr);
       //copia p2 a W
       kMOVLW(value2);
       //lazo de rotación
       CodifShift_by_W(aux, false);
-      kMOVF(aux, toW);  //deja en W
+      kMOVF(aux.addr, toW);  //deja en W
       aux.used := false;
     end;
   end;
@@ -1833,7 +1799,7 @@ _LABEL(sale); //Si p1=p2 -> Z=1. Si p1>p2 -> C=0.
     SetROBResultExpres_bool(Opt, false);   //Se pide Z para el resultado
     aux := GetAuxRegisterByte;  //Pide un registro libre
     _MOVWF(aux.offs);  //guarda W
-    varTmp := NewTmpVarWord(aux, H);  //Crea variable temporal
+    varTmp := NewTmpVarWord(aux.addr, H.addr);  //Crea variable temporal
     p1^.SetAsVariab(varTmp);  //para que se pueda procesar como variable
     codVariab_Const;      //Lo evalúa como stVariab_Const
     varTmp.Destroy;
@@ -1843,7 +1809,7 @@ _LABEL(sale); //Si p1=p2 -> Z=1. Si p1>p2 -> C=0.
     SetROBResultExpres_bool(Opt, false);   //Se pide Z para el resultado
     aux := GetAuxRegisterByte;  //Pide un registro libre
     _MOVWF(aux.offs);  //guarda W
-    varTmp := NewTmpVarWord(aux, H);  //Crea variable temporal
+    varTmp := NewTmpVarWord(aux.addr, H.addr);  //Crea variable temporal
     p1^.SetAsVariab(varTmp);  //para que se pueda procesar como variable
     codVariab_Variab;      //Lo evalúa como stVariab_Variab;
     varTmp.Destroy;
@@ -2118,7 +2084,7 @@ begin
     SetROBResultExpres_word(Opt);
     kMOVF (byte2H, toW); //p2->w
     kSUBLW(value1H);     //p1 - W -W
-    kMOVWF(H);
+    kMOVWF(H.addr);
     kMOVF (byte2L, toW); //p2-W
     kSUBLW(value1L);     //p1-W->w
     _BANKSEL(H.bank);    //Para fijar el banco de salida de la condicional
@@ -2128,11 +2094,11 @@ begin
   stConst_Expres: begin  //la expresión p2 se evaluó y esta en (H,W)
     SetROBResultExpres_word(Opt);
     aux := GetAuxRegisterByte;
-    kMOVWF(aux);
-    kMOVF(H, toW);    //p2->w
+    kMOVWF(aux.addr);
+    kMOVF(H.addr, toW);    //p2->w
     kSUBLW(value1H);     //p1 - W -W
-    kMOVWF(H);
-    kMOVF (aux, toW);  //p2-W
+    kMOVWF(H.addr);
+    kMOVF (aux.addr, toW);  //p2-W
     kSUBLW(value1L);     //p1-W->w
     _BANKSEL(H.bank);    //Para fijar el banco de salida de la condicional
     _BTFSS(_STATUS, _C);
@@ -2310,7 +2276,7 @@ begin
     //K + WHEU -> WHEU, se puede manejar como asignación con sums
     aux := GetAuxRegisterByte;  //Pide un registro libre
     _MOVWF(aux.offs);  //guarda W
-    varTmp := NewTmpVarDword(aux, H, E, U);  //Crea variable temporal, con los RT
+    varTmp := NewTmpVarDword(aux.addr, H.addr, E.addr, U.addr);  //Crea variable temporal, con los RT
     p2^.SetAsVariab(varTmp);  //Convierte p2 a variable
     ExchangeP1_P2;  //Convierte a p1 := p1 + K;
     ROB_dword_aadd_dword(Opt, false);  //compila como autosuma
@@ -2401,7 +2367,7 @@ begin
     //WHEU + K -> WHEU, se puede manejar como asignación con suma
     aux := GetAuxRegisterByte;  //Pide un registro libre
     _MOVWF(aux.offs);  //gaurda W
-    varTmp := NewTmpVarDword(aux, H, E, U);  //Crea variable temporal
+    varTmp := NewTmpVarDword(aux.addr, H.addr, E.addr, U.addr);  //Crea variable temporal
     p1^.SetAsVariab(varTmp);  //Convierte p1 a variable
     ROB_dword_aadd_dword(Opt, false);  //compila como autosuma
     _MOVF(aux.offs, toW);  //devuelve byet bajo en W
@@ -2709,12 +2675,10 @@ var
   aux: TPicRegister;
 begin
   StartCodeSub(fun);  //inicia codificación
-//  PutLabel('__delay_ms');
   PutTopComm('    ;delay routine.');
-  typWord.DefineRegister;   //Se asegura de que se exista y lo marca como "usado".
   //aux := GetAuxRegisterByte;  //Pide un registro libre
+  //if HayError then exit;
   aux := FSR;  //Usa el FSR como registro auxiliar
-  if HayError then exit;
   {Esta rutina recibe los milisegundos en los registros en (H,w) o en (w)
   En cualquier caso, siempre usa el registros H , el acumulador "w" y un reg. auxiliar.
   Se supone que para pasar los parámetros, ya se requirió H, así que no es necesario
@@ -2735,28 +2699,39 @@ delay:= _PC;
   EndCodeSub;  //termina codificación
   //aux.used := false;  //libera registro
 end;
-procedure TGenCod.fun_delay_ms(fun: TxpEleFun);
+procedure TGenCod.codif_delay_ms2(fun: TxpEleFun);
+//Code the routine for delay in miliseconds for word parameter.
+var
+  aux: TPicRegister;
+  delay: Word;
 begin
-  if not CaptureTok('(') then exit;
-  GetExpressionE(0, pexPARSY);  //captura parámetro
-  if HayError then exit;   //aborta
-  //Se terminó de evaluar un parámetro
-  LoadToRT(res);   //Carga en registro de trabajo
-  if HayError then exit;
-  if res.Typ = typByte then begin
-    //El parámetro byte, debe estar en W
-    _CALL(fun.adrr);
-  end else if res.Typ = typWord then begin
-    //El parámetro word, debe estar en (H, W)
-    _CALL(fun.adrr+1);
+  if f_delay_msB.linked THEN begin
+    {This is something weird, because we really don't generate code, but point the
+    function to an existing code.}
+    fun.adrr := f_delay_msB.adrr+1;  //At the entry for word parameter
   end else begin
-    GenError(MSG_INVAL_PARTYP, [res.Typ.name]);
-    exit;
+    //It's not used f_delay_ms(). We use a simplified version of the loop
+    StartCodeSub(fun);  //inicia codificación
+    PutTopComm('    ;delay routine.');
+    aux := FSR;  //Usa el FSR como registro auxiliar
+
+
+    _MOVWF(aux.offs);
+    _INCF(H.offs,toF);
+    _INCF(aux.offs,toF);  //corrección
+  delay:= _PC;
+    _DECFSZ(aux.offs, toF);
+    _GOTO(_PC+2);
+    _DECFSZ(H.offs, toF);
+    _GOTO(_PC+2);
+    _RETURN();
+    codif_1mseg;   //codifica retardo 1 mseg
+    if HayError then exit;
+    _GOTO(delay);
+    EndCodeSub;  //termina codificación
   end;
-  //Verifica fin de parámetros
-  if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Exit(fun: TxpEleFun);
+procedure TGenCod.fun_Exit(fun: TxpEleFunBase; out AddrUndef: boolean);
 {Se debe dejar en los registros de trabajo, el valor del parámetro indicado.}
 var
   curFunTyp: TxpEleType;
@@ -2788,7 +2763,7 @@ begin
     end else begin
       //Se espera el valor devuelto
       if not CaptureTok('(') then exit;
-      GetExpressionE(0, pexPARSY);  //captura parámetro
+      res := GetExpression(0);  //captura parámetro
       if HayError then exit;   //aborta
       //Verifica fin de parámetros
       if not CaptureTok(')') then exit;
@@ -2810,7 +2785,7 @@ begin
   end;
   res.SetAsNull;  //No es función
 end;
-procedure TGenCod.fun_Inc(fun: TxpEleFun);
+procedure TGenCod.fun_Inc(fun: TxpEleFunBase; out AddrUndef: boolean);
 begin
   if not CaptureTok('(') then exit;
   res := GetExpression(0);  //Captura parámetro. No usa GetExpressionE, para no cambiar RTstate
@@ -2883,7 +2858,7 @@ begin
   //Verifica fin de parámetros
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Dec(fun: TxpEleFun);
+procedure TGenCod.fun_Dec(fun: TxpEleFunBase; out AddrUndef: boolean);
 begin
   if not CaptureTok('(') then exit;
   res := GetExpression(0);  //Captura parámetro. No usa GetExpressionE, para no cambiar RTstate
@@ -2931,7 +2906,7 @@ begin
   //Verifica fin de parámetros
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Ord(fun: TxpEleFun);
+procedure TGenCod.fun_Ord(fun: TxpEleFunBase; out AddrUndef: boolean);
 var
   tmpVar: TxpEleVar;
 begin
@@ -2970,7 +2945,7 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Chr(fun: TxpEleFun);
+procedure TGenCod.fun_Chr(fun: TxpEleFunBase; out AddrUndef: boolean);
 var
   tmpVar: TxpEleVar;
 begin
@@ -3009,7 +2984,7 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Bit(fun: TxpEleFun);
+procedure TGenCod.fun_Bit(fun: TxpEleFunBase; out AddrUndef: boolean);
 {Convierte byte, o boolean a bit}
 var
   tmpVar: TxpEleVar;
@@ -3065,7 +3040,7 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Bool(fun: TxpEleFun);
+procedure TGenCod.fun_Bool(fun: TxpEleFunBase; out AddrUndef: boolean);
 {Convierte byte, o bit a boolean}
 var
   tmpVar: TxpEleVar;
@@ -3121,7 +3096,7 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Byte(fun: TxpEleFun);
+procedure TGenCod.fun_Byte(fun: TxpEleFunBase; out AddrUndef: boolean);
 var
   tmpVar: TxpEleVar;
 begin
@@ -3202,7 +3177,7 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_Word(fun: TxpEleFun);
+procedure TGenCod.fun_Word(fun: TxpEleFunBase; out AddrUndef: boolean);
 var
   tmpVar: TxpEleVar;
 begin
@@ -3285,7 +3260,7 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_DWord(fun: TxpEleFun);
+procedure TGenCod.fun_DWord(fun: TxpEleFunBase; out AddrUndef: boolean);
 begin
   if not CaptureTok('(') then exit;
   res := GetExpression(0);  //Captura parámetro. No usa GetExpressionE, para no cambiar RTstate
@@ -3380,10 +3355,10 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_SetAsInput(fun: TxpEleFun);
+procedure TGenCod.fun_SetAsInput(fun: TxpEleFunBase; out AddrUndef: boolean);
 begin
   if not CaptureTok('(') then exit;
-  GetExpressionE(0, pexPARSY);  //captura parámetro
+  res := GetExpression(0);  //captura parámetro
   if HayError then exit;   //aborta
   case res.Sto of  //el parámetro debe estar en "res"
   stConst : begin
@@ -3412,10 +3387,10 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_SetAsOutput(fun: TxpEleFun);
+procedure TGenCod.fun_SetAsOutput(fun: TxpEleFunBase; out AddrUndef: boolean);
 begin
   if not CaptureTok('(') then exit;
-  GetExpressionE(0, pexPARSY);  //captura parámetro
+  res := GetExpression(0);  //captura parámetro
   if HayError then exit;   //aborta
   case res.Sto of  //el parámetro debe estar en "res"
   stConst : begin
@@ -3443,11 +3418,11 @@ begin
   end;
   if not CaptureTok(')') then exit;
 end;
-procedure TGenCod.fun_SetBank(fun: TxpEleFun);
+procedure TGenCod.fun_SetBank(fun: TxpEleFunBase; out AddrUndef: boolean);
 {Define el banco actual}
 begin
   if not CaptureTok('(') then exit;
-  GetExpressionE(0, pexPARSY);  //captura parámetro
+  res := GetExpression(0);  //captura parámetro
   if HayError then exit;   //aborta
   case res.Sto of  //el parámetro debe estar en "res"
   stConst : begin
@@ -3505,7 +3480,7 @@ begin
   //tipos predefinidos
   xLex.AddIdentSpecList('bit boolean byte word char dword', tnType);
   //funciones del sistema
-  xLex.AddIdentSpecList('exit delay_ms Inc Dec Ord Chr', tnSysFunct);
+  xLex.AddIdentSpecList('exit Inc Dec Ord Chr', tnSysFunct);
   xLex.AddIdentSpecList('SetAsInput SetAsOutput SetBank', tnSysFunct);
   //símbolos especiales
   xLex.AddSymbSpec('+',  tnOperator);
@@ -3558,6 +3533,83 @@ begin
   //Define métodos a usar
   OnExprStart := @expr_start;
   OnExprEnd := @expr_End;
+
+  ///////////Crea tipos
+  ClearSystemTypes;
+  ///////////////// Tipo Bit ////////////////
+  typBit := CreateSysType('bit', t_uinteger,-1);   //de 1 bit
+  typBit.OnLoadToRT  :=  @bit_LoadToRT;
+  typBit.OnDefRegister:= @bit_DefineRegisters;
+  typBit.OnSaveToStk  := @bit_SaveToStk;
+//  opr:=typBit.CreateUnaryPreOperator('@', 6, 'addr', @Oper_addr_bit);
+
+  ///////////////// Tipo Booleano ////////////////
+  typBool := CreateSysType('boolean',t_boolean,-1);   //de 1 bit
+  typBool.OnLoadToRT   := @bit_LoadToRT;  //es lo mismo
+  typBool.OnDefRegister:= @bit_DefineRegisters;  //es lo mismo
+  typBool.OnSaveToStk  := @bit_SaveToStk;  //es lo mismo
+
+  //////////////// Tipo Byte /////////////
+  typByte := CreateSysType('byte',t_uinteger,1);   //de 1 byte
+  typByte.OnLoadToRT   := @byte_LoadToRT;
+  typByte.OnDefRegister:= @byte_DefineRegisters;
+  typByte.OnSaveToStk  := @byte_SaveToStk;
+  //typByte.OnReadFromStk :=
+  //Campos de bit
+  typByte.CreateField('bit0', @byte_bit0, @byte_bit0);
+  typByte.CreateField('bit1', @byte_bit1, @byte_bit1);
+  typByte.CreateField('bit2', @byte_bit2, @byte_bit2);
+  typByte.CreateField('bit3', @byte_bit3, @byte_bit3);
+  typByte.CreateField('bit4', @byte_bit4, @byte_bit4);
+  typByte.CreateField('bit5', @byte_bit5, @byte_bit5);
+  typByte.CreateField('bit6', @byte_bit6, @byte_bit6);
+  typByte.CreateField('bit7', @byte_bit7, @byte_bit7);
+  //Campos de bit (se mantienen por compatibilidad)
+  typByte.CreateField('0', @byte_bit0, @byte_bit0);
+  typByte.CreateField('1', @byte_bit1, @byte_bit1);
+  typByte.CreateField('2', @byte_bit2, @byte_bit2);
+  typByte.CreateField('3', @byte_bit3, @byte_bit3);
+  typByte.CreateField('4', @byte_bit4, @byte_bit4);
+  typByte.CreateField('5', @byte_bit5, @byte_bit5);
+  typByte.CreateField('6', @byte_bit6, @byte_bit6);
+  typByte.CreateField('7', @byte_bit7, @byte_bit7);
+
+  //////////////// Tipo Char /////////////
+  //Tipo caracter
+  typChar := CreateSysType('char',t_uinteger,1);   //de 1 byte. Se crea como uinteger para leer/escribir su valor como número
+  typChar.OnLoadToRT   := @byte_LoadToRT;  //Es lo mismo
+  typChar.OnDefRegister:= @byte_DefineRegisters;  //Es lo mismo
+  typChar.OnSaveToStk  := @byte_SaveToStk; //Es lo mismo
+
+  //////////////// Tipo Word /////////////
+  //Tipo numérico de dos bytes
+  typWord := CreateSysType('word',t_uinteger,2);   //de 2 bytes
+  typWord.OnLoadToRT   := @word_LoadToRT;
+  typWord.OnDefRegister:= @word_DefineRegisters;
+  typWord.OnSaveToStk  := @word_SaveToStk;
+
+  typWord.CreateField('Low' , @word_Low , @word_Low );
+  typWord.CreateField('High', @word_High, @word_High);
+
+  //////////////// String type /////////////
+  {Se crea el tipo String, solo para permitir inicializar arreglos de
+  caracteres. Por ahora no se implementan otras funcionalidades.}
+  typString := CreateSysType('string', t_string, 0);  //tamaño variable
+  { TODO : String debería definirse mejor como un tipo común, no del sistema }
+
+  //////////////// Tipo DWord /////////////
+  //Tipo numérico de cuatro bytes
+  typDWord := CreateSysType('dword',t_uinteger,4);  //de 4 bytes
+  typDWord.OnLoadToRT   := @dword_LoadToRT;
+  typDWord.OnDefRegister:= @dword_DefineRegisters;
+  typDWord.OnSaveToStk  := @dword_SaveToStk;
+
+  typDWord.CreateField('Low'     , @dword_Low     , @dword_Low     );
+  typDWord.CreateField('High'    , @dword_High    , @dword_High    );
+  typDWord.CreateField('Extra'   , @dword_Extra   , @dword_Extra   );
+  typDWord.CreateField('Ultra'   , @dword_Ultra   , @dword_Ultra   );
+  typDWord.CreateField('LowWord' , @dword_LowWord , @dword_LowWord );
+  typDWord.CreateField('HighWord', @dword_HighWord, @dword_HighWord);
 
   {Los operadores deben crearse con su precedencia correcta
   Precedencia de operadores en Pascal:
@@ -3653,7 +3705,7 @@ begin
   opr.CreateOperation(typBit,@ROB_byte_xor_bit);
 
   opr:=typByte.CreateUnaryPreOperator('NOT', 6, 'not', @ROU_not_byte);
-  opr:=typByte.CreateUnaryPreOperator('@', 6, 'addr', @ROU_addr_byte);
+  opr:=typByte.CreateUnaryPreOperator('@', 6, 'addr', @ROU_address);
 
   opr:=typByte.CreateBinaryOperator('=',3,'equal');
   opr.CreateOperation(typByte,@ROB_byte_equal_byte);
@@ -3717,7 +3769,7 @@ begin
   opr:=typWord.CreateBinaryOperator('UMULWORD',5,'umulword');  //suma
   opr.CreateOperation(typWord,@ROB_word_umulword_word);
 
-  opr:=typWord.CreateUnaryPreOperator('@', 6, 'addr', @ROU_addr_word);
+  opr:=typWord.CreateUnaryPreOperator('@', 6, 'addr', @ROU_address);
 
   //////////////////////////////////////////
   //////// Operaciones con DWord ////////////
@@ -3739,6 +3791,11 @@ begin
   opr.CreateOperation(typDWord,@ROB_dword_add_dword);
 //  opr.CreateOperation(typByte,@ROB_word_add_byte);
 
+  //////// Operaciones con String ////////////
+  opr:=typString.CreateUnaryPreOperator('@', 6, 'addr', @ROU_address);
+  opr:=typString.CreateBinaryOperator('+',4,'add');  //add
+  opr.CreateOperation(typString,@ROB_string_add_string);
+  opr.CreateOperation(typChar,@ROB_string_add_char);
 end;
 procedure TGenCod.DefPointerArithmetic(etyp: TxpEleType);
 {Configura ls operaciones que definen la aritmética de punteros.}
@@ -3805,25 +3862,69 @@ begin
 end;
 procedure TGenCod.CreateSystemElements;
 {Inicia los elementos del sistema. Se ejecuta cada vez que se compila.}
+  procedure AddParam(var pars: TxpParFuncArray; parName: string; const srcPos: TSrcPos;
+                     typ0: TxpEleType; adicDec: TxpAdicDeclar);
+  //Create a new parameter to the function.
+  var
+    n: Integer;
+  begin
+    //Add record to the array
+    n := high(pars)+1;
+    setlength(pars, n+1);
+    pars[n].name := parName;  //Name is not important
+    pars[n].srcPos := srcPos;
+    pars[n].typ  := typ0;  //Agrega referencia
+    pars[n].adicVar.hasAdic := adicDec;
+    pars[n].adicVar.hasInit := false;
+  end;
+  function CreateSystemFunction(name: string; retType: TxpEleType; const srcPos: TSrcPos;
+                                const pars: TxpParFuncArray;
+                                compile: TProcExecFunction): TxpEleFun;
+  {Create a new system function in the current element of the Syntax Tree.
+   Returns the reference to the function created.}
+  var
+     fundec: TxpEleFunDec;
+     bod: TxpEleBody;
+  begin
+    //Add declaration
+    curLocation := locInterface;
+    fundec := AddFunctionDEC(name, retType, srcPos, pars, false);
+    //Implementation
+    {Note that implementation is added always after declarartion. It's not the usual
+    in common units, where all declarations are first}
+    curLocation := locImplement;
+    Result := AddFunctionIMP(name, retType, srcPos, fundec);
+    //Here varaibles can be added
+    {Create a body, to be uniform with normal function and for have a space where
+    compile code and access to posible variables or other elements.}
+    bod := CreateBody;
+    bod.srcDec := srcPos;
+    TreeElems.AddElement(bod);  //Add Body (not need to open)
+    Result.compile := compile;  //Set routine to geenrate code
+    TreeElems.CloseElement;  //Close function implementation
+  end;
 var
   f: TxpEleFun;  //índice para funciones
+  uni: TxpEleUnit;
+  pars: TxpParFuncArray;  //Array of parameters
+  srcPos: TSrcPos;
 begin
   //////// Funciones del sistema ////////////
   {Notar que las funciones del sistema no crean espacios de nombres.}
-  f := CreateSysFunction('delay_ms', nil, @fun_delay_ms);
-  f.adrr:=$0;
-  f.compile := @codif_delay_ms;  //rutina de compilación
+//  f := CreateSysFunction('delay_ms', nil, @fun_delay_ms);
+//  f.adrr:=$0;
+//  f.compile := @codif_delay_ms;  //rutina de compilación
   //Funciones INLINE
   f := CreateSysFunction('exit'     , nil, @fun_Exit);
   f := CreateSysFunction('Inc'      , nil, @fun_Inc);
   f := CreateSysFunction('Dec'      , nil, @fun_Dec);
-  f := CreateSysFunction('Ord'      , @callParam, @fun_Ord);
-  f := CreateSysFunction('Chr'      , @callParam, @fun_Chr);
-  f := CreateSysFunction('Bit'      , @callParam, @fun_Bit);
-  f := CreateSysFunction('Boolean'  , @callParam, @fun_Bool);
-  f := CreateSysFunction('Byte'     , @callParam, @fun_Byte);
-  f := CreateSysFunction('Word'     , @callParam, @fun_Word);
-  f := CreateSysFunction('DWord'    , @callParam, @fun_DWord);
+  f := CreateSysFunction('Ord'      , @FunctParam, @fun_Ord);
+  f := CreateSysFunction('Chr'      , @FunctParam, @fun_Chr);
+  f := CreateSysFunction('Bit'      , @FunctParam, @fun_Bit);
+  f := CreateSysFunction('Boolean'  , @FunctParam, @fun_Bool);
+  f := CreateSysFunction('Byte'     , @FunctParam, @fun_Byte);
+  f := CreateSysFunction('Word'     , @FunctParam, @fun_Word);
+  f := CreateSysFunction('DWord'    , @FunctParam, @fun_DWord);
   f := CreateSysFunction('SetAsInput' ,nil, @fun_SetAsInput);
   f := CreateSysFunction('SetAsOutput',nil, @fun_SetAsOutput);
   f := CreateSysFunction('SetBank'  , nil, @fun_SetBank);
@@ -3841,9 +3942,68 @@ begin
   f_word_mul_word_16.adrr:=$0;
   f_word_mul_word_16.compile := @word_mul_word_16;
   //Inicializa eventos y funciones del compilador
-  CodDefinePointer:= @DefinePointer;
-  CodDefineArray  := @DefineArray;
-  CodValidRAMaddr := @ValidRAMaddr;
+  callDefinePointer:= @DefinePointer;
+  callDefineArray  := @DefineArray;
+  callValidRAMaddr := @ValidRAMaddr;
+  callStartProgram := @Cod_StartProgram;
+  callEndProgram   := @Cod_EndProgram;
+  //Create "System" Unit. Must be done once in First Pass
+  {Originally system functions were created in a special list and has a special treatment
+  but it implied a lot of work for manage the memory, linking, use of variables, and
+  optimization. Now we create a "system unit" like a real unit (more less) and we create
+  the system fucntion here, so we use the same code for linking, calling and optimization
+  that we use in common fucntions. Moreover, we can create private functions.}
+  uni := CreateUnit('-');
+  TreeElems.AddElementAndOpen(uni);  //Open Unit
+  //Create a fictional position
+  srcPos.fil := '';
+  srcPos.row := 1;
+  srcPos.col := 1;
+  {Create variables for aditional Working register. Note that this variables are
+  accesible (and usable) from the code, because the name assigned is a common variable.}
+  //Create register H as variable
+  H := AddVariable('__H', typByte, srcPos);
+  H.adicPar.hasAdic := decNone;
+  H.adicPar.hasInit := false;
+  H.location := locInterface;  //make visible
+  //Create register E as variable
+  E := AddVariable('__E', typByte, srcPos);
+  E.adicPar.hasAdic := decNone;
+  E.adicPar.hasInit := false;
+  E.location := locInterface;  //make visible
+  //Create register U as variable
+  U := AddVariable('__U', typByte, srcPos);
+  U.adicPar.hasAdic := decNone;
+  U.adicPar.hasInit := false;
+  U.location := locInterface;  //make visible
+
+  //Create system function "delay_ms" with byte parameter
+  setlength(pars, 0);  //Reset parameters
+  AddParam(pars, 'ms', srcPos, typByte, decRegis);  //Add parameter
+  f_delay_msB := CreateSystemFunction('delay_ms', typNull, srcPos,  pars, @codif_delay_ms);
+  AddCallerTo(H, f.BodyNode); {Adds this dependency because, like this is a system function,
+                           won`t be compiled in the First pass, that is when references are created.
+                           As we need to use W. We declare a call.}
+  //Create system function "delay_ms" with word parameter
+  setlength(pars, 0);  //Reset parameters
+  AddParam(pars, 'ms', srcPos, typWord, decRegis);  //Add parameter
+  f_delay_msW := CreateSystemFunction('delay_ms', typNull, srcPos,  pars, @codif_delay_ms2);
+  AddCallerTo(H, f.BodyNode); //Adds this dependency.
+//
+//  //Multiply system function
+//  setlength(pars, 0);  //Reset parameters
+//  AddParam(pars, 'A', srcPos, typByte, decNone);  //Add parameter
+//  AddParam(pars, 'B', srcPos, typByte, decNone);  //Add parameter
+//  f_byte_mul_byte_16 := CreateSystemFunction('byte_mul_byte_16', typWord, srcPos, pars, @byte_mul_byte_16);
+//  AddCallerTo(H, f_byte_mul_byte_16.BodyNode);  //We'll need to return result.
+//
+//  //Word shift left
+//  setlength(pars, 0);  //Reset parameters
+//  AddParam(pars, 'n', srcPos, typByte, decRegisX);   //Parameter counter shift
+//  f_word_shift_l := CreateSystemFunction('word_shift_l', typWord, srcPos, pars, @word_shift_l);
+//  AddCallerTo(H, f_word_shift_l.BodyNode);  //We'll need to return result.
+//
+  TreeElems.CloseElement; //Close Unit
 end;
 end.
 

@@ -622,7 +622,7 @@ begin
     genError('Not implemented: "%s"', [Opr.OperationString]);
   end;
 end;
-procedure TGenCod.ROU_addr_byte(Opr: TxpOperator; SetRes: boolean);
+procedure TGenCod.ROU_address(Opr: TxpOperator; SetRes: boolean);
 {Devuelve la dirección de una variable.}
 begin
   case p1^.Sto of
@@ -754,7 +754,7 @@ begin
     SetROBResultExpres_byte(Opt);
     //p1 está en la pila y p2 en el acumulador
     rVar := GetVarByteFromStk;
-    kANDWF(rVar.adrByte0, toW);
+    kANDWF(rVar.addr0, toW);
     FreeStkRegisterByte;   //libera pila porque ya se uso
   end;
   else
@@ -845,7 +845,7 @@ begin
     SetROBResultExpres_byte(Opt);
     //p1 está en la pila y p2 en el acumulador
     rVar := GetVarByteFromStk;
-    kIORWF(rVar.adrByte0, toW);
+    kIORWF(rVar.addr0, toW);
     FreeStkRegisterByte;   //libera pila porque ya se uso
   end;
   else
@@ -908,7 +908,7 @@ begin
     SetROBResultExpres_byte(Opt);
     //p1 está en la pila y p2 en el acumulador
     rVar := GetVarByteFromStk;
-    kXORWF(rVar.adrByte0, toW);
+    kXORWF(rVar.addr0, toW);
     FreeStkRegisterByte;   //libera pila porque ya se uso
   end;
   else
@@ -983,7 +983,7 @@ begin
     SetROBResultExpres_bool(Opt, false);   //Se pide Z para el resultado
     //la expresión p1 debe estar salvada y p2 en el acumulador
     rVar := GetVarByteFromStk;
-    kSUBWF(rVar.adrByte0, toW);  //compara directamente a lo que había en pila.
+    kSUBWF(rVar.addr0, toW);  //compara directamente a lo que había en pila.
     FreeStkRegisterByte;   //libera pila porque se usará el dato ahí contenido
   end;
   else
@@ -1052,7 +1052,7 @@ begin
     stConst : begin
       //Caso especial de asignación a puntero derefrrenciado: variable^
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona byte bajo
+      kMOVWF(FSR.addr);  //direcciona byte bajo
       //Asignación normal
       if value2L=0 then begin
         //caso especial
@@ -1073,7 +1073,7 @@ begin
     stVariab: begin
       //Caso especial de asignación a puntero dereferenciado: variable^
       kMOVF(byte1, toW);
-      kMOVWF(FSR);  //direcciona byte bajo
+      kMOVWF(FSR.addr);  //direcciona byte bajo
       //Asignación normal
       kMOVF(byte2L, toW);
       _MOVWF(0);
@@ -1651,27 +1651,6 @@ begin
     genError(MSG_CANNOT_COMPL, [OperationStr(Opt)]);
   end;
 end;
-procedure TGenCod.ROU_addr_word(Opr: TxpOperator; SetRes: boolean);
-{Devuelve la dirección de una variable.}
-begin
-  case p1^.Sto of
-  stConst : begin
-    genError('Cannot obtain address of constant.');
-  end;
-  stVariab: begin
-    //Es una variable normal
-    //La dirección de una variable es constante
-    SetResultConst(typByte);
-    //No se usa p1^.offs, porque solo retorna 7 bits;
-    res.valInt := p1^.rVar.addr and $ff;
-  end;
-  stExpres: begin  //ya está en STATUS.Z
-    genError('Cannot obtain address of an expression.');
-  end;
-  else
-    genError('Cannot obtain address of this operand.');
-  end;
-end;
 
 //////////// Operaciones con Dword
 procedure TGenCod.ROB_dword_asig_byte(Opt: TxpOperation; SetRes: boolean);
@@ -1804,8 +1783,7 @@ begin
     _BANKSEL(E.bank);
     _MOVF(E.offs, toW);
     kMOVWF(byte1E);
-    _BANKSEL(U.bank);
-    _MOVF(U.offs, toW);
+    kMOVF(U.addr, toW);
     kMOVWF(byte1U);
   end;
   else
@@ -1992,5 +1970,33 @@ procedure TGenCod.ROB_dword_difer_dword(Opt: TxpOperation; SetRes: boolean);
 begin
   ROB_dword_equal_dword(Opt, SetRes);
   res.Invert;
+end;
+
+//////////// Operaciones con Char
+procedure TGenCod.ROB_string_add_string(Opt: TxpOperation; SetRes: boolean);
+{Implementation of string is incomplete. Just created this oepration to facilitate
+initialization of ARRAY OF chars with string}
+begin
+  case stoOperation of
+  stConst_Const: begin  //Special case. Comapares constants.
+    SetResultConst(typString);
+    res.valStr := p1^.valStr + p2^.valStr;
+  end;
+  else
+    genError(MSG_CANNOT_COMPL, [OperationStr(Opt)]);
+  end;
+end;
+procedure TGenCod.ROB_string_add_char(Opt: TxpOperation; SetRes: boolean);
+{Implementation of string is incomplete. Just created this oepration to facilitate
+initialization of ARRAY OF chars with string}
+begin
+  case stoOperation of
+  stConst_Const: begin  //Special case. Comapares constants.
+    SetResultConst(typString);
+    res.valStr := p1^.valStr + chr(p2^.valInt);
+  end;
+  else
+    genError(MSG_CANNOT_COMPL, [OperationStr(Opt)]);
+  end;
 end;
 

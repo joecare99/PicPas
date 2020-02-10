@@ -190,7 +190,7 @@ var
 
 procedure SetLanguage;
 begin
-//  ParserAsm_PIC16.SetLanguage;
+  CompMain.SetLanguage;
 {$I ..\language\tra_ParserDirec.pas}
 end;
 { TDirOperand }
@@ -858,7 +858,7 @@ procedure TParserDirecBase.ProcIFDEF(lin: string; negated: boolean);
       //Agrega el nodo para guardar información para la segunda pasada
       xDirec := TxpEleDIREC.Create;
       xDirec.srcDec := cIn.ReadSrcPos;   //guarda posición de aparición
-      TreeDirec.AddElement(xDirec, false);  //Agrega sin verificación de nombre
+      TreeDirec.AddElement(xDirec);
       //Evalúa
       Result := (DefinedMacro(Ident) or DefinedVar(Ident, dvar)) xor negated;
       //Guarda resultado
@@ -923,7 +923,7 @@ procedure TParserDirecBase.ProcIF(lin: string; negated: boolean);
       //Agrega el nodo para guardar información para la segunda pasada
       xDirec := TxpEleDIREC.Create;
       xDirec.srcDec := cIn.ReadSrcPos;   //guarda posición de aparición
-      TreeDirec.AddElement(xDirec, false);  //Agrega sin verificación de nombre
+      TreeDirec.AddElement(xDirec);  //Agrega sin verificación de nombre
       //Evalúa
       varValue := CogExpresion(0);
       //No debería seguir nada más
@@ -1731,6 +1731,7 @@ begin
   varsList := TDirVar_list.Create(true);
   instList := TDirInstruc_list.Create(true);
   DefLexDirectiv;
+  callProcDIRline := @ProcDIRline;
 end;
 destructor TParserDirecBase.Destroy;
 begin

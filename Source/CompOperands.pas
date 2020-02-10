@@ -63,10 +63,12 @@ public  //Campos acceso cuando sea variable.
   function Lbank: TVarBank; inline;  //banco
   function bit : byte; inline;  //posición del bit
 public  //Campos de acceso a los valores constantes
+  property Value   : TConsValue read FValue;
   property valInt  : Int64 read FValue.ValInt write SetvalInt;
   property valFloat: extended read FValue.ValFloat write SetvalFloat;
   property valBool : boolean read FValue.ValBool write SetvalBool;
-  //funciones de ayuda para adaptar los tipos numéricos
+  property valStr  : string read FValue.ValStr write FValue.ValStr;
+  //Funciones de ayuda para adaptar los tipos numéricos
   function aWord: word; inline;  //devuelve el valor en Word
   function LByte: byte; inline;  //devuelve byte bajo de valor entero
   function HByte: byte; inline;  //devuelve byte alto de valor entero
@@ -78,8 +80,19 @@ public  //Campos de acceso a los valores constantes
   //métodos para mover valores desde/hacia una constante externa
   procedure CopyConsValTo(var c: TxpEleCon);
   procedure GetConsValFrom(const c: TxpEleCon);
+private //Manage items
+  curSize: integer;
+  function GetNItems: integer;
+public  //Manage items when it's constant array
+  property nItems: integer read GetNItems;
+  procedure InitItems;
+  procedure AddConsItem(const c: TConsValue);
+  procedure CloseItems;
+  procedure StringToArrayOfChar(str: string);
 end;
 TOperandPtr = ^TOperand;
+
+{ TCompOperands }
 
 TCompOperands = class
 protected //Access to properties of p1^ y p2^.
@@ -95,16 +108,16 @@ protected //Access to properties of p1^ y p2^.
   function value2H: word;
   function bit1: TPicRegisterBit;
   function bit2: TPicRegisterBit;
-  function byte1: TPicRegister;
-  function byte1L: TPicRegister;
-  function byte1H: TPicRegister;
-  function byte1E: TPicRegister;
-  function byte1U: TPicRegister;
-  function byte2: TPicRegister;
-  function byte2L: TPicRegister;
-  function byte2H: TPicRegister;
-  function byte2E: TPicRegister;
-  function byte2U: TPicRegister;
+  function byte1: word;
+  function byte1L: word;
+  function byte1H: word;
+  function byte1E: word;
+  function byte1U: word;
+  function byte2: word;
+  function byte2L: word;
+  function byte2H: word;
+  function byte2E: word;
+  function byte2U: word;
   function stoOperation: TStoOperandsROB; inline;
   procedure ExchangeP1_P2;
   function OperationStr(Opt: TxpOperation): string;
@@ -281,35 +294,59 @@ begin
 end;
 procedure TOperand.CopyConsValTo(var c: TxpEleCon);
 begin
-  //hace una copia selectiva por velocidad, de acuerdo al grupo
-  case Typ.grp of
-  t_boolean : c.val.ValBool:=FValue.ValBool;
-  t_integer,
-  t_uinteger: c.val.ValInt  := FValue.ValInt;
-  t_float   : c.val.ValFloat:= FValue.ValFloat;
-  t_string  : c.val.ValStr  := FValue.ValStr;
-  else
-    MsgErr('Internal PicPas error');
-    {En teoría, cualquier valor constante que pueda contener TOperand, debería poder
-    transferirse a una constante, porque usan el mismo contenedor, así que si pasa esto
-    solo puede ser que faltó implementar.}
-  end;
+  c.val := FValue;
 end;
 procedure TOperand.GetConsValFrom(const c: TxpEleCon);
 {Copia valores constante desde una constante. Primero TOperand, debería tener inicializado
  correctamente su campo "catTyp". }
 begin
-  case Typ.grp of
-  t_boolean : FValue.ValBool := c.val.ValBool;
-  t_integer,
-  t_uinteger: FValue.ValInt := c.val.ValInt;
-  t_float   : FValue.ValFloat := c.val.ValFloat;
-  t_string  : FValue.ValStr := c.val.ValStr;
-  else
-    MsgErr('Internal PicPas error');
-    //faltó implementar.
+  FValue := c.val;
+end;
+function TOperand.GetNItems: integer;
+{Returns the number of items when operand is a static array.}
+begin
+  if Sto = stVariab then begin
+    //It's a variable
+    exit(rVar.typ.nItems)
+  end else if Sto = stConst then begin
+    exit(FValue.nItems);
+  end else begin
+      exit(0);
   end;
 end;
+//Manage items
+const CONS_ITEM_BLOCK = 3;
+procedure TOperand.InitItems;
+begin
+  FValue.nItems := 0;
+  curSize := CONS_ITEM_BLOCK;   //Block size
+  setlength(FValue.items, curSize);  //initial size
+end;
+procedure TOperand.AddConsItem(const c: TConsValue);
+begin
+  FValue.items[FValue.nItems] := c;
+  inc(FValue.nItems);
+  if FValue.nItems >= curSize then begin
+    curSize += CONS_ITEM_BLOCK;   //Increase size by block
+    setlength(FValue.items, curSize);  //make space
+  end;
+end;
+procedure TOperand.CloseItems;
+begin
+  setlength(FValue.items, FValue.nItems);
+end;
+procedure TOperand.StringToArrayOfChar(str: string);
+{Init the constant value as array of char from a string.}
+var
+  i: Integer;
+begin
+  FValue.nItems := length(str);
+  setlength(FValue.items, FValue.nItems);
+  for i:=0 to FValue.nItems-1 do begin
+    FValue.items[i].ValInt := ord(str[i+1]);
+  end;
+end;
+
 function TOperand.GetTyp: TxpEleType;
 {Devuelve el tipo de la variable referenciada. }
 begin
@@ -394,9 +431,7 @@ end;
 procedure TOperand.SetAsNull;
 {Configura al operando como de tipo Null}
 begin
-  {Se pone como constante, que es el tipo más simple, además se protege, pro si era
-  variable}
-  FSto := stConst;
+  FSto := stNull;
   FTyp := typNull;   //Este es el tipo NULO
 end;
 function TOperand.StoOpStr: string;
@@ -465,45 +500,45 @@ function TCompOperands.value2H: word; inline;
 begin
   Result := p2^.HByte;
 end;
-function TCompOperands.byte1: TPicRegister; inline;
+function TCompOperands.byte1: word;
 begin
-  Result := p1^.rVar.adrByte0;
+  Result := p1^.rVar.addr0;
 end;
-function TCompOperands.byte1L: TPicRegister; inline;
+function TCompOperands.byte1L: word;
 begin
-  Result := p1^.rVar.adrByte0;
+  Result := p1^.rVar.addr0;
 end;
-function TCompOperands.byte1H: TPicRegister; inline;
+function TCompOperands.byte1H: word;
 begin
-  Result := p1^.rVar.adrByte1;
+  Result := p1^.rVar.addr1;
 end;
-function TCompOperands.byte1E: TPicRegister;
+function TCompOperands.byte1E: word;
 begin
-  Result := p1^.rVar.adrByte2;
+  Result := p1^.rVar.addr2;
 end;
-function TCompOperands.byte1U: TPicRegister;
+function TCompOperands.byte1U: word;
 begin
-  Result := p1^.rVar.adrByte3;
+  Result := p1^.rVar.addr3;
 end;
-function TCompOperands.byte2: TPicRegister; inline;
+function TCompOperands.byte2: word; inline;
 begin
-  Result := p2^.rVar.adrByte0;
+  Result := p2^.rVar.addr0;
 end;
-function TCompOperands.byte2L: TPicRegister; inline;
+function TCompOperands.byte2L: word;
 begin
-  Result := p2^.rVar.adrByte0;
+  Result := p2^.rVar.addr0;
 end;
-function TCompOperands.byte2H: TPicRegister; inline;
+function TCompOperands.byte2H: word;
 begin
-  Result := p2^.rVar.adrByte1;
+  Result := p2^.rVar.addr1;
 end;
-function TCompOperands.byte2E: TPicRegister;
+function TCompOperands.byte2E: word;
 begin
-  Result := p2^.rVar.adrByte2;
+  Result := p2^.rVar.addr2;
 end;
-function TCompOperands.byte2U: TPicRegister;
+function TCompOperands.byte2U: word;
 begin
-  Result := p2^.rVar.adrByte3;
+  Result := p2^.rVar.addr3;
 end;
 function TCompOperands.bit1: TPicRegisterBit; inline;
 begin
