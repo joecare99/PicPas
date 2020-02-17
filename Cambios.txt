@@ -14,6 +14,8 @@ Se mejora el desensamblado para la serie 16F mejorada.
 Se corrige la rutina TGenCodBas.PICCurBank() en la unidad GenCodBas_PIC17. 
 Se corrige un error en la rutina TCompOperands.byte2() de la unidad CompOperands.
 Se agrega la instrucción MOVLB en el archivo de sintaxis de ensamblador.
+Se usa una versión corregida de PicUtils. La corrección tiene que ver con el método 
+TPIC16.Disassembler(), en el desensamblado de la instrucción i_MOVWF.
 
 PicPas 0.8.8
 ============
