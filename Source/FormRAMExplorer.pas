@@ -3,19 +3,27 @@ unit FormRAMExplorer;
 interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, LCLType,
-  FrameRamExplorer, Pic16Utils;
+  ExtCtrls, StdCtrls, FrameRamExplorer, CompBase;
 type
 
   { TfrmRAMExplorer }
 
   TfrmRAMExplorer = class(TForm)
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    panStatBar: TPanel;
+    Shape1: TShape;
+    Shape2: TShape;
+    Shape3: TShape;
+    Shape4: TShape;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     fra: TfraRamExplorer;
   public
-    pic: TPIC16;
-    procedure Exec(pic0: TPIC16);
+    procedure Exec(cxp0: TCompilerBase);
   end;
 
 var
@@ -32,6 +40,9 @@ begin
   fra:= TfraRamExplorer.Create(self);
   fra.Parent := self;
   fra.panTitle.Visible := false;
+  Shape1.Brush.Color := $FF9090;
+  Shape4.Brush.Color := $80FF80;
+  Shape3.Brush.Color := clGray;
 end;
 
 procedure TfrmRAMExplorer.FormKeyDown(Sender: TObject; var Key: Word;
@@ -47,11 +58,10 @@ begin
   end;
 end;
 
-procedure TfrmRAMExplorer.Exec(pic0: TPIC16);
+procedure TfrmRAMExplorer.Exec(cxp0: TCompilerBase);
 begin
-  pic := pic0;
-  fra.pic := pic0;
-  Caption := 'RAM Explorer. PICModel=' + pic0.Model;
+  fra.SetCompiler(cxp0);
+  Caption := 'RAM Explorer. PICModel=' + cxp0.PICName;
   Show;
   self.Width := 600;
   self.Height := 480;

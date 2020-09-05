@@ -15,12 +15,16 @@ var
    //Variables globales
    MsjError    : String;    //Bandera - Mensaje de error
    //Rutas sin "/" final
-   rutApp     : string;     //ruta de la aplicación
-   rutSamples : string;     //ruta de la carpeta de scripts
-   rutUnits   : string;     //ruta para guardar las sintaxis
-   rutTemp    : string;     //ruta para los archivos temporales
-   rutSyntax  : string;     //ruta de los archivos de sintaxis
-   rutThemes  : string;     //ruta de los archivos de temas
+   patApp     : string;     //ruta de la aplicación
+   patSamples : string;     //ruta de la carpeta de scripts
+   patUnits   : string;     //ruta para guardar las sintaxis
+   patTemp    : string;     //ruta para los archivos temporales
+   patSyntax  : string;     //ruta de los archivos de sintaxis
+   patThemes  : string;     //ruta de los archivos de temas
+   patDevices10 : string;     //ruta para guardar unidades
+   patDevices16 : string;     //ruta para guardar unidades
+   patDevices17 : string;     //ruta para guardar unidades
+   patDevices18 : string;     //ruta para guardar unidades
 
    archivoEnt  : string;    //archivo de entrada
    MostrarError: Boolean;   //Bandera para mostrar mensajesde error.
@@ -39,7 +43,7 @@ var
 //const
 // TestRec: TTranslation = (en: 'Something'; es: 'algo'; );
 
-function Trans(const strEn, strEs, strQu, strDe, strUk, strRu: string): string;
+function Trans(const strEn, strEs, strQu, strDe, strUk, strRu, strFr: string): string;
 //////////////////////////////////////////////////////
 function LeerParametros: boolean;
 function NombDifArc(nomBase: String): String;
@@ -49,7 +53,7 @@ const
   WA_DIR_NOEXIST = 'Directory: %s no found. It will be created';
   ER_CANN_READDI = 'Cannot read or create directories.';
 
-function Trans(const strEn, strEs, strQu, strDe, strUk, strRu: string): string;
+function Trans(const strEn, strEs, strQu, strDe, strUk, strRu, strFr: string): string;
   function ClearLangId(str: string): string;
   {Limpia la cadena del caracter identificador de lenguaje, de la forma:
   #en=
@@ -83,13 +87,17 @@ begin
   end;  //por defecto
   'uk': begin
      Result := ClearLangId(strUk);
-     if Result = '' then Result := ClearLangId(strEn);
-  end;  //por defecto
+     if Result = '' then Result := ClearLangId(strEn); //por defecto
+  end;
   'ru': begin
      Result := ClearLangId(strRu);
-     if Result = '' then Result := ClearLangId(strEn);
-  end;  //por defecto
-  else
+     if Result = '' then Result := ClearLangId(strEn); //por defecto
+  end;
+  'fr': begin
+     Result := ClearLangId(strFr);
+     if Result = '' then Result := ClearLangId(strEn); //por defecto
+  end;
+  else  //Por defecto Inglés
     Result := ClearLangId(strEn);
   end;
 end;
@@ -168,34 +176,54 @@ End;
 
 initialization
   //inicia directorios de la aplicación
-  rutApp :=  ExtractFilePath(Application.ExeName);  //incluye el '\' final
-  rutSamples := rutApp + 'samples';
-  rutUnits   := rutApp + 'units';
-  rutTemp    := rutApp + 'temp';
-  rutSyntax  := rutApp + 'syntax';
-  rutThemes  := rutApp + 'themes';
-  archivoEnt := '';    //archivo de entrada
+  patApp      :=  ExtractFilePath(Application.ExeName);  //incluye el '\' final
+  patSamples  := patApp + 'samples';
+  patUnits    := patApp + 'units';
+  patTemp     := patApp + 'temp';
+  patSyntax   := patApp + 'syntax';
+  patThemes   := patApp + 'themes';
+  patDevices10 := patApp + 'devices10';
+  patDevices16 := patApp + 'devices16';
+  patDevices17 := patApp + 'devices17';
+  patDevices18 := patApp + 'devices18';
+  archivoEnt  := '';    //archivo de entrada
   //verifica existencia de carpetas de trabajo
   try
-    if not DirectoryExists(rutSamples) then begin
-      msgexc(WA_DIR_NOEXIST, [rutSamples]);
-      CreateDir(rutSamples);
+    if not DirectoryExists(patSamples) then begin
+       msgexc(WA_DIR_NOEXIST, [patSamples]);
+       CreateDir(patSamples);
     end;
-    if not DirectoryExists(rutUnits) then begin
-       msgexc(WA_DIR_NOEXIST, [rutUnits]);
-       CreateDir(rutUnits);
-     end;
-    if not DirectoryExists(rutTemp) then begin
-       msgexc(WA_DIR_NOEXIST, [rutTemp]);
-       CreateDir(rutTemp);
+    if not DirectoryExists(patUnits) then begin
+       msgexc(WA_DIR_NOEXIST, [patUnits]);
+       CreateDir(patUnits);
     end;
-    if not DirectoryExists(rutSyntax) then begin
-       msgexc(WA_DIR_NOEXIST, [rutSyntax]);
-       CreateDir(rutSyntax);
+    if not DirectoryExists(patDevices10) then begin
+       msgexc(WA_DIR_NOEXIST, [patDevices10]);
+       CreateDir(patDevices10);
     end;
-    if not DirectoryExists(rutThemes) then begin
-       msgexc(WA_DIR_NOEXIST, [rutThemes]);
-      CreateDir(rutThemes);
+    if not DirectoryExists(patDevices16) then begin
+       msgexc(WA_DIR_NOEXIST, [patDevices16]);
+       CreateDir(patDevices16);
+    end;
+    if not DirectoryExists(patDevices17) then begin
+       msgexc(WA_DIR_NOEXIST, [patDevices17]);
+       CreateDir(patDevices17);
+    end;
+    if not DirectoryExists(patDevices18) then begin
+       msgexc(WA_DIR_NOEXIST, [patDevices18]);
+       CreateDir(patDevices18);
+    end;
+    if not DirectoryExists(patTemp) then begin
+       msgexc(WA_DIR_NOEXIST, [patTemp]);
+       CreateDir(patTemp);
+    end;
+    if not DirectoryExists(patSyntax) then begin
+       msgexc(WA_DIR_NOEXIST, [patSyntax]);
+       CreateDir(patSyntax);
+    end;
+    if not DirectoryExists(patThemes) then begin
+       msgexc(WA_DIR_NOEXIST, [patThemes]);
+      CreateDir(patThemes);
     end;
 
   except
@@ -205,10 +233,14 @@ initialization
 finalization
   //Por algún motivo, la unidad HeapTrc indica que hay gotera de memoria si no se liberan
   //estas cadenas:
-  rutApp :=  '';
-  rutSamples := '';
-  rutUnits := '';
-  rutTemp := '';
-  rutSyntax := '';
+  patApp :=  '';
+  patSamples := '';
+  patUnits := '';
+  patDevices10 := '';
+  patDevices16 := '';
+  patDevices17 := '';
+  patDevices18 := '';
+  patTemp := '';
+  patSyntax := '';
 end.
 

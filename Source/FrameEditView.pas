@@ -173,6 +173,7 @@ type
     procedure AgregArcReciente(arch: string);
   public   //Inicialización
     procedure UpdateSynEditConfig;
+    procedure UpdateSynEditCompletion;
     procedure InitMenuRecents(menRecents0: TMenuItem; RecentList: TStringList;
       MaxRecents0: integer = 5);
     constructor Create(AOwner: TComponent) ; override;
@@ -1072,7 +1073,7 @@ begin
   case Upcase(ext) of
   '.PAS': begin
       //Es Pascal
-      synFile := rutSyntax + DirectorySeparator + 'PicPas_PIC16.xml';
+      synFile := patSyntax + DirectorySeparator + 'PicPas_PIC16.xml';
       if not FileExists(synFile) then begin
         MsgErr(MSG_NOSYNFIL, [synFile]);
         exit;
@@ -1085,7 +1086,7 @@ begin
     end;
   '.ASM','.LST': begin
       //Es Ensamblador
-      synFile := rutSyntax + DirectorySeparator + 'PicPas_AsmPic.xml';
+      synFile := patSyntax + DirectorySeparator + 'PicPas_AsmPic.xml';
       if not FileExists(synFile) then begin
         MsgErr(MSG_NOSYNFIL, [synFile]);
         exit;
@@ -1097,7 +1098,7 @@ begin
    end;
   '.C': begin
      //Es C
-     synFile := rutSyntax + DirectorySeparator + 'PicPas_C.xml';
+     synFile := patSyntax + DirectorySeparator + 'PicPas_C.xml';
      if not FileExists(synFile) then begin
        MsgErr(MSG_NOSYNFIL, [synFile]);
        exit;
@@ -1140,7 +1141,7 @@ begin
   ed := AddEdit('');   //Dispara OnSelecEditor
   if Pos(DirectorySeparator, fileName) = 0 then begin
     //Es ruta relativa, la vuelve abosulta
-    fileName := rutApp + fileName;
+    fileName := patApp + fileName;
   end;
   ed.LoadFile(fileName);
   if ed.Error='' then begin
@@ -1335,7 +1336,7 @@ begin
     RecentFiles.Delete(MaxRecents);
 end;
 procedure TfraEditView.UpdateSynEditConfig;
-{Indica que se desea cambiar la configuración de los SynEdit.}
+{Indica que se desea cambiar la configuración de todos los SynEdit abiertos.}
 var
   i: Integer;
 begin
@@ -1345,9 +1346,19 @@ begin
       OnRequireSynEditConfig(editors[i].SynEdit);
     end;
     //Actualiza resaltador
-    ConfigureSyntax(editors[i], false);
+    ConfigureSyntax(editors[i]);
   end;
 end;
+procedure TfraEditView.UpdateSynEditCompletion;
+var
+  i: Integer;
+begin
+  //Pide configurar completado para todos los editores abiertos
+  for i:=0 to editors.Count-1 do begin
+    if OnRequireSetCompletion<>nil then OnRequireSetCompletion(editors[i]);
+  end;
+end;
+
 //Inicialización
 procedure TfraEditView.InitMenuRecents(menRecents0: TMenuItem; RecentList: TStringList;
       MaxRecents0: integer=5);

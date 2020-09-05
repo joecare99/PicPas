@@ -1,34 +1,61 @@
-PicPas 0.8.4
+PicPas 0.9.0
 ============
-* Se crea el campo TgenCodPic.lastOpCode, para almacenar la última instrucción compilada, y se
-modifican las instrucciones "k" para que usen este campo.
-* Se Modifican las clases TPicRegister y TPicRegisterBit, en XpresTypesPIC, para agregar el campo 
-"addr" y convertir los campos "offs" y "bank" en propiedades de solo lectura.
-* Se modifican diversas rutinas afectadas, especialmente de la unidad "GenCodPic", para adaptarse 
-a la nueva definición de TPicRegister y TPicRegisterBit.
-* Se pasa a usar la versión 1.3 de PicUtils.
-* Se simplifica la definición del almacenamiento: stVarRefVar y se actualizan las rutinas 
-aefctadas.
-* Se reemplazan diversas rutinas del generador de código, con instrucciones "k".
-* Se cambia por completo los contenedores de las direcciones de memoria de la clase TxpEleVar,
-y se adaptan diversas rutinas para trabajar con este nuevo tipo de almacenamiento.
-* Se implementa la operación MOD para bytes.
-* Se crea ún nuevo patrón de pruebas para los tipos Byte, incluyendo la operación MOD.
-* Se modifica la ventana de depuración para que muestre el desensambaldo de forma similar a como
-se muestra en la ventana principal.
-* Se mueve AddCaller() de TGenCodPic a TCompilerBase, y usa en lugar del evento 
-TxpElement.AddCaller() que es eliminado.
-* Se pasa a usar la versión 1.7 de la librería ogMotEdicion.
-* Se activa un menú contextual en el editor gráfico de la ventana de depuración.
-* Se crea el objeto gráfico TOgLogicState, en la ventana de depuración. Pero no es aún funcional.
-* Se compila una versión del binario para Mac (Colaboración de https://github.com/cuistax).
+Se actualizan rutas/versiones de las librerías.
+Se modifica la unidad XpresTypesPIC en la forma en que se define P65Pas, para facilitar la
+adquisición de las mejoras realizadas en este compilador.
+Se modifica la unidad XpresElementsPIC para que adquiera algunas mejoras de P65Pas.
+Se adaptan algunas rutinas de las unidades COmpiler_PICXX para que sean compatibles con las
+mejoras de P65Pas.
+Se mejora la interfaz, cambiando el ToolBar por un CoolBar y se mejora el botón de selección
+del compilador.
+Se corrige la rutina TGenCodBas.GenCodBank() de la unidad GenCodBas_PIC17, para detectar mejor
+a las direcciones que están mapeadas en todos los bancos.
+Se mejora el desensamblado para la serie 16F mejorada.
+Se corrige la rutina TGenCodBas.PICCurBank() en la unidad GenCodBas_PIC17. 
+Se corrige un error en la rutina TCompOperands.byte2() de la unidad CompOperands.
+Se agrega la instrucción MOVLB en el archivo de sintaxis de ensamblador.
+Se usa una versión corregida de PicUtils. La corrección tiene que ver con el método 
+TPIC16.Disassembler(), en el desensamblado de la instrucción i_MOVWF.
+
+PicPas 0.8.8
+============
+## Cambios 
+Se corrige la reconstrucción del diagrama en la ventana de simulación. 
+Se quita la opción de compilación por línea de parámetros, ya que ahora se tiene más 
+compiladores y hay problemas en mostrar mensajes de error.
+Se incluyen menús para seleccionar el compilador por defecto.
+Se incluye traducciones para nuevos cadenas de la unidad FormPrincipal.
+Se incluye rutina para prueba de compilación de las unidades, y se pone acceso desde
+el menú principal (Herramientas>).
+Se agrega rutina de verificación de error en los métodos TGenCodBas.AssignRAMinByte().
+Se agrega leyenda en la ventana Explorador de RAM.
+Se pasa a trabajar con la versión 1.6 de PicUtils.
+Se incrementa parámetros a los comandos de la directiva: $SET_STATE_RAM, para poder definir el estado y zonas mapeadas en todos los bancos, con una sola directiva.
+Se actualizan las unidades de dispositivos, para que usen la nueva sintaxis de $SET_STATE_RAM.
+Se cambia el nombre de la carpeta /TestCode a /testcode16
+Se cambia el nombre de los menús de la unidad FrameArcExplor para hacerlos más consistentes con la terminología inglesa.
+Se agrega el menú "Crear copia" en la unidad FrameArcExplor.
+Se activa el atajo al menú contextual al menú de la unidad FrameArcExplor.
+Se cambia al atajo, desde la ventana principal, para mostrar el arbol de sintaxis. Ahora es ALt+F2.
+Se inhabilita la ejecución (simulación) cuando se compila una unidad.
+Se mejora el autocompletado, actualizando la librería SynFacilCompletion y corrigiendo FraEditView y CodeTools.
+Se crean las listas TXpTreeElements.AllCOnst, TXpTreeElements.AllUnits, TXpTreeElements.AllTypes y los métodos de llenado respectivo. 
+Se crean los métodos:
+ TCompilerBase.RemoveUnusedFunc
+ TCompilerBase.RemoveUnusedVars
+ TCompilerBase.RemoveUnusedCons
+ TCompilerBase.RemoveUnusedTypes
+ TCompilerBase.UpdateUsedUnits
+Y se crea documentación sobre estos nuevos métodos. 
+Se modifica TXpTreeElements.FindNext() y para corregir el acceso a campos de la sección IMPLEMENTATION de una unidad.
+Se corrige la asignación del nombre del nodo principal en el método TCompiler_PIC16.Compile().
+Se agregan rutinas para detectar a las unidades usadas.
+Se crea el nuevo elemento TxpEleFinal en la unidad XpresElementsPIC.
 
 PENDIENTES
+-Revisar los errores en el posicionamiento de los puntos de conexión resaltados, cuando se cambia el zoom y se hace desplazamiento.
 -Revisar el uso de bancos, para funciones del sistema, como delay_ms() y las llamadas que se
-hacen para algunas operacionas como DIV. Se sugiere primero eliminar TxpElement.AddCaller() 
-y definir un método como TCOmpilerBase.AddCallerTo() para realizar el mismo trabajo, de modo 
-que se pueda tener acceso a las variables de entorno del compilador como FirstPass y se evita el
-uso confuso de eventos, y se simplifica el código.
+hacen para algunas operacionas como DIV. 
 
 -Revisar si conviene crear el almacenamiento VarRefVarOff, para expresiones de tipo:
   (p+5)^
@@ -37,8 +64,7 @@ uso confuso de eventos, y se simplifica el código.
 -Reemplazar todas las rutinas del generador de código con las instrucciones "k" e ir 
 desapareciendo campos auxiliares de TOperand, como .bank o .offs.
 
--Revisar el manejo de bancos en el generador de código, cuando se usan instrucciones condicionales
-como BTFSS o DECFSZ, en los algoritmos.
+-Revisar el manejo de bancos en el generador de código, cuando se usan instrucciones condicionales como BTFSS o DECFSZ, en los algoritmos.
 -Revisar la implementación de IF THEN END, para optimizar el caso más simple, el que el cuerpo
 contiene una sola instrucción, evitando saltos innecesarios. 
 -Terminar de implementar los arreglos.
@@ -70,6 +96,142 @@ los lazos y condicionales.
 -Incluir el tipo integer con signo.
 -Revisar el comportamiento de los programas compilados, con más de un banco de memoria RAM
 y más de una página de ROM.
+
+PicPas 0.8.7
+============
+## Notas
+Esta versión consolida el soporte a la familia de PIC con instrucciones de 12 bits, incluyendo nuevas rutinas y corrigiendo algunas en el generador de código. Aún quedan puntos pendientes por revisar pero son incidencias menores.
+Además se continúan con los cambios en la arquitectura del proyecto que mejoren el soporte Multi-compilador de PicPas.
+Los cambios más notables son las mejoras considerables que se están incluyendo en el depurador/simulador, que ahora puede incluir componentes electrónicos adicionales al PIC. Además la simulación es mucho más completa y no se limita a solo simular valores digitales sino que se hace análisis de nodos con valores de voltaje e impedancias.
+
+## Cambios 
+- Se pasa a usar la librería PicUtils en su versión 1.5.
+- Se quita el soporte a los PIC de la serie 12F, en la directiva {$PROCESSOR}, porque se está prefiriendo la definición de micros, usando directivas más detalladas.
+- Se agregan métodos de acceso a p1^ y p2^ en la unidad Parser.
+- Se crea el método TCompilerBase.OperationStr() para dar más información sobre una operación ROB, y se pasa a usar en las unidades generadoras de código.
+- Se crea la directiva $SET_UNIMP_BITS1 para definir bits no implementados, fijos a 1.
+- Se crea la unidad ParserDirec para incluir rutinas comunes del "Parser" de  directivas, que se implementan para todos los compiladores, y se simplifican las unidades ParserDirec_PIC10 y ParserDirec_PIC16.
+- Se crean los método TParserDirecBase.AddSysVariableNumber() y AddSysVariableString() en la unidad ParserDirec y se implementa un método para agregar instrucciones de forma dinámica.
+- Se crean los archivos de traducción tra_GenCodBas.pas, tra_GenCod.pas  y las rutinas para el cambio del idioma.
+- Se corrigen la modificación de la bandera Z en TPIC16.Exec() y TPIC10.Exec().
+- Se revisan y corrigen varias rutinas del compilador PIC10, para que reemplacen correctamente a las instrucciones ADDLW y SUBLW. También se quita el uso del registro FSR que se usa en algunas rutinas de PIC16.
+- Se crean rutinas de pruebas para el compilador PIC10, en la ruta "/testcode10".
+- Se reemplazan más instrucciones del generador de código por instrucciones K, de modo que se amplía el trabajo a variables de bancos RAM diversos.
+- Se corrige un error en la visualización de etiquetas en la ventana del depurador.
+- Se crea la unidad FramePicAsm y se incluye la funcionalidad de mostrar el códgo ensamblador.
+- Se mejora el comportamiento del menú contextual para la ventana de depuración y se incluye la posibilidad de plegar código en el código ensamblador.
+- Se pasa a usar la version 2.4 de la librería ogEditGraf. 
+- Se agregan diversas funciones al frame FramePicDiagram, como puntos de conexión y resaltado, así como mejor manejo de las etiquetas y se corrige el error de la falta de coincidencia del cuadro de selección con la forma, en algunos casos.
+- Se incluyen elementos gráficos nuevos en el frame FramePicDiagram, y se incluyen conectores para poder enlazarlos a modo de conexiones.
+- Se crean dos temporizaciones independientes para referscar la ventana de Depuración.
+- Se modifica la implementación de la la directiva SET, para que considere como válidas, el uso de unidades como KHz y MHz.
+- Se cambia de nombre a las clases TgenCodBas_PIC16 por TgenCodBas y a TgenCodBas_PIC10 por TgenCodBas. 
+- Se crea, a modo experimental, las unidades necesarias para el compilador PIC17. 
+- Se mejora la lista de acceso, en la pantalla principal,  para seleccionar al compilador actual.
+- Se elimina la generación de archivos *.hex para las unidades, al momento de compilarlas. 
+- Se cambia la tecla de acceso a la compilación de F9 a Ctrl+F9.
+
+
+PicPas 0.8.6
+============
+* Se reemplazan más rutinas del generador de código de la unidad GenCod_PIC16 con instrucciones
+"k".
+* Se reescriben la rutina TGenCod.ROB_byte_and_byte(), TGenCod.ROB_byte_or_byte() y
+TGenCod.ROB_byte_xor_byte() para no usar TGenCod.opers_byte() y se incluyen algunas optimizaciones.
+* Se elimina TGenCod.opers_byte().
+* Se modifican los métodos AddrString, IsBitSize, IsByteSize, IsWordSize y IsDWordSize en 
+TxpEleType para que no accedan a los tipos typBit, typBool, ... y así puedan moverse estos 
+campos a la clase TCompilerBase.
+* Se mueve la declaración de tipos: typBit, typBool, typByte, typChar, typWord, typDWord a la
+clase TCOmpilerBase, para poder crear instancias independientes de compiladores, basados en 
+TCOmpilerBase.
+* Se cambia de nombre a TfrmPrincipal.Compiler por TfrmPrincipal.Compiler16 y se crea el
+objeto TfrmPrincipal.Compiler10
+* Se modifica la unidad "Parser" para incluir campos virtuales y abstractos en TCompilerBase. 
+* Se modifica frmPrincipal para que pueda trabajar con distintos compiladores, descendientes
+de la clase TCompilerBase.
+* Se rediseña gran parte de la unidad FrameRegWatcher para que acepte a un objeto TCompilerBase
+como fuente, de modo que ya no es específico de PIC16. Además se implementa la opción de mostrar 
+variables de tipo bit y se le crea un archivo de traducciones para el idioma.
+* Se modifica la unidad FrameRamExplorer para que acepte a un objeto TCompilerBase
+como fuente, de modo que ya no es específico de PIC16. 
+* Se modifica la unidad FrameRomExplorer para que acepte a un objeto TCompilerBase
+como fuente, de modo que ya no es específico de PIC16. 
+* Se crea el registro TWordRec en PicCore y se usa para optimizar el manejo de los campo PCH y 
+PCL de TPIC16 y TPIC10.
+* Se modifica FramePicregisters, para optimizar y modularizar la forma en que se muestran los 
+bits de un registro. Se quita, además, la descripción de los bits del registro  STATUS.
+* Se modifica la forma de llamar a TfrmPrincipal.frmDebug para poder indicarle el compilador y 
+el PIC, al momento de mostrar el formulario.
+* Se modifica FormDebugger para que pueda trabajar con los compiladores PIC10 y PIC16.
+* Se cambia la plantilla de Programa nuevo, para hacerla más actualziada a la forma de trabajo 
+actual, usando unidades.
+* Se actualizan los programas de la carpeta ejemplo, a la nueva forma de trabajar con las 
+unidades.
+* Se elimina el campo fraSynTree de la clase TCodeTools y se modifica TCodeTool.Create() para
+que acepte un compilador genérico de la clase TcompilerBase.
+* Se renombra la carpeta /devices a /devices16 y se crean las carpetas /devices10, /devices17,
+/devices18 y se separan las unidades de acuerdo a su arquitectura.
+* Se modifican a los compiladores para que busquen a sus unidades en la ruta que les 
+corresponde.
+* Se optimiza TCodeTool.SetCompletion() para evitar leer por triplicado, la lista de unidades.
+* Se crean las directivas $SET_PIN_NAME y $RESET_PINS y se incluyen en el archivo de sintaxis.
+* Se uniformiza el código de las unidades FrameRamExplorer y FrameRomExplorer.
+
+
+PicPas 0.8.5
+============
+Se crea la unidad /devices para almacenar las unidades de modelos de microcontroladores.
+Se implementa la búsqueda de unidades en la carpeta /devices para compilación y autocompletado.
+Se cambia de nombre a las variables de rutas para que empiecen con "pat" en lugar de "rut".
+Se incluyen librerías que definen diversos dispositivos que no están definidos internamente.
+Se compila el proyecto con la versión 1.8 de Lazarus.
+Se crea una entrada nueva en los archivos de idioma para ingresar el idioma frances.
+Se cambia el nombre del proyecto a PicPas (antes era Project1).
+Se optimiza la operación <Constante byte>*<Constante byte> para resultado menor a 256.
+Se implementa la operación <Constante byte>*<Constante word>
+Se implementa la operación <Constante word>*<Constante word>
+Se cambia de nombre a la unidad XpresParserPIC for Parser y se eliminan las referencias a TPIC16
+Se cambia de nombre a la unidad GenCodPIC for GenCodBas_PIC16
+Se cambia de nombre a la unidad GenCod for GenCod_PIC16 
+Se cambia de nombre a la unidad Parser for Compiler_PIC16
+Se cambia de nombre a la unidad ParserDirec for ParserDirec_PIC16.
+Se cambia de nombre a la unidad ParserAsm for ParserAsmPIC16 
+Se cambia el nombre de TfrmPrincipal.CT a CodeTool.
+Se cambia el nombre de TfrmPrincipal.cxp a TfrmPrincipal.Compiler.
+Se cambia de nombre a la clase TGenCodPic por TGenCodBas_PICBase.
+Se pasa a usar la versión 2.3 de ogEditGraf.
+Se elimina el campo TGenCodBas_PIC16.lastOpCode
+Se cambia el sistema de traducción de idioma a FrameArcExplor, para que use el mismo que
+usa todo el proyecto.
+Se mueven métodos de GenCod_PIC16 a "Parser" para que sirvan a otros compiladores.
+Se divide la documentación técnica en varios archivos más específicos.
+
+
+PicPas 0.8.4
+============
+* Se crea el campo TgenCodPic.lastOpCode, para almacenar la última instrucción compilada, y se
+modifican las instrucciones "k" para que usen este campo.
+* Se Modifican las clases TPicRegister y TPicRegisterBit, en XpresTypesPIC, para agregar el campo 
+"addr" y convertir los campos "offs" y "bank" en propiedades de solo lectura.
+* Se modifican diversas rutinas afectadas, especialmente de la unidad "GenCodPic", para adaptarse 
+a la nueva definición de TPicRegister y TPicRegisterBit.
+* Se pasa a usar la versión 1.3 de PicUtils.
+* Se simplifica la definición del almacenamiento: stVarRefVar y se actualizan las rutinas 
+aefctadas.
+* Se reemplazan diversas rutinas del generador de código, con instrucciones "k".
+* Se cambia por completo los contenedores de las direcciones de memoria de la clase TxpEleVar,
+y se adaptan diversas rutinas para trabajar con este nuevo tipo de almacenamiento.
+* Se implementa la operación MOD para bytes.
+* Se crea ún nuevo patrón de pruebas para los tipos Byte, incluyendo la operación MOD.
+* Se modifica la ventana de depuración para que muestre el desensambaldo de forma similar a como
+se muestra en la ventana principal.
+* Se mueve AddCaller() de TGenCodPic a TCompilerBase, y usa en lugar del evento 
+TxpElement.AddCaller() que es eliminado.
+* Se pasa a usar la versión 1.7 de la librería ogMotEdicion.
+* Se activa un menú contextual en el editor gráfico de la ventana de depuración.
+* Se crea el objeto gráfico TOgLogicState, en la ventana de depuración. Pero no es aún funcional.
+* Se compila una versión del binario para Mac (Colaboración de https://github.com/cuistax).
 
 
 PicPas 0.8.3
