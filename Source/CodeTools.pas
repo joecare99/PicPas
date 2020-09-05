@@ -5,16 +5,14 @@ interface
 uses
   Classes, SysUtils, LCLType, LCLProc, SynEdit, SynEditHighlighter, LazUTF8,
   MisUtils, SynFacilCompletion, SynFacilHighlighter, SynFacilBasic, XpresBas,
-  XpresElementsPIC, FrameEditView, FrameSyntaxTree, Parser,
-  Globales;
+  XpresElementsPIC, FrameEditView, CompBase, Globales;
 type
   { TCodeTool }
   TCodeTool = class
   private
     //Referencias importantes
     fraEdit   : TfraEditView;
-    cxp       : TCompiler;
-    fraSynTree: TfraSyntaxTree;
+    cxp       : TCompilerBase;
     opEve0: TFaOpenEvent;   //Para pasar parámetro a cxpTreeElemsFindElement´()
   public
     procedure ReadCurIdentif(out tok: string; out tokType: integer; out
@@ -24,6 +22,7 @@ type
   private  //Completado de código
     procedure cxpTreeElemsFindElement(elem: TxpElement);
     procedure AddListUnits(OpEve: TFaOpenEvent);
+    procedure CopyListItems(OpEve, OpEveSrc: TFaOpenEvent);
     procedure FieldsComplet(ident: string; opEve: TFaOpenEvent; tokPos: TSrcPos);
     procedure Fill_IFtemplate(opEve: TFaOpenEvent);
     procedure Fill_THENtemplate(opEve: TFaOpenEvent);
@@ -39,8 +38,8 @@ type
   public
     procedure SetCompletion(ed: TSynEditor);
   public  //Inicialización
-    constructor Create(fraEdit0: TfraEditView; cxp0: TCompiler;
-      fraSynTree0: TfraSyntaxTree);
+    procedure SetCompiler(cxp0: TCompilerBase);
+    constructor Create(fraEdit0: TfraEditView);
   end;
 
 implementation
@@ -183,7 +182,8 @@ var
   SearchRec: TSearchRec;
 begin
   if OpEve=nil then exit;
-  directorio := rutUnits;
+  //Directorio /units
+  directorio := patUnits;
   if FindFirst(directorio + '\*.pas', faDirectory, SearchRec) = 0 then begin
     repeat
       nomArc := SysToUTF8(SearchRec.Name);
@@ -196,6 +196,30 @@ begin
       end;
     until FindNext(SearchRec) <> 0;
     FindClose(SearchRec);
+  end;
+  //Directorio /devices
+  directorio := cxp.devicesPath;
+  if FindFirst(directorio + '\*.pas', faDirectory, SearchRec) = 0 then begin
+    repeat
+      nomArc := SysToUTF8(SearchRec.Name);
+      if SearchRec.Attr and faDirectory = faDirectory then begin
+        //directorio
+      end else begin //archivo
+        //Argega nombre de archivo
+        nomArc := copy(nomArc, 1, length(nomArc)-4);
+        opEve.AddItem(nomArc, -1);
+      end;
+    until FindNext(SearchRec) <> 0;
+    FindClose(SearchRec);
+  end;
+
+end;
+procedure TCodeTool.CopyListItems(OpEve, OpEveSrc: TFaOpenEvent);
+var
+  it : TFaCompletItem;
+begin
+  for it in OpEveSrc.Items do begin
+    opEve.AddItem(it.Caption, -1);
   end;
 end;
 procedure TCodeTool.FieldsComplet(ident: string; opEve: TFaOpenEvent;
@@ -223,7 +247,7 @@ begin
   if ele.idClass = eltVar then begin
     //Es una variable, vemos el tipo
     xVar := TxpEleVar(ele);
-    if xVar.typ = typByte then begin
+    if xVar.typ = cxp.typByte then begin
       opEve.AddItem('bit0', 11);
       opEve.AddItem('bit1', 11);
       opEve.AddItem('bit2', 11);
@@ -233,11 +257,11 @@ begin
       opEve.AddItem('bit6', 11);
       opEve.AddItem('bit7', 11);
     end;
-    if xVar.typ = typWord then begin
+    if xVar.typ = cxp.typWord then begin
       opEve.AddItem('high', 11);
       opEve.AddItem('low' , 11);
     end;
-    if xVar.typ = typDWord then begin
+    if xVar.typ = cxp.typDWord then begin
       opEve.AddItem('Low', 11);
       opEve.AddItem('High', 11);
       opEve.AddItem('Extra', 11);
@@ -302,7 +326,7 @@ begin
 end;
 procedure TCodeTool.GeneralIdentifierCompletion(opEve: TFaOpenEvent;
   curEnv: TFaCursorEnviron; out Cancel: boolean);
-{La idea de este métod es implementar el completado de un identifcador, en cualquier
+{La idea de este método es implementar el completado de un identifcador, en cualquier
 parte en que se encuentre el cursor.
 Pero actualmente solo se aplica para cualquier bloque que no sea el bloque principal
 (Cuerpo del programa principal o cuerpo de procedimientos). EL completado del blooue
@@ -347,12 +371,15 @@ begin
   ele := cxp.TreeElems.GetElementAt(curPos);
   if ele = nil then begin
     //No identifica la posición actual
-    exit;
+    Cancel := false;  //Deja que siga el filtrado, porque hay items agregados
+    exit;  //Sale porque no se reconcoe al elemento sintáctico actual
   end;
   cxp.TreeElems.curNode := ele;  //Se posiciona en ese nodo
   //Realiza la búsqueda con FindFirst, usando evento OnFindElement
   opEve0 := opEve;      //Para que el evento identifique al opEve
+  //Configura evento oara que agregue elemento encontrado a opEve0.
   cxp.TreeElems.OnFindElement := @cxpTreeElemsFindElement;
+  //Hace la búsqueda a todos los elementos accesibles desde la posición actual.
   cxp.TreeElems.FindFirst('#');  //Nunca lo va a encontrar pero va a explorar todo el árbol
   cxp.TreeElems.OnFindElement := nil;
 
@@ -393,39 +420,48 @@ begin
 end;
 procedure TCodeTool.SetCompletion(ed: TSynEditor);
 var
-  opEve: TFaOpenEvent;
+  opEve1, opEve3, opEve2, opEve: TFaOpenEvent;
 begin
   //Llena eventos de apertura para la sección de unidades
   //Configura eventos de apertura para nombres de unidades.
-  opEve := ed.hl.FindOpenEvent('unit1');
-  opEve.ClearItems;
-  AddListUnits(opEve);  //Configura unidades disponibles
+  opEve1 := ed.hl.FindOpenEvent('unit1');
+  if OpEve1=nil then exit;
+  opEve1.ClearItems;
+  AddListUnits(opEve1);  //Configura unidades disponibles
 
-  opEve := ed.hl.FindOpenEvent('unit2');
-  opEve.ClearItems;
-  AddListUnits(opEve);  //Configura unidades disponibles
+  opEve2 := ed.hl.FindOpenEvent('unit2');
+  if OpEve2=nil then exit;
+  opEve2.ClearItems;
+  CopyListItems(opEve2, opEve1);  //Copia lista de ítems
 
-  opEve := ed.hl.FindOpenEvent('unit3');
-  opEve.ClearItems;
-  AddListUnits(opEve);  //Configura unidades disponibles
+  opEve3 := ed.hl.FindOpenEvent('unit3');
+  if OpEve3=nil then exit;
+  opEve3.ClearItems;
+  CopyListItems(opEve3, opEve1);  //Copia lista de ítems
 
   //Configura eventos, para "después del punto."
   opEve := ed.hl.FindOpenEvent('AfterDot1');
+  if OpEve=nil then exit;
   opEve.OnLoadItems := @OpenAfterDot1;
   opEve := ed.hl.FindOpenEvent('AfterDot2');
   opEve.OnLoadItems := @OpenAfterDot2;
 
   //Configura completado dinámico, en cualquier punto del programa
   opEve := ed.hl.FindOpenEvent('BE4');
+  if OpEve=nil then exit;
   opEve.OnLoadItems := @GeneralIdentifierCompletion;
 
 end;
-constructor TCodeTool.Create(fraEdit0: TfraEditView; cxp0 : TCompiler;
-                             fraSynTree0: TfraSyntaxTree);
+
+procedure TCodeTool.SetCompiler(cxp0: TCompilerBase);
 begin
-  fraEdit    := fraEdit0;
-  cxp        := cxp0;
-  fraSynTree := fraSynTree0;
+  cxp     := cxp0;
+  //Habría que cambiar algunas configuraciones de acuerdo al compilador usado
+end;
+
+constructor TCodeTool.Create(fraEdit0: TfraEditView);
+begin
+  fraEdit := fraEdit0;
 end;
 
 end.

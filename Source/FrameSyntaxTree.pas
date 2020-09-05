@@ -4,7 +4,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, TreeFilterEdit, Forms, Controls, StdCtrls,
   ComCtrls, Menus, ActnList, ExtCtrls, ComboEx, LCLProc, Graphics,
-  XpresElementsPIC, Globales, FormElemProperty, XpresParserPIC, FormConfig,
+  XpresElementsPIC, Globales, FormElemProperty, CompBase, FormConfig,
   FrameArcExplor, MisUtils;
 type
   { TfraSyntaxTree }
@@ -73,6 +73,8 @@ type
     OnSelecFileExplorer: procedure of object;
     //Se requiere información del archivo actual
 //    OnReqCurFile: procedure(var filname: string) of object;
+    function HasFocus: boolean;
+    function FileSelected: string;
     property BackColor: TColor read FBackColor write SetBackColor;
     property TextColor: TColor read FTextColor write SetTextColor;
     procedure LocateFile(filname: string);
@@ -96,6 +98,7 @@ var
 procedure TfraSyntaxTree.SetLanguage;
 begin
   {$I ..\language\tra_FrameSyntaxTree.pas}
+  frmArcExplor1.SetLanguage;
   Refresh;
 end;
 procedure TfraSyntaxTree.frmArcExplor1DoubleClickFile(nod: TExplorNode);
@@ -120,8 +123,9 @@ begin
   frmArcExplor1.Filter.Visible := false;
   frmArcExplor1.InternalPopupFile := true;
   frmArcExplor1.InternalPopupFolder := true;
-  frmArcExplor1.OnDoubleClickFile := @frmArcExplor1DoubleClickFile;
-  frmArcExplor1.OnMenuOpenFile := @frmArcExplor1MenuOpenFile;
+  frmArcExplor1.OnDoubleClickFile:= @frmArcExplor1DoubleClickFile;
+  frmArcExplor1.OnKeyEnterOnFile := @frmArcExplor1DoubleClickFile;
+  frmArcExplor1.OnMenuOpenFile   := @frmArcExplor1MenuOpenFile;
 end;
 function TfraSyntaxTree.AddNodeTo(nodParent: TTreeNode; elem: TxpElement): TTreeNode;
 {Agrega un elemento a un noco.}
@@ -276,6 +280,7 @@ begin
     nodMain := TreeView1.Items.AddChild(nil, TIT_MAIN);
     nodMain.ImageIndex := 1;
     nodMain.SelectedIndex := 1;
+    nodMain.Data := syntaxTree.main;  //Elemento raiz
     RefreshByGroups(nodMain, syntaxTree.main);
     TreeView1.Items.EndUpdate;
   end;
@@ -288,6 +293,7 @@ begin
     nodMain := TreeView1.Items.AddChild(nil, TIT_MAIN);
     nodMain.ImageIndex := 1;
     nodMain.SelectedIndex := 1;
+    nodMain.Data := syntaxTree.main;  //Elemento raiz
     RefreshByDeclar(nodMain, syntaxTree.main);
     TreeView1.Items.EndUpdate;
   end;
@@ -367,7 +373,31 @@ begin
      DefaultDraw := true;   //Para que siga ejecutando la rutina de dibujo
   end;
 end;
-
+function TfraSyntaxTree.HasFocus: boolean;
+{Indica si el frame tiene el enfoque.}
+begin
+  if frmArcExplor1.Visible then begin
+    //Modo de explorador de archivo
+    Result := frmArcExplor1.TreeView1.Focused;
+  end else begin
+    //Modo normal
+    Result := TreeView1.Focused;
+  end;
+end;
+function TfraSyntaxTree.FileSelected: string;
+{Devuelve el archivo seleccionado. Solo es válido cuando está en modo "vmFileExp"
+}
+begin
+  if Config.viewMode = vmFileExp then begin
+    if frmArcExplor1.SelectedFile = nil then begin
+      Result := '';
+    end else begin
+      Result := frmArcExplor1.SelectedFile.Path;
+    end;
+  end else begin
+    Result := '';
+  end;
+end;
 procedure TfraSyntaxTree.LocateFile(filname: string);
 begin
   //Ubica el archivo actual en el explorador de archivo
