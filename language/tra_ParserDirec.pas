@@ -11,7 +11,7 @@ ER_UNKNO_DIREC := trans('Unknown directive: %s', 'Directiva desconocida: %s','',
 ER_ERROR_FREQ  := trans('Error in frequency.'  , 'Error en frecuencia.'    , '',
                         'Fehler bei der Frequenz.','Помилка в частоті.','Ошибка в частоте.', 'Erreur de fréquence.');
 ER_TOOHIGHFRE  := trans('Frequency too high for this device.', 'Frecuencia muy alta para este microproc.', '',
-                        ''                                   , 'Частота зависока для цього приладу.','Слишком высокая частота для этого устройства.', 'Fréquence trop élevée pour ce modèle.');
+                        'Frequenz zu hoch für dieses Gerät.'                                   , 'Частота зависока для цього приладу.','Слишком высокая частота для этого устройства.', 'Fréquence trop élevée pour ce modèle.');
 ER_IDENT_EXPEC := trans('Identifier expected.' , 'Identificador esperado.' , '',
                         'Bezeichner erwartet.' ,'Очікується ідентифікатор.','Ожидается идентификатор.', 'Identifiant attendu.');
 ER_EXPEC_EQUAL := trans('Expected "="'         , 'Se esperaba "="'         , '',
@@ -21,30 +21,30 @@ ER_SYNTAX_ERRO := trans('Syntax error.'        , 'Error de sintaxis.'      , '',
 ER_SYNTAX_ERR_ := trans('Syntax error: "%s"'   , 'Error de sintaxis: "%s"' , '',
                         'Syntax-Fehler: "%s"'  , 'Помилка синтаксиса: "%s"','Ошибка синтаксиса: "%s"', 'Erreur de syntaxe : "%s".');
 ER_EXPECTED_BR := trans('Expected: "}".'       , 'Se esperaba "}".'        , '',
-                        '"}" erwartet.'        , 'Очікується: "}".','Ожидается: "}".', 'Attendu: "}"');
+                        '":=" erwartet.'        , 'Очікується: "}".','Ожидается: "}".', 'Attendu: "}"');
 ER_ENDIF_NOFOU := trans('"$ENDIF" not found.'  , 'No se encontró "$ENDIF".', '',
-                        ''                     , '"$ENDIF" не знайдено.','"$ENDIF" не найден.', '$ENDIF non trouvé.');
+                        '"$ENDIF" nicht gefunden.'                     , '"$ENDIF" не знайдено.','"$ENDIF" не найден.', '$ENDIF non trouvé.');
 ER_UNEXP_ENDIF := trans('Unexpected "$ENDIF".' , 'No se esperaba "$ENDIF".', '',
-                        ''                     , 'Непередбачений "$ENDIF".','Непредвиденный "$ENDIF".', '"$ENDIF" non attendu.');
+                        'Unerwartetes "$ENDIF".'                     , 'Непередбачений "$ENDIF".','Непредвиденный "$ENDIF".', '"$ENDIF" non attendu.');
 ER_UNEXP_ELSE  := trans('Unexpected "$ELSE".'  , 'No se esperaba "$ELSE".' , '',
-                        ''                     , 'Непередбачений "$ELSE".','Непредвиденный "$ELSE".', '"$ELSE" non attendu.');
+                        'Unerwartetes "$ELSE".'                     , 'Непередбачений "$ELSE".','Непредвиденный "$ELSE".', '"$ELSE" non attendu.');
 ER_CONF_UNDEF_ := trans('Undefined Config. Bit: %s', 'Bit de Config. no definido: %s' , '',
-                        ''                       , 'Невизначений біт конфігурації: %s','Неопределённый бит конфигурации: %s', 'Bit de configuration non défini : %s');
+                        'Undefinierte Konfiguration. Bit: %s'                       , 'Невизначений біт конфігурації: %s','Неопределённый бит конфигурации: %s', 'Bit de configuration non défini : %s');
 ER_INVAL_CBIT_ := trans('Invalid Config. Bit: %s', 'Bit de Config. inválido: %s' , '',
-                        ''                       , 'Помилковий біт конфігурації: %s','Ошибочный бит конфигурации: %s', 'Bit de configuration invalide : %s');
+                        'Ungültige Configuration. Bit: %s'                       , 'Помилковий біт конфігурації: %s','Ошибочный бит конфигурации: %s', 'Bit de configuration invalide : %s');
 ER_FILE_NO_FND_:= trans('File no found: %s'      , 'Archivo no encontrado: %s' , '',
-                        ''                       , 'Файл не знайдено: %s','Файл не найден: %s', 'Fichier non trouvé : %s');
+                        '(Datei nicht gefunden: "%s")'                       , 'Файл не знайдено: %s','Файл не найден: %s', 'Fichier non trouvé : %s');
 ER_ERIN_NUMBER_:= trans('Error in number: %s'    , 'Error en número: %s' , '',
-                        ''                       , 'Помилка в номері: %s','Ошибка в числе: %s', 'Nombre erroné : %s');
+                        'Fehler in der Zahl: %s'                       , 'Помилка в номері: %s','Ошибка в числе: %s', 'Nombre erroné : %s');
 ER_UNKNW_IDENT_:= trans('Unknown Identifier: %s' , 'Identificador desconocido: %s' , '',
-                        ''                       , 'Невідомий ідентифікатор: %s','Неизвестный идентификатор: %s', 'Identifiant inconnu : %s');
+                        'Unbekannter Bezeichner: %s'                       , 'Невідомий ідентифікатор: %s','Неизвестный идентификатор: %s', 'Identifiant inconnu : %s');
 ER_DIVIDE_ZERO := trans('Cannot divide by zero'  , 'No se puede dividir por cero' , '',
-                        ''                       , 'Не можу поділити на нуль','Не могу поделить на ноль', 'Division par zéro impossible.');
+                        'Kann nicht durch Null dividieren'                       , 'Не можу поділити на нуль','Не могу поделить на ноль', 'Division par zéro impossible.');
 ER_EVA_ZER_ZER := trans('Cannot evaluate 0^0'    , 'No se puede evaluar 0^0', '',
-                        ''                       , 'Не можу оцінити 0^0', 'Не могу оценить 0^0', 'Impossibilité d''évaluer 0^0');
+                        '0^0 kann nicht ausgewertet werden'                       , 'Не можу оцінити 0^0', 'Не могу оценить 0^0', 'Impossibilité d''évaluer 0^0');
 ER_OPE_NOT_IMP_ := trans('Operator not implemented: %s', 'Operador no implementado: %s', '',
-                        ''                       , 'Оператор не реалізовано: %s','Оператор не реализован: %s', 'Opérateur non implémenté : %s');
+                        'Operator nicht implementiert: %s'                       , 'Оператор не реалізовано: %s','Оператор не реализован: %s', 'Opérateur non implémenté : %s');
 ER_EXPECT_CAR_ := trans('Expected "%s"'          , 'Se esperaba "%s"'         , '',
-                        '"%s" erwartet.'         , 'Очікується "%s"','Ожидается "%s"', 'Attendu "%s"');
+                        'Erwartete "%s"'         , 'Очікується "%s"','Ожидается "%s"', 'Attendu "%s"');
 
 

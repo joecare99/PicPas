@@ -65,22 +65,22 @@ ER_ASIG_EXPECT := trans('":=" expected.' , 'Se esperaba ":="', '',
 ER_FIL_NOFOUND := trans('File not found: %s'        , 'Archivo no encontrado: %s', '',
                         'Datei nicht gefunden: "%s"', 'Файл не знайдено: %s','Файл не найден: %s', 'Fichier non trouvé: %s');
 ER_NOTYPDEF_NU := trans('No type defined to allocate this number.', 'No hay tipo para almacenar este número.', '',
-                        '','Не визначено тип, щоб виділити цей номер.','Нет определенного типа, чтобы выделить это число.', 'Aucun type défini pour allouer ce nombre');
+                        'Es wurde kein Typ definiert, um diese Nummer zuzuweisen.','Не визначено тип, щоб виділити цей номер.','Нет определенного типа, чтобы выделить это число.', 'Aucun type défini pour allouer ce nombre');
 
 WA_UNUSED_CON_ := trans('Unused constant: %s', 'Constante sin usar: %s', '',
-                        'Unbenutzte Konstante: %s','Невикористана константа: %s','Неиспользованная константа: %s', 'Constante non utilisée : %s');
+                        'Unbenutzte Konstante:%s','Невикористана константа: %s','Неиспользованная константа: %s', 'Constante non utilisée : %s');
 WA_UNUSED_VAR_ := trans('Unused variable: %s', 'Variable sin usar: %s', '',
                         'Unbenutzte Variable:%s','Невикористана змінна: %s','Неиспользованная переменная: %s', 'Variable non utilisée : %s');
 WA_UNUSED_PRO_ := trans('Unused procedure: %s', 'Procedimiento sin usar: %s', '',
                         'Unbenutztes Prozedur:%s','Невикористана процедура: %s','Неиспользованная процедура: %s', 'Procédure non utilisée : %s');
 
 MSG_RAM_USED   := trans('RAM Used   = '   , 'RAM usada  =', '',
-                        'RAM verwendet = ','RAM використано   = ','RAM использовано   = ', 'RAM utilisée    =');
+                        'RAM verwendet =','RAM використано   = ','RAM использовано   = ', 'RAM utilisée    =');
 MSG_FLS_USED   := trans('Flash Used = '   , 'Flash usada=', '',
                         'Flash verwendet =','Flash використано = ','Flash использовано = ', 'FLASH utilisée =');
 ER_ARR_SIZ_BIG := trans('Array size to big.' , 'Tamaño de arreglo muy grande', '',
-                        ''                   ,'Розмір масиву завеликий.','Размер массива слишком велик.', 'Tableau trop grand.');
+                        'Arraygröße zu groß.'                   ,'Розмір масиву завеликий.','Размер массива слишком велик.', 'Tableau trop grand.');
 ER_INV_ARR_SIZ := trans('Invalid array size.', 'Tamaño de arreglo inválido', '',
-                        ''                   , 'Помилка в розмірі масиву.','Ошибка размера массива.', 'Taille de tableau invalide.');
+                        'Ungültige Arraygröße.'                   , 'Помилка в розмірі масиву.','Ошибка размера массива.', 'Taille de tableau invalide.');
 
 

@@ -9,10 +9,10 @@
                           '&Suchen'  , 'Пошук',         'Поиск',
                           '&Chercher');
  mnView.Caption  := Trans('&View'    , '&Ver'           , '&Qhaway'       ,
-                          '&Ansicht' , 'Вигляд'         ,'Вид',
+                          '&Anzeigen' , 'Вигляд'         ,'Вид',
                           '&Affichage');
  mnTools.Caption := Trans('&Tools'   , '&Herramientas'  , '&Llamk''anakuna' ,
-                          '&Werkzeuge','Інструменти','Инструменты',
+                          '&Tools','Інструменти','Инструменты',
                           '&Outils');
 
 //File Actions
@@ -102,22 +102,22 @@
 
 //Search Actions
  acSearFind.Caption    := Trans('Find...'      , 'Buscar...'          , 'Maskhay',
-                                'Suchen...'    , 'Знайти...'          , 'Найти...',
+                                'Finden...'    , 'Знайти...'          , 'Найти...',
                                 'Chercher...');
  acSearFind.Hint       := Trans('Find text'    , 'Buscar texto'       , 'Qillqata maskhay',
-                                'Text suchen'  , 'Знайти текст'       , 'Найти текст',
+                                'Finde Text'  , 'Знайти текст'       , 'Найти текст',
                                 'Chercher texte');
  acSearFindNxt.Caption := Trans('Find &Next'   , 'Buscar &Siguiente'  , '&Hamuqta Maskhay',
-                                'Weitersuche&n','Знайти наступний','Найти следующий',
+                                '&Weitersuchen','Знайти наступний','Найти следующий',
                                 'Chercher &Suivant');
  acSearFindNxt.Hint    := Trans('Find Next'    , 'Buscar Siguiente'   , 'Hamuqta Maskhay',
-                                'Nächste Stelle suchen','Знайти наступний','Найти следующий',
+                                'Weitersuchen','Знайти наступний','Найти следующий',
                                 'Chercher Suivant');
  acSearFindPrv.Caption := Trans('Find &Previous','Buscar &Anterior'   , '',
-                                '','Знайти попередній','Найти предыдущий',
+                                'Finde &Vorherige','Знайти попередній','Найти предыдущий',
                                 'Chercher &Précédent');
  acSearFindPrv.Hint    := Trans('Find &Previous','Buscar &Anterior'   , '',
-                                '','Знайти попередній','Найти предыдущий',
+                                'Finde &Vorherige','Знайти попередній','Найти предыдущий',
                                 'Chercher Précédent');
  acSearReplac.Caption  := Trans('&Replace...'    , '&Reemplazar...'     , '&Yankiy',
                                 '&Ersetzen...','Замінити...','Замена...',
@@ -149,7 +149,7 @@
                                '&Quelltext-Explorer','Оглядач кода','Обозреватель кода',
                                '&Explorateur de Code');
  acViewAsmPan.Caption := Trans('&Assembler Panel'        , '&Panel de ensamblador.'       , '',
-                               '','Панель асемблера','Панель ассемблера',
+                               '&Assembler Bereich','Панель асемблера','Панель ассемблера',
                                'Panneau &Assembleur');
 
 
@@ -173,23 +173,23 @@
                                 'Öffne den PIC Geräte explorer','Відкрити PIC оглядач','Открыть PIC обозреватель',
                                 'Ouvrir l''explorateur de modèles PIC');
  acToolListRep.Caption := Trans('&List Report'            , '&Reporte de listado'          , '',
-                                '','Звіт','Отчет',
+                                '&List-Bericht','Звіт','Отчет',
                                 '&Rapport de Compilation');
  acToolFindDec.Caption := Trans('Find declaration' , 'Ir a la declaración' , 'Riqsichikusqan k''itiman riy',
                                 'Finde Deklaration','Знайти декларування','Найти декларирование',
                                 'Trouver déclaration');
  acToolRamExp.Caption  := Trans('&RAM Explorer' , 'Explorador de &RAM' , '',
-                                '','','',
+                                '&RAM Explorer','','',
                                 '');
 
  acToolASMDebug.Caption:= Trans('ASM &Debugger'        , '&Depurador de ASM'            , '',
-                                '','ASM зневаджувач','ASM отладчик',
+                                'ASM &Debugger','ASM зневаджувач','ASM отладчик',
                                 '&Débogueur PIC');
  acToolASMDebug.Hint   := Trans('ASM &Debugger'        , '&Depurador de ASM'            , '',
-                                '','ASM зневаджувач','ASM отладчик',
+                                'ASM &Debugger','ASM зневаджувач','ASM отладчик',
                                 'Démarrer le Débogueur');
  MenuItem51.Caption    := Trans('&Select Compiler'        , '&Elegir Compilador'            , '',
-                                '','','',
+                                '&Select Compiler','','',
                                 '');
  acToolConfig.Caption  := Trans('&Settings'               , '&Configuración'                , 'Kamachina',
                                 '&Einstellungen','Налагодження','Настройки',
@@ -200,39 +200,39 @@
 
 //Messages
  MSG_MODIFIED      := Trans('(*)Modified'      , '(*)Modificado'                  , '',
-                         '','(*)Змінено','(*)Изменено',
+                         '(*) Geändert','(*)Змінено','(*)Изменено',
                          '(*)Modifié');
  MSG_SAVED      := Trans('Saved'            , 'Guardado'                       , '',
-                         '','Збережено','Сохранено',
+                         'Gespeichert','Збережено','Сохранено',
                          'Enregistré');
  MSG_NOFILES    := Trans('No files.'        , 'Sin archivos'                   , '',
-                         '','Немає файлів.','Нет файлов.',
+                         'Keine Dateien','Немає файлів.','Нет файлов.',
                          'Aucun fichier');
  MSG_NOFOUND_   := Trans('No found "%s"'    , 'No se encuentra: "%s"'          , '',
-                         '','Не знайдено "%s"','Не найдено "%s"',
+                         '"%s" nicht gefunden','Не знайдено "%s"','Не найдено "%s"',
                          '"%s" non trouvé');
  MSG_N_REPLAC   := Trans('%d words replaced', 'Se reemplazaron %d ocurrencias.', '',
-                         '','%d слів замінено','%d слов заменено',
+                         '%d Wörter ersetzt','%d слів замінено','%d слов заменено',
                          '%d mots remplacés');
  MSG_REPTHIS    := Trans('Replace this?'    , '¿Reemplazar esta ocurrencia?'   , '',
-                         '','Замінити це?','Заменить это?',
+                         'Ersetzen','Замінити це?','Заменить это?',
                          'Remplacer ceci?');
  MSG_SYNFIL_NOF := Trans('Syntax file not found: %s' , 'Archivo de sintaxis no encontrado: %s'   , '',
-                         '','','',
+                         'Syntax-Datei nicht gefunden: %s','','',
                          'Fichier de syntaxe non trouvé : %s');
  MSG_FILSAVCOMP  := Trans('File must be saved before compiling.', 'Archivo debe ser guardado antes de compilar', '',
-                          '', '', '',
+                          'Die Datei muss vor dem Kompilieren gespeichert werden.', '', '',
                           'Le fichier doit être sauvegardé pour compiler.');
  MSG_BASEL_COMP  := Trans('Baseline Compiler', 'Compilador Baseline', '',
-                          '', '', '',
+                          'Baseline-Compiler', '', '',
                           '');
  MSG_MIDRAN_COMP := Trans('Mid-range Compiler', 'Compilador Mid-range', '',
-                          '', '', '',
+                          'Mid-Range-Compiler', '', '',
                           '');
  MSG_ENMIDR_COMP := Trans('Enhanced Mid-range Compiler', 'Compilador Enhanced Mid-range', '',
-                          '', '', '',
+                          'Verbesserter Midrange-Compiler', '', '',
                           '');
  MSG_PROJECT     := Trans('Project: ', '', '',
-                          '', '', '',
+                          'Projekt: ', '', '',
                           '');
 

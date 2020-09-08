@@ -9,7 +9,7 @@ TIT_VARS := trans('Variables'  ,'Variables'  , ''     ,
 TIT_FUNC := trans('Functions'  ,'Funciones'  , ''     ,
                   'Funktionen' , 'Функції'   , 'Функции', 'Fonctions');
 TIT_TYPE := trans('Types'      ,'Tipos'      , ''     ,
-                  ''           , 'Типи'      , 'Типы', 'Types');
+                  'Typen'           , 'Типи'      , 'Типы', 'Types');
 TIT_OTHER:= trans('Others'     ,'Otros'      , ''     ,
                   'Anderes'    , 'Інше'      , 'Другое', 'Autres');
 Label1.Caption := Trans('Code Explorer', 'Explorador de Código','',
