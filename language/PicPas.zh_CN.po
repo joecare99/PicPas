@@ -1,0 +1,2213 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PicPas 0.9.0\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Joe Care\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.4.1\n"
+
+#: ProcAsm.ER_EXPEC_COMMA
+#, fuzzy
+msgctxt "ProcAsm.ER_EXPEC_COMMA"
+msgid "Expected \",\"."
+msgstr "预期\"，\"。"
+
+#: ProcAsm.ER_EXP_ADR_VAR
+#, fuzzy
+msgctxt "ProcAsm.ER_EXP_ADR_VAR"
+msgid "Expected address or variable name."
+msgstr "预期地址或变量名称。"
+
+#: ProcAsm.ER_EXP_CON_VAL
+#, fuzzy
+msgctxt "ProcAsm.ER_EXP_CON_VAL"
+msgid "Expected constant or value."
+msgstr "预期常量或值。"
+
+#: ProcAsm.ER_NOGETADD_VAR
+#, fuzzy
+msgctxt "ProcAsm.ER_NOGETADD_VAR"
+msgid "Cannot get address of this Variable"
+msgstr "无法获取此变量的地址"
+
+#: ProcAsm.ER_NOGETVAL_CON
+#, fuzzy
+msgctxt "ProcAsm.ER_NOGETVAL_CON"
+msgid "Cannot get value of this costant"
+msgstr "无法获取此成本值"
+
+#: ProcAsm.ER_INV_ASMCODE
+#, fuzzy
+msgctxt "ProcAsm.ER_INV_ASMCODE"
+msgid "Invalid ASM Opcode: %s"
+msgstr "无效的 ASM 操作码： %s"
+
+#: ProcAsm.ER_EXPECT_W_F
+#, fuzzy
+msgctxt "ProcAsm.ER_EXPECT_W_F"
+msgid "Expected \"w\" or \"f\"."
+msgstr "预期为\"w\"或\"f\"。"
+
+#: ProcAsm.ER_SYNTAX_ERR_
+#, fuzzy
+msgctxt "ProcAsm.ER_SYNTAX_ERR_"
+msgid "Syntax error: \"%s\""
+msgstr "语法错误：\"%s\""
+
+#: ProcAsm.ER_DUPLIC_LBL_
+#, fuzzy
+msgctxt "ProcAsm.ER_DUPLIC_LBL_"
+msgid "Duplicated label: \"%s\""
+msgstr "重复标签：\"%s\""
+
+#: ProcAsm.ER_EXPE_NUMBIT
+#, fuzzy
+msgctxt "ProcAsm.ER_EXPE_NUMBIT"
+msgid "Expected number of bit: 0..7."
+msgstr "预期位数： 0.7。"
+
+#: ProcAsm.ER_EXPECT_ADDR
+#, fuzzy
+msgctxt "ProcAsm.ER_EXPECT_ADDR"
+msgid "Expected address."
+msgstr "预期地址。"
+
+#: ProcAsm.ER_EXPECT_BYTE
+#, fuzzy
+msgctxt "ProcAsm.ER_EXPECT_BYTE"
+msgid "Expected byte."
+msgstr "预期字节。"
+
+#: ProcAsm.ER_UNDEF_LABEL_
+#, fuzzy
+msgctxt "ProcAsm.ER_UNDEF_LABEL_"
+msgid "Undefined ASM Label: %s"
+msgstr "未定义的 ASM 标签： %s"
+
+#: ProcAsm.WA_ADDR_TRUNC
+#, fuzzy
+msgctxt "ProcAsm.WA_ADDR_TRUNC"
+msgid "Address truncated to fit instruction."
+msgstr "地址截断以适合指令。"
+
+#: ParserDirec.ER_ERROR_DIREC ParserDirec.ER_ERROR_DIREC
+#, fuzzy
+msgctxt "ParserDirec.ER_ERROR_DIREC"
+msgid "Error in directive."
+msgstr "指令错误。"
+
+#: ParserDirec.ER_UNKNO_DEVIC ParserDirec.ER_UNKNO_DEVIC
+#, fuzzy
+msgctxt "ParserDirec.ER_UNKNO_DEVIC"
+msgid "Unknown device: %s"
+msgstr "未知设备： %s"
+
+#: ParserDirec.ER_MODE_UNKNOWN ParserDirec.ER_MODE_UNKNOWN
+#, fuzzy
+msgctxt "ParserDirec.ER_MODE_UNKNOWN"
+msgid "Mode unknown: %s"
+msgstr "模式未知： %s"
+
+#: ParserDirec.ER_UNKNO_DIREC ParserDirec.ER_UNKNO_DIREC
+#, fuzzy
+msgctxt "ParserDirec.ER_UNKNO_DIREC"
+msgid "Unknown directive: %s"
+msgstr "未知指令： %s"
+
+#: ParserDirec.ER_ERROR_FREQ ParserDirec.ER_ERROR_FREQ
+#, fuzzy
+msgctxt "ParserDirec.ER_ERROR_FREQ"
+msgid "Error in frequency."
+msgstr "频率错误。"
+
+#: ParserDirec.ER_IDENT_EXPEC ParserDirec.ER_IDENT_EXPEC
+#, fuzzy
+msgctxt "ParserDirec.ER_IDENT_EXPEC"
+msgid "Identifier expected."
+msgstr "需要标识符。"
+
+#: ParserDirec.ER_EXPEC_EQUAL ParserDirec.ER_EXPEC_EQUAL
+#, fuzzy
+msgctxt "ParserDirec.ER_EXPEC_EQUAL"
+msgid "Expected \"=\""
+msgstr "预期\"|\""
+ ParserDirec.ER_SYNTAX_ERRO
+#: ParserDirec.ER_SYNTAX_ERRO
+msgctxt "ParserDirec.ER_SYNTAX_ERRO"
+msgid "Syntax error."
+msgstr "語法錯誤。"
+
+#: ParserDirec.ER_SYNTAX_ERR_ ParserDirec.ER_SYNTAX_ERR_
+#, fuzzy
+msgctxt "ParserDirec.ER_SYNTAX_ERR_"
+msgid "Syntax error: \"%s\""
+msgstr "语法错误：\"%s\""
+
+#: ParserAsm.ER_EXPEC_COMMA ParserAsm.ER_EXPEC_COMMA
+#, fuzzy
+msgctxt "ParserAsm.ER_EXPEC_COMMA"
+msgid "Expected \",\"."
+msgstr "预期\"，\"。"
+
+#: ParserAsm.ER_EXP_ADR_VAR ParserAsm.ER_EXP_ADR_VAR
+#, fuzzy
+msgctxt "ParserAsm.ER_EXP_ADR_VAR"
+msgid "Expected address or variable name."
+msgstr "预期地址或变量名称。"
+
+#: ParserAsm.ER_EXP_CON_VAL ParserAsm.ER_EXP_CON_VAL
+#, fuzzy
+msgctxt "ParserAsm.ER_EXP_CON_VAL"
+msgid "Expected constant or value."
+msgstr "预期常量或值。"
+
+#: ParserAsm.ER_NOGETADD_VAR ParserAsm.ER_NOGETADD_VAR
+#, fuzzy
+msgctxt "ParserAsm.ER_NOGETADD_VAR"
+msgid "Cannot get address of this Variable"
+msgstr "无法获取此变量的地址"
+
+#: ParserAsm.ER_NOGETVAL_CON ParserAsm.ER_NOGETVAL_CON
+#, fuzzy
+msgctxt "ParserAsm.ER_NOGETVAL_CON"
+msgid "Cannot get value of this costant"
+msgstr "无法获取此成本值"
+
+#: ParserAsm.ER_INV_ASMCODE ParserAsm.ER_INV_ASMCODE
+#, fuzzy
+msgctxt "ParserAsm.ER_INV_ASMCODE"
+msgid "Invalid ASM Opcode: %s"
+msgstr "无效的 ASM 操作码： %s"
+
+#: ParserAsm.ER_EXPECT_W_F ParserAsm.ER_EXPECT_W_F
+#, fuzzy
+msgctxt "ParserAsm.ER_EXPECT_W_F"
+msgid "Expected \"w\" or \"f\"."
+msgstr "预期为\"w\"或\"f\"。"
+
+#: ParserAsm.ER_SYNTAX_ERR_ ParserAsm.ER_SYNTAX_ERR_
+#, fuzzy
+msgctxt "ParserAsm.ER_SYNTAX_ERR_"
+msgid "Syntax error: \"%s\""
+msgstr "语法错误：\"%s\""
+
+#: ParserAsm.ER_DUPLIC_LBL_ ParserAsm.ER_DUPLIC_LBL_
+#, fuzzy
+msgctxt "ParserAsm.ER_DUPLIC_LBL_"
+msgid "Duplicated label: \"%s\""
+msgstr "重复标签：\"%s\""
+
+#: ParserAsm.ER_EXPE_NUMBIT ParserAsm.ER_EXPE_NUMBIT
+#, fuzzy
+msgctxt "ParserAsm.ER_EXPE_NUMBIT"
+msgid "Expected number of bit: 0..7."
+msgstr "预期位数： 0.7。"
+
+#: ParserAsm.ER_EXPECT_ADDR ParserAsm.ER_EXPECT_ADDR
+#, fuzzy
+msgctxt "ParserAsm.ER_EXPECT_ADDR"
+msgid "Expected address."
+msgstr "预期地址。"
+
+#: ParserAsm.ER_EXPECT_BYTE ParserAsm.ER_EXPECT_BYTE
+#, fuzzy
+msgctxt "ParserAsm.ER_EXPECT_BYTE"
+msgid "Expected byte."
+msgstr "预期字节。"
+
+#: ParserAsm.ER_UNDEF_LABEL_ ParserAsm.ER_UNDEF_LABEL_
+#, fuzzy
+msgctxt "ParserAsm.ER_UNDEF_LABEL_"
+msgid "Undefined ASM Label: %s"
+msgstr "未定义的 ASM 标签： %s"
+
+#: ParserAsm.WA_ADDR_TRUNC ParserAsm.WA_ADDR_TRUNC
+#, fuzzy
+msgctxt "ParserAsm.WA_ADDR_TRUNC"
+msgid "Address truncated to fit instruction."
+msgstr "地址截断以适合指令。"
+
+#: Parser.ER_NOT_IMPLEM_ Parser.ER_NOT_IMPLEM_
+#, fuzzy
+msgctxt "Parser.ER_NOT_IMPLEM_"
+msgid "Not implemented: \"%s\""
+msgstr "未实现：\"%s\""
+
+#: Parser.ER_IDEN_EXPECT Parser.ER_IDEN_EXPECT
+#, fuzzy
+msgctxt "Parser.ER_IDEN_EXPECT"
+msgid "Identifier expected."
+msgstr "需要标识符。"
+
+#: Parser.ER_DUPLIC_IDEN Parser.ER_DUPLIC_IDEN
+#, fuzzy
+msgctxt "Parser.ER_DUPLIC_IDEN"
+msgid "Duplicated identifier: \"%s\""
+msgstr "重复标识符：\"%s\""
+
+#: Parser.ER_INVAL_FLOAT Parser.ER_INVAL_FLOAT
+#, fuzzy
+msgctxt "Parser.ER_INVAL_FLOAT"
+msgid "Unvalid float number."
+msgstr "未验证的浮点数。"
+
+#: Parser.ER_ERR_IN_NUMB Parser.ER_ERR_IN_NUMB
+#, fuzzy
+msgctxt "Parser.ER_ERR_IN_NUMB"
+msgid "Error in number."
+msgstr "数字错误。"
+
+#: Parser.ER_NOTYPDEFNUM Parser.ER_NOTYPDEFNUM
+#, fuzzy
+msgctxt "Parser.ER_NOTYPDEFNUM"
+msgid "No type defined to accommodate this number."
+msgstr "没有定义任何类型来容纳此数字。"
+
+#: Parser.ER_UNDEF_TYPE_ Parser.ER_UNDEF_TYPE_
+#, fuzzy
+msgctxt "Parser.ER_UNDEF_TYPE_"
+msgid "Undefined type \"%s\""
+msgstr "未定义类型\"%s\""
+
+#: Parser.ER_INV_MEMADDR Parser.ER_INV_MEMADDR
+#, fuzzy
+msgctxt "Parser.ER_INV_MEMADDR"
+msgid "Invalid memory address."
+msgstr "无效的内存地址。"
+
+#: Parser.ER_BIT_VAR_REF Parser.ER_BIT_VAR_REF
+#, fuzzy
+msgctxt "Parser.ER_BIT_VAR_REF"
+msgid "A bit variable reference expected."
+msgstr "预期为位变量引用。"
+
+#: Parser.ER_INV_MAD_DEV Parser.ER_INV_MAD_DEV
+#, fuzzy
+msgctxt "Parser.ER_INV_MAD_DEV"
+msgid "Invalid memory address for this device."
+msgstr "此设备的内存地址无效。"
+
+#: Parser.ER_EXP_VAR_IDE Parser.ER_EXP_VAR_IDE
+#, fuzzy
+msgctxt "Parser.ER_EXP_VAR_IDE"
+msgid "Identifier of variable expected."
+msgstr "预期的变量的标识符。"
+
+#: Parser.ER_UNKNOWN_ID_ Parser.ER_UNKNOWN_ID_
+#, fuzzy
+msgctxt "Parser.ER_UNKNOWN_ID_"
+msgid "Unknown identifier: %s"
+msgstr "未知标识符： %s"
+
+#: Parser.ER_IDE_CON_EXP Parser.ER_IDE_CON_EXP
+#, fuzzy
+msgctxt "Parser.ER_IDE_CON_EXP"
+msgid "Identifier of constant expected."
+msgstr "应数常量的标识符。"
+
+#: Parser.ER_NUM_ADD_EXP Parser.ER_NUM_ADD_EXP
+#, fuzzy
+msgctxt "Parser.ER_NUM_ADD_EXP"
+msgid "Numeric address expected."
+msgstr "预期的数字地址。"
+
+#: Parser.ER_IDE_TYP_EXP Parser.ER_IDE_TYP_EXP
+#, fuzzy
+msgctxt "Parser.ER_IDE_TYP_EXP"
+msgid "Identifier of type expected."
+msgstr "预期的类型的标识符。"
+
+#: Parser.ER_SEM_COM_EXP Parser.ER_SEM_COM_EXP
+#, fuzzy
+msgctxt "Parser.ER_SEM_COM_EXP"
+msgid "\":\" or \",\" expected."
+msgstr "\"：\"或\"，预期。"
+
+#: Parser.ER_EQU_COM_EXP Parser.ER_EQU_COM_EXP
+#, fuzzy
+msgctxt "Parser.ER_EQU_COM_EXP"
+msgid "\"=\" or \",\" expected."
+msgstr "\"=\"或\"\"预期。"
+
+#: Parser.ER_END_EXPECTE Parser.ER_END_EXPECTE
+#, fuzzy
+msgctxt "Parser.ER_END_EXPECTE"
+msgid "\"end\" expected."
+msgstr "预期\"结束\"。"
+
+#: Parser.ER_EOF_END_EXP Parser.ER_EOF_END_EXP
+#, fuzzy
+msgctxt "Parser.ER_EOF_END_EXP"
+msgid "Unexpected end of file. \"end\" expected."
+msgstr "意外的文件结束。预期\"结束\"。"
+
+#: Parser.ER_BOOL_EXPECT Parser.ER_BOOL_EXPECT
+#, fuzzy
+msgctxt "Parser.ER_BOOL_EXPECT"
+msgid "Boolean expression expected."
+msgstr "预期布尔表达式。"
+
+#: Parser.ER_UNKN_STRUCT Parser.ER_UNKN_STRUCT
+#, fuzzy
+msgctxt "Parser.ER_UNKN_STRUCT"
+msgid "Unknown structure."
+msgstr "未知结构。"
+
+#: Parser.ER_PROG_NAM_EX Parser.ER_PROG_NAM_EX
+#, fuzzy
+msgctxt "Parser.ER_PROG_NAM_EX"
+msgid "Program name expected."
+msgstr "预期程序名称。"
+
+#: Parser.ER_COMPIL_PROC Parser.ER_COMPIL_PROC
+#, fuzzy
+msgctxt "Parser.ER_COMPIL_PROC"
+msgid "There is a compilation in progress."
+msgstr "正在编写一份汇编。"
+
+#: Parser.ER_CON_EXP_EXP Parser.ER_CON_EXP_EXP
+#, fuzzy
+msgctxt "Parser.ER_CON_EXP_EXP"
+msgid "Constant expression expected."
+msgstr "预期常量表达式。"
+
+#: Parser.ER_NOT_AFT_END Parser.ER_NOT_AFT_END
+#, fuzzy
+msgctxt "Parser.ER_NOT_AFT_END"
+msgid "Syntax error. Nothing should be after \"END.\""
+msgstr "语法错误。\"结束\"之后不应该是任何东西。"
+
+#: Parser.ER_ELS_UNEXPEC Parser.ER_ELS_UNEXPEC
+#, fuzzy
+msgctxt "Parser.ER_ELS_UNEXPEC"
+msgid "\"else\" unexpected."
+msgstr "\"否则\" 出乎意料。"
+
+#: Parser.ER_INST_NEV_EXE Parser.ER_INST_NEV_EXE
+#, fuzzy
+msgctxt "Parser.ER_INST_NEV_EXE"
+msgid "Instruction will never execute."
+msgstr "指令永远不会执行。"
+
+#: Parser.ER_ONLY_ONE_REG Parser.ER_ONLY_ONE_REG
+#, fuzzy
+msgctxt "Parser.ER_ONLY_ONE_REG"
+msgid "Only one REGISTER parameter is allowed."
+msgstr "只允许一个注册参数。"
+ Parser.ER_VARIAB_EXPEC
+#: Parser.ER_VARIAB_EXPEC
+msgctxt "Parser.ER_VARIAB_EXPEC"
+msgid "Variable expected."
+msgstr "等待变量。"
+
+#: Parser.ER_ONL_BYT_WORD Parser.ER_ONL_BYT_WORD
+#, fuzzy
+msgctxt "Parser.ER_ONL_BYT_WORD"
+msgid "Only BYTE or WORD index is allowed in FOR."
+msgstr "在 FOR 中只允许字节或 WORD 索引。"
+
+#: Parser.ER_ASIG_EXPECT Parser.ER_ASIG_EXPECT
+#, fuzzy
+msgctxt "Parser.ER_ASIG_EXPECT"
+msgid "\":=\" expected."
+msgstr "\"：=\" 预期。"
+
+#: Parser.ER_FIL_NOFOUND Parser.ER_FIL_NOFOUND
+#, fuzzy
+msgctxt "Parser.ER_FIL_NOFOUND"
+msgid "File not found: %s"
+msgstr "未找到文件： %s"
+
+#: Parser.WA_UNUSED_CON_ Parser.WA_UNUSED_CON_
+#, fuzzy
+msgctxt "Parser.WA_UNUSED_CON_"
+msgid "Unused constant: %s"
+msgstr "未使用的常量： %s"
+
+#: Parser.WA_UNUSED_VAR_ Parser.WA_UNUSED_VAR_
+#, fuzzy
+msgctxt "Parser.WA_UNUSED_VAR_"
+msgid "Unused variable: %s"
+msgstr "未使用的变量： %s"
+
+#: Parser.WA_UNUSED_PRO_ Parser.WA_UNUSED_PRO_
+#, fuzzy
+msgctxt "Parser.WA_UNUSED_PRO_"
+msgid "Unused procedure: %s"
+msgstr "未使用的过程： %s"
+
+#: Parser.MSG_RAM_USED Parser.MSG_RAM_USED
+#, fuzzy
+msgctxt "Parser.MSG_RAM_USED"
+msgid "RAM Used   = "
+msgstr "已用内存 |"
+
+#: Parser.MSG_FLS_USED Parser.MSG_FLS_USED
+#, fuzzy
+msgctxt "Parser.MSG_FLS_USED"
+msgid "Flash Used = "
+msgstr "使用闪光灯 |"
+ FrameSyntaxTree.TIT_MAIN
+#: FrameSyntaxTree.TIT_MAIN
+msgctxt "FrameSyntaxTree.TIT_MAIN"
+msgid "Program"
+msgstr "程序"
+ FrameSyntaxTree.TIT_UNIT
+#: FrameSyntaxTree.TIT_UNIT
+msgctxt "FrameSyntaxTree.TIT_UNIT"
+msgid "Units"
+msgstr "单位"
+ FrameSyntaxTree.TIT_CONS
+#: FrameSyntaxTree.TIT_CONS
+msgctxt "FrameSyntaxTree.TIT_CONS"
+msgid "Constants"
+msgstr "常量"
+ FrameSyntaxTree.TIT_VARS
+#: FrameSyntaxTree.TIT_VARS
+msgctxt "FrameSyntaxTree.TIT_VARS"
+msgid "Variables"
+msgstr "变量"
+ FrameSyntaxTree.TIT_FUNC
+#: FrameSyntaxTree.TIT_FUNC
+msgctxt "FrameSyntaxTree.TIT_FUNC"
+msgid "Functions"
+msgstr "功能"
+ FrameSyntaxTree.TIT_OTHER
+#: FrameSyntaxTree.TIT_OTHER
+msgctxt "FrameSyntaxTree.TIT_OTHER"
+msgid "Others"
+msgstr "其他"
+
+#: FrameSyntaxTree.Label1.Caption FrameSyntaxTree.Label1.Caption
+#, fuzzy
+msgctxt "FrameSyntaxTree.Label1.Caption"
+msgid "Code Explorer"
+msgstr "代码资源管理器"
+
+#: FrameMessagesWin.MSG_INICOMP FrameMessagesWin.MSG_INICOMP
+#, fuzzy
+msgctxt "FrameMessagesWin.MSG_INICOMP"
+msgid "Starting Compilation..."
+msgstr "正在开始编译..."
+ FrameMessagesWin.MSG_WARN
+#: FrameMessagesWin.MSG_WARN
+msgctxt "FrameMessagesWin.MSG_WARN"
+msgid "Warning"
+msgstr "警告"
+ FrameMessagesWin.MSG_WARNS
+#: FrameMessagesWin.MSG_WARNS
+msgctxt "FrameMessagesWin.MSG_WARNS"
+msgid "Warnings"
+msgstr "警告"
+ FrameMessagesWin.MSG_ERROR
+#: FrameMessagesWin.MSG_ERROR
+msgctxt "FrameMessagesWin.MSG_ERROR"
+msgid "Error"
+msgstr "错误"
+ FrameMessagesWin.MSG_ERRORS
+#: FrameMessagesWin.MSG_ERRORS
+msgctxt "FrameMessagesWin.MSG_ERRORS"
+msgid "Errors"
+msgstr "错误"
+
+#: FrameMessagesWin.MSG_COMPIL FrameMessagesWin.MSG_COMPIL
+#, fuzzy
+msgctxt "FrameMessagesWin.MSG_COMPIL"
+msgid "Compiled in: "
+msgstr "编译于："
+ FrameMessagesWin.lblInform.Caption
+#: FrameMessagesWin.lblInform.Caption
+msgctxt "FrameMessagesWin.lblInform.Caption"
+msgid "Information"
+msgstr "信息"
+ FrameMessagesWin.lblWarns.Caption
+#: FrameMessagesWin.lblWarns.Caption
+msgctxt "FrameMessagesWin.lblWarns.Caption"
+msgid "Warnings"
+msgstr "警告"
+ FrameMessagesWin.lblErrors.Caption
+#: FrameMessagesWin.lblErrors.Caption
+msgctxt "FrameMessagesWin.lblErrors.Caption"
+msgid "Errors"
+msgstr "错误"
+
+#: FrameMessagesWin.PanGrilla.Caption FrameMessagesWin.PanGrilla.Caption
+#, fuzzy
+msgctxt "FrameMessagesWin.PanGrilla.Caption"
+msgid "<< No messages >>"
+msgstr "[无消息]"
+ FrameEditView.MSG_NOFILES
+#: FrameEditView.MSG_NOFILES
+msgctxt "FrameEditView.MSG_NOFILES"
+msgid "No files"
+msgstr "无文件"
+
+#: FrameEditView.MSG_PASFILES FrameEditView.MSG_PASFILES
+#, fuzzy
+msgctxt "FrameEditView.MSG_PASFILES"
+msgid "Pascal Files"
+msgstr "帕斯卡文件"
+ FrameEditView.MSG_ALLFILES
+#: FrameEditView.MSG_ALLFILES
+msgctxt "FrameEditView.MSG_ALLFILES"
+msgid "All files"
+msgstr "所有文件"
+
+#: FrameEditView.MSG_MODIFSAV FrameEditView.MSG_MODIFSAV
+#, fuzzy
+msgctxt "FrameEditView.MSG_MODIFSAV"
+msgid "File %s has been modified. Save?"
+msgstr "文件 %s 已修改。救？"
+
+#: FrameEditView.MSG_NOSYNFIL FrameEditView.MSG_NOSYNFIL
+#, fuzzy
+msgctxt "FrameEditView.MSG_NOSYNFIL"
+msgid "Syntax file not found: %s"
+msgstr "未找到语法文件： %s"
+
+#: FrameEditView.lblBackground.Caption FrameEditView.lblBackground.Caption
+#, fuzzy
+msgctxt "FrameEditView.lblBackground.Caption"
+msgid "<< No files >>"
+msgstr "[无文件]"
+ FrameEditView.mnNewTab.Caption
+#: FrameEditView.mnNewTab.Caption
+msgctxt "FrameEditView.mnNewTab.Caption"
+msgid "New"
+msgstr "不能”插入“新文件。新文件将被移动到无组织的…"
+ FrameEditView.mnCloseTab.Caption
+#: FrameEditView.mnCloseTab.Caption
+msgctxt "FrameEditView.mnCloseTab.Caption"
+msgid "Close"
+msgstr "关闭"
+ FrameEditView.mnCloseAll.Caption
+#: FrameEditView.mnCloseAll.Caption
+msgctxt "FrameEditView.mnCloseAll.Caption"
+msgid "Close All"
+msgstr "关闭所有"
+
+#: FrameEditView.if mnRecents<>nil then mnRecents.Caption
+#, fuzzy
+msgctxt "FrameEditView.if mnRecents<>nil then mnRecents.Caption"
+msgid "&Recents"
+msgstr "• 最近"
+ FormPrincipal.mnFile.Caption
+#: FormPrincipal.mnFile.Caption
+msgctxt "FormPrincipal.mnFile.Caption"
+msgid "&File"
+msgstr "&文件"
+ FormPrincipal.mnEdit.Caption
+#: FormPrincipal.mnEdit.Caption
+msgctxt "FormPrincipal.mnEdit.Caption"
+msgid "&Edit"
+msgstr "&编辑"
+ FormPrincipal.mnFind.Caption
+#: FormPrincipal.mnFind.Caption
+msgctxt "FormPrincipal.mnFind.Caption"
+msgid "&Search"
+msgstr "&搜索"
+ FormPrincipal.mnView.Caption
+#: FormPrincipal.mnView.Caption
+msgctxt "FormPrincipal.mnView.Caption"
+msgid "&View"
+msgstr "&视图"
+ FormPrincipal.mnTools.Caption
+#: FormPrincipal.mnTools.Caption
+msgctxt "FormPrincipal.mnTools.Caption"
+msgid "&Tools"
+msgstr "&工具"
+ FormPrincipal.acArcNewProj.Caption
+#: FormPrincipal.acArcNewProj.Caption
+msgctxt "FormPrincipal.acArcNewProj.Caption"
+msgid "New &Project"
+msgstr "新建项目"
+
+#: FormPrincipal.acArcNewFile.Caption FormPrincipal.acArcNewFile.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acArcNewFile.Caption"
+msgid "New &File"
+msgstr "新文件"
+ FormPrincipal.acArcNewFile.Hint
+#: FormPrincipal.acArcNewFile.Hint
+msgctxt "FormPrincipal.acArcNewFile.Hint"
+msgid "New File"
+msgstr "新文件"
+ FormPrincipal.acArcNewProj.Hint
+#: FormPrincipal.acArcNewProj.Hint
+msgctxt "FormPrincipal.acArcNewProj.Hint"
+msgid "New &Project"
+msgstr "新建项目"
+ FormPrincipal.acArcOpen.Caption
+#: FormPrincipal.acArcOpen.Caption
+msgctxt "FormPrincipal.acArcOpen.Caption"
+msgid "&Open..."
+msgstr "打开(&O)..."
+ FormPrincipal.acArcOpen.Hint
+#: FormPrincipal.acArcOpen.Hint
+msgctxt "FormPrincipal.acArcOpen.Hint"
+msgid "Open file"
+msgstr "打开文件"
+ FormPrincipal.acArcSave.Caption
+#: FormPrincipal.acArcSave.Caption
+msgctxt "FormPrincipal.acArcSave.Caption"
+msgid "&Save"
+msgstr "&保存"
+ FormPrincipal.acArcSave.Hint
+#: FormPrincipal.acArcSave.Hint
+msgctxt "FormPrincipal.acArcSave.Hint"
+msgid "Save file"
+msgstr "保存文件"
+ FormPrincipal.acArcSaveAs.Caption
+#: FormPrincipal.acArcSaveAs.Caption
+msgctxt "FormPrincipal.acArcSaveAs.Caption"
+msgid "Sa&ve As..."
+msgstr "另存为... (&V)"
+ FormPrincipal.acArcSaveAs.Hint
+#: FormPrincipal.acArcSaveAs.Hint
+msgctxt "FormPrincipal.acArcSaveAs.Hint"
+msgid "Save file as..."
+msgstr "文件另存为..."
+
+#: FormPrincipal.acArcCloseFile.Caption FormPrincipal.acArcCloseFile.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acArcCloseFile.Caption"
+msgid "&Close File"
+msgstr "•关闭文件"
+ FormPrincipal.acArcCloseProj.Caption
+#: FormPrincipal.acArcCloseProj.Caption
+msgctxt "FormPrincipal.acArcCloseProj.Caption"
+msgid "Close Project"
+msgstr "关闭项目"
+ FormPrincipal.mnSamples.Caption
+#: FormPrincipal.mnSamples.Caption
+msgctxt "FormPrincipal.mnSamples.Caption"
+msgid "Samples"
+msgstr "采样"
+ FormPrincipal.acArcQuit.Caption
+#: FormPrincipal.acArcQuit.Caption
+msgctxt "FormPrincipal.acArcQuit.Caption"
+msgid "&Quit"
+msgstr "&退出"
+
+#: FormPrincipal.acArcQuit.Hint FormPrincipal.acArcQuit.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acArcQuit.Hint"
+msgid "Close the program"
+msgstr "关闭程序"
+ FormPrincipal.acEdUndo.Caption
+#: FormPrincipal.acEdUndo.Caption
+msgctxt "FormPrincipal.acEdUndo.Caption"
+msgid "&Undo"
+msgstr "&撤销"
+ FormPrincipal.acEdUndo.Hint
+#: FormPrincipal.acEdUndo.Hint
+msgctxt "FormPrincipal.acEdUndo.Hint"
+msgid "Undo"
+msgstr "撤销"
+ FormPrincipal.acEdRedo.Caption
+#: FormPrincipal.acEdRedo.Caption
+msgctxt "FormPrincipal.acEdRedo.Caption"
+msgid "&Redo"
+msgstr "&重做"
+ FormPrincipal.acEdRedo.Hint
+#: FormPrincipal.acEdRedo.Hint
+msgctxt "FormPrincipal.acEdRedo.Hint"
+msgid "Redo"
+msgstr "重做"
+
+#: FormPrincipal.acEdCut.Caption FormPrincipal.acEdCut.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acEdCut.Caption"
+msgid "C&ut"
+msgstr "C&ut"
+ FormPrincipal.acEdCut.Hint
+#: FormPrincipal.acEdCut.Hint
+msgctxt "FormPrincipal.acEdCut.Hint"
+msgid "Cut"
+msgstr "剪切"
+ FormPrincipal.acEdCopy.Caption
+#: FormPrincipal.acEdCopy.Caption
+msgctxt "FormPrincipal.acEdCopy.Caption"
+msgid "&Copy"
+msgstr "复制(&C)"
+ FormPrincipal.acEdCopy.Hint
+#: FormPrincipal.acEdCopy.Hint
+msgctxt "FormPrincipal.acEdCopy.Hint"
+msgid "Copy"
+msgstr "复制"
+ FormPrincipal.acEdPaste.Caption
+#: FormPrincipal.acEdPaste.Caption
+msgctxt "FormPrincipal.acEdPaste.Caption"
+msgid "&Paste"
+msgstr "粘贴(&P)"
+ FormPrincipal.acEdPaste.Hint
+#: FormPrincipal.acEdPaste.Hint
+msgctxt "FormPrincipal.acEdPaste.Hint"
+msgid "Paste"
+msgstr "粘贴"
+ FormPrincipal.acEdSelecAll.Caption
+#: FormPrincipal.acEdSelecAll.Caption
+msgctxt "FormPrincipal.acEdSelecAll.Caption"
+msgid "Select &All"
+msgstr "全选（＆A）"
+ FormPrincipal.acEdSelecAll.Hint
+#: FormPrincipal.acEdSelecAll.Hint
+msgctxt "FormPrincipal.acEdSelecAll.Hint"
+msgid "Select all"
+msgstr "全选"
+
+#: FormPrincipal.acBusFind.Caption
+msgctxt "FormPrincipal.acBusFind.Caption"
+msgid "Search..."
+msgstr "搜索..."
+
+#: FormPrincipal.acBusFind.Hint
+msgctxt "FormPrincipal.acBusFind.Hint"
+msgid "Search text"
+msgstr "搜索文字"
+
+#: FormPrincipal.acBusFindNxt.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acBusFindNxt.Caption"
+msgid "Search &Next"
+msgstr "搜索下一步"
+
+#: FormPrincipal.acBusFindNxt.Hint
+msgctxt "FormPrincipal.acBusFindNxt.Hint"
+msgid "Search Next"
+msgstr "搜索下一步"
+
+#: FormPrincipal.acBusReplac.Caption
+msgctxt "FormPrincipal.acBusReplac.Caption"
+msgid "&Replace..."
+msgstr "替换..."
+
+#: FormPrincipal.acBusReplac.Hint
+msgctxt "FormPrincipal.acBusReplac.Hint"
+msgid "Replace text"
+msgstr "区段标题文本"
+
+#: FormPrincipal.acViewMsgPan.Caption FormPrincipal.acViewMsgPan.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acViewMsgPan.Caption"
+msgid "&Messages Panel"
+msgstr "& 消息面板"
+
+#: FormPrincipal.acViewMsgPan.Hint FormPrincipal.acViewMsgPan.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acViewMsgPan.Hint"
+msgid "Show/hide Messages Panel"
+msgstr "显示/隐藏消息面板"
+ FormPrincipal.acViewStatbar.Caption
+#: FormPrincipal.acViewStatbar.Caption
+msgctxt "FormPrincipal.acViewStatbar.Caption"
+msgid "&Status Bar"
+msgstr "状态栏"
+
+#: FormPrincipal.acViewStatbar.Hint FormPrincipal.acViewStatbar.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acViewStatbar.Hint"
+msgid "Show/hide Status Bar"
+msgstr "显示/隐藏状态栏"
+ FormPrincipal.acViewToolbar.Caption
+#: FormPrincipal.acViewToolbar.Caption
+msgctxt "FormPrincipal.acViewToolbar.Caption"
+msgid "&Tool Bar"
+msgstr "工具条"
+
+#: FormPrincipal.acViewToolbar.Hint FormPrincipal.acViewToolbar.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acViewToolbar.Hint"
+msgid "Show/hide Tool Bar"
+msgstr "显示/隐藏工具栏"
+
+#: FormPrincipal.acViewSynTree.Caption FormPrincipal.acViewSynTree.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acViewSynTree.Caption"
+msgid "&Code explorer"
+msgstr "&代码资源管理器"
+ FormPrincipal.acToolCompil.Caption
+#: FormPrincipal.acToolCompil.Caption
+msgctxt "FormPrincipal.acToolCompil.Caption"
+msgid "&Compile"
+msgstr "编译(&C)"
+
+#: FormPrincipal.acToolCompil.Hint FormPrincipal.acToolCompil.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acToolCompil.Hint"
+msgid "Compile the source code"
+msgstr "编译源代码"
+
+#: FormPrincipal.acToolComEjec.Caption FormPrincipal.acToolComEjec.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acToolComEjec.Caption"
+msgid "Compile and E&xecute"
+msgstr "编译和 E&xecute"
+
+#: FormPrincipal.acToolComEjec.Hint FormPrincipal.acToolComEjec.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acToolComEjec.Hint"
+msgid "Compile and Execute"
+msgstr "编译和执行"
+
+#: FormPrincipal.acToolPICExpl.Caption FormPrincipal.acToolPICExpl.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acToolPICExpl.Caption"
+msgid "PIC E&xplorer"
+msgstr "图片 E & xplorer"
+
+#: FormPrincipal.acToolPICExpl.Hint FormPrincipal.acToolPICExpl.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acToolPICExpl.Hint"
+msgid "Open the PIC devices explorer"
+msgstr "打开 PIC 设备资源管理器"
+ FormPrincipal.acToolConfig.Caption
+#: FormPrincipal.acToolConfig.Caption
+msgctxt "FormPrincipal.acToolConfig.Caption"
+msgid "&Settings"
+msgstr "&设置"
+
+#: FormPrincipal.acToolConfig.Hint FormPrincipal.acToolConfig.Hint
+#, fuzzy
+msgctxt "FormPrincipal.acToolConfig.Hint"
+msgid "Settings dialog"
+msgstr "设置对话框"
+
+#: FormPrincipal.acToolFindDec.Caption FormPrincipal.acToolFindDec.Caption
+#, fuzzy
+msgctxt "FormPrincipal.acToolFindDec.Caption"
+msgid "Find declaration"
+msgstr "查找声明"
+ FormConfig.Caption
+#: FormConfig.Caption
+msgctxt "FormConfig.Caption"
+msgid "Settings"
+msgstr "设置"
+ FormConfig.BitAceptar.Caption
+#: FormConfig.BitAceptar.Caption
+msgctxt "FormConfig.BitAceptar.Caption"
+msgid "&OK"
+msgstr "&确认"
+ FormConfig.BitAplicar.Caption
+#: FormConfig.BitAplicar.Caption
+msgctxt "FormConfig.BitAplicar.Caption"
+msgid "&Apply"
+msgstr "&应用"
+ FormConfig.BitCancel.Caption
+#: FormConfig.BitCancel.Caption
+msgctxt "FormConfig.BitCancel.Caption"
+msgid "&Cancel"
+msgstr "&取消"
+
+#: FormConfig.tabGeneral.Caption
+msgctxt "FormConfig.tabGeneral.Caption"
+msgid "General"
+msgstr "常规"
+ FormConfig.RadioGroup1.Caption
+#: FormConfig.RadioGroup1.Caption
+msgctxt "FormConfig.RadioGroup1.Caption"
+msgid "Toolbar"
+msgstr "工具栏"
+ FormConfig.RadioGroup1.Items[0]
+#: FormConfig.RadioGroup1.Items[0]
+msgctxt "FormConfig.RadioGroup1.Items[0]"
+msgid "Small Icons"
+msgstr "小图标"
+ FormConfig.RadioGroup1.Items[1]
+#: FormConfig.RadioGroup1.Items[1]
+msgctxt "FormConfig.RadioGroup1.Items[1]"
+msgid "Big Icons"
+msgstr "大图标"
+
+#: FormConfig.label1.Caption FormConfig.label1.Caption
+#, fuzzy
+msgctxt "FormConfig.label1.Caption"
+msgid "Units Path:"
+msgstr "单位路径："
+
+#: FormConfig.chkAutSynChk.Caption FormConfig.chkAutSynChk.Caption
+#, fuzzy
+msgctxt "FormConfig.chkAutSynChk.Caption"
+msgid "Automatic Syntax checking"
+msgstr "自动语法检查"
+
+#: FormConfig.grpTabEdiState.Caption FormConfig.grpTabEdiState.Caption
+#, fuzzy
+msgctxt "FormConfig.grpTabEdiState.Caption"
+msgid "Tab Editor State"
+msgstr "选项卡编辑器状态"
+
+#: FormConfig.grpTabEdiState.Items[0] FormConfig.grpTabEdiState.Items[0]
+#, fuzzy
+msgctxt "FormConfig.grpTabEdiState.Items[0]"
+msgid "&Show always"
+msgstr "• 始终显示"
+
+#: FormConfig.grpTabEdiState.Items[1] FormConfig.grpTabEdiState.Items[1]
+#, fuzzy
+msgctxt "FormConfig.grpTabEdiState.Items[1]"
+msgid "Hide for &One file"
+msgstr "隐藏为 &一个文件"
+
+#: FormConfig.grpTabEdiState.Items[2] FormConfig.grpTabEdiState.Items[2]
+#, fuzzy
+msgctxt "FormConfig.grpTabEdiState.Items[2]"
+msgid "&Hide always"
+msgstr "• 始终隐藏"
+ FormConfig.Label2.Caption
+#: FormConfig.Label2.Caption
+msgctxt "FormConfig.Label2.Caption"
+msgid "Language"
+msgstr "语言"
+
+#: FormConfig.tabEnviron.Caption
+msgctxt "FormConfig.tabEnviron.Caption"
+msgid "Environment"
+msgstr "环境"
+
+#: FormConfig.chkLoadLast.Caption FormConfig.chkLoadLast.Caption
+#, fuzzy
+msgctxt "FormConfig.chkLoadLast.Caption"
+msgid "Load last file edited"
+msgstr "加载上次编辑的文件"
+
+#: FormConfig.lblMessPan1.Caption FormConfig.lblMessPan1.Caption
+#, fuzzy
+msgctxt "FormConfig.lblMessPan1.Caption"
+msgid "Message Panel Back color"
+msgstr "消息面板背面颜色"
+
+#: FormConfig.lblMessPan2.Caption FormConfig.lblMessPan2.Caption
+#, fuzzy
+msgctxt "FormConfig.lblMessPan2.Caption"
+msgid "Message Panel Text color:"
+msgstr "消息面板文本颜色："
+
+#: FormConfig.lblMessPan3.Caption FormConfig.lblMessPan3.Caption
+#, fuzzy
+msgctxt "FormConfig.lblMessPan3.Caption"
+msgid "Message Panel Error color:"
+msgstr "消息面板错误颜色："
+
+#: FormConfig.lblMessPan4.Caption FormConfig.lblMessPan4.Caption
+#, fuzzy
+msgctxt "FormConfig.lblMessPan4.Caption"
+msgid "Message Panel Selec. color:"
+msgstr "消息面板 Selec.颜色："
+
+#: FormConfig.lblPanelCol.Caption FormConfig.lblPanelCol.Caption
+#, fuzzy
+msgctxt "FormConfig.lblPanelCol.Caption"
+msgid "Panels Color:"
+msgstr "面板颜色："
+
+#: FormConfig.lblSplitterCol.Caption
+#, fuzzy
+msgctxt "FormConfig.lblSplitterCol.Caption"
+msgid "Splitters color:"
+msgstr "拆分器颜色："
+
+#: FormConfig.lblCodExplCol1.Caption FormConfig.lblCodExplCol1.Caption
+#, fuzzy
+msgctxt "FormConfig.lblCodExplCol1.Caption"
+msgid "Code Explorer Back color:"
+msgstr "代码资源管理器背面颜色："
+
+#: FormConfig.lblCodExplCol2.Caption FormConfig.lblCodExplCol2.Caption
+#, fuzzy
+msgctxt "FormConfig.lblCodExplCol2.Caption"
+msgid "Code Explorer Text Color:"
+msgstr "代码资源管理器文本颜色："
+
+#: FormConfig.butDefval.Caption
+#, fuzzy
+msgctxt "FormConfig.butDefval.Caption"
+msgid "Set &Default Values"
+msgstr "设置和默认值"
+
+#: FormConfig.tabEditor.Caption
+msgctxt "FormConfig.tabEditor.Caption"
+msgid "Editor"
+msgstr "编辑"
+
+#: FormConfig.tabSyntax.Caption
+msgctxt "FormConfig.tabSyntax.Caption"
+msgid "Syntax"
+msgstr "语法"
+
+#: FormConfig.tabEnsamb.Caption
+msgctxt "FormConfig.tabEnsamb.Caption"
+msgid "Assembler"
+msgstr "汇编器"
+
+#: FormConfig.chkIncHeadMpu.Caption FormConfig.chkIncHeadMpu.Caption
+#, fuzzy
+msgctxt "FormConfig.chkIncHeadMpu.Caption"
+msgid "Include MPU &Header"
+msgstr "包括 MPU + 标题"
+
+#: FormConfig.chkIncDecVar.Caption FormConfig.chkIncDecVar.Caption
+#, fuzzy
+msgctxt "FormConfig.chkIncDecVar.Caption"
+msgid "Include &Variables declaration"
+msgstr "包括 &变量声明"
+ FormConfig.RadioGroup2.Caption
+#: FormConfig.RadioGroup2.Caption
+msgctxt "FormConfig.RadioGroup2.Caption"
+msgid "Style"
+msgstr "样式"
+
+#: FormConfig.chkExcUnused.Caption FormConfig.chkExcUnused.Caption
+#, fuzzy
+msgctxt "FormConfig.chkExcUnused.Caption"
+msgid "Exclude unused"
+msgstr "排除未使用的"
+
+#: FormConfig.chkIncAddress.Caption FormConfig.chkIncAddress.Caption
+#, fuzzy
+msgctxt "FormConfig.chkIncAddress.Caption"
+msgid "Include &Memory Address"
+msgstr "包括和内存地址"
+
+#: FormConfig.chkIncComment.Caption FormConfig.chkIncComment.Caption
+#, fuzzy
+msgctxt "FormConfig.chkIncComment.Caption"
+msgid "Include &Comments"
+msgstr "包括和评论"
+
+#: FormConfig.chkIncComment2.Caption FormConfig.chkIncComment2.Caption
+#, fuzzy
+msgctxt "FormConfig.chkIncComment2.Caption"
+msgid "Include &Detailed comments"
+msgstr "包括 +详细评论"
+
+#: FormConfig.chkIncVarName.Caption FormConfig.chkIncVarName.Caption
+#, fuzzy
+msgctxt "FormConfig.chkIncVarName.Caption"
+msgid "Include &Variable Names"
+msgstr "包括 &变量名称"
+
+#: FormConfig.tabOutput.Caption
+msgctxt "FormConfig.tabOutput.Caption"
+msgid "Compiler"
+msgstr "编译器"
+
+#: FormConfig.chkShowErrMsg.Caption FormConfig.chkShowErrMsg.Caption
+#, fuzzy
+msgctxt "FormConfig.chkShowErrMsg.Caption"
+msgid "&Show Error Messages"
+msgstr "•显示错误消息"
+
+#: FormConfig.grpOptimLev.Caption FormConfig.grpOptimLev.Caption
+#, fuzzy
+msgctxt "FormConfig.grpOptimLev.Caption"
+msgid "Optimization Level:"
+msgstr "优化级别："
+ FormConfig.grpOptimLev.Items[0]
+#: FormConfig.grpOptimLev.Items[0]
+msgctxt "FormConfig.grpOptimLev.Items[0]"
+msgid "Fool"
+msgstr "弄臣"
+ FormConfig.grpOptimLev.Items[1]
+#: FormConfig.grpOptimLev.Items[1]
+msgctxt "FormConfig.grpOptimLev.Items[1]"
+msgid "Smart"
+msgstr "智能"
+
+#: FormConfig.chkOptBnkAftIF.Caption FormConfig.chkOptBnkAftIF.Caption
+#, fuzzy
+msgctxt "FormConfig.chkOptBnkAftIF.Caption"
+msgid "After IF structure"
+msgstr "在 IF 结构之后"
+
+#: FormConfig.chkOptBnkBefPro.Caption FormConfig.chkOptBnkBefPro.Caption
+#, fuzzy
+msgctxt "FormConfig.chkOptBnkBefPro.Caption"
+msgid "Before Procedures"
+msgstr "程序前"
+
+#: FormConfig.chkOptBnkAftPro.Caption FormConfig.chkOptBnkAftPro.Caption
+#, fuzzy
+msgctxt "FormConfig.chkOptBnkAftPro.Caption"
+msgid "After Procedures"
+msgstr "程序后"
+
+#: CfgSynEdit.Label6.Caption
+msgctxt "CfgSynEdit.Label6.Caption"
+msgid "&Font:"
+msgstr "字体(&F):"
+
+#: CfgSynEdit.Label7.Caption
+msgctxt "CfgSynEdit.Label7.Caption"
+msgid "&Size:"
+msgstr "大小（＆s）"
+
+#: CfgSynEdit.Label8.Caption CfgSynEdit.Label8.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.Label8.Caption"
+msgid "Back color:"
+msgstr "背面颜色："
+ CfgSynEdit.Label9.Caption
+#: CfgSynEdit.Label9.Caption
+msgctxt "CfgSynEdit.Label9.Caption"
+msgid "Font Color:"
+msgstr "字体颜色："
+
+#: CfgSynEdit.chkViewVScroll.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.chkViewVScroll.Caption"
+msgid "&Vertical Scrollbar"
+msgstr "•垂直滚动条"
+
+#: CfgSynEdit.chkViewHScroll.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.chkViewHScroll.Caption"
+msgid "&Horizontal Scrollbar"
+msgstr "•水平滚动条"
+
+#: CfgSynEdit.chkAutoindent.Caption CfgSynEdit.chkAutoindent.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.chkAutoindent.Caption"
+msgid "Autoindent"
+msgstr "自动缩进"
+
+#: CfgSynEdit.chkHighCurWord.Caption CfgSynEdit.chkHighCurWord.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.chkHighCurWord.Caption"
+msgid "Highlight current word"
+msgstr "突出显示当前单词"
+
+#: CfgSynEdit.chkHighCurLin.Caption CfgSynEdit.chkHighCurLin.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.chkHighCurLin.Caption"
+msgid "Hightlight current line"
+msgstr "高光电流线"
+ CfgSynEdit.chkVerPanVer.Caption
+#: CfgSynEdit.chkVerPanVer.Caption
+msgctxt "CfgSynEdit.chkVerPanVer.Caption"
+msgid "Gutter"
+msgstr "间距"
+
+#: CfgSynEdit.chkVerNumLin.Caption CfgSynEdit.chkVerNumLin.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.chkVerNumLin.Caption"
+msgid "Show line number"
+msgstr "显示行号"
+
+#: CfgSynEdit.label2.Caption CfgSynEdit.label2.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.label2.Caption"
+msgid "Back color:"
+msgstr "背面颜色："
+
+#: CfgSynEdit.chkVerMarPle.Caption CfgSynEdit.chkVerMarPle.Caption
+#, fuzzy
+msgctxt "CfgSynEdit.chkVerMarPle.Caption"
+msgid "Show folding marks"
+msgstr "显示折叠标记"
+ CfgSynEdit.label3.Caption
+#: CfgSynEdit.label3.Caption
+msgctxt "CfgSynEdit.label3.Caption"
+msgid "Text color:"
+msgstr "文本颜色:"
+ CfgExtTool.label1.Caption
+#: CfgExtTool.label1.Caption
+msgctxt "CfgExtTool.label1.Caption"
+msgid "Name:"
+msgstr ""
+ CfgExtTool.label2.Caption
+#: CfgExtTool.label2.Caption
+msgctxt "CfgExtTool.label2.Caption"
+msgid "Program Path:"
+msgstr ""
+ CfgExtTool.label3.Caption
+#: CfgExtTool.label3.Caption
+msgctxt "CfgExtTool.label3.Caption"
+msgid "Command line:"
+msgstr ""
+ CfgExtTool.label5.Caption
+#: CfgExtTool.label5.Caption
+msgctxt "CfgExtTool.label5.Caption"
+msgid "To reference the output *.hex file, use $(hexFile)"
+msgstr ""
+ CfgExtTool.label6.Caption
+#: CfgExtTool.label6.Caption
+msgctxt "CfgExtTool.label6.Caption"
+msgid "To reference the source file, use ${mainFile}"
+msgstr ""
+ CfgExtTool.label4.Caption
+#: CfgExtTool.label4.Caption
+msgctxt "CfgExtTool.label4.Caption"
+msgid "16x16 icon:"
+msgstr ""
+ CfgExtTool.label7.Caption
+#: CfgExtTool.label7.Caption
+msgctxt "CfgExtTool.label7.Caption"
+msgid "32x32 icon:"
+msgstr ""
+ CfgExtTool.chkWaitExit.Caption
+#: CfgExtTool.chkWaitExit.Caption
+msgctxt "CfgExtTool.chkWaitExit.Caption"
+msgid "&Wait on exit"
+msgstr ""
+ CfgExtTool.chkShowTBar.Caption
+#: CfgExtTool.chkShowTBar.Caption
+msgctxt "CfgExtTool.chkShowTBar.Caption"
+msgid "&Show in Toolbar"
+msgstr ""
+ CfgExtTool.butTest.Caption
+#: CfgExtTool.butTest.Caption
+msgctxt "CfgExtTool.butTest.Caption"
+msgid "&Test"
+msgstr ""
+ CfgExtTool.butAdd.Caption
+#: CfgExtTool.butAdd.Caption
+msgctxt "CfgExtTool.butAdd.Caption"
+msgid "&Add"
+msgstr ""
+ CfgExtTool.butRemove.Caption
+#: CfgExtTool.butRemove.Caption
+msgctxt "CfgExtTool.butRemove.Caption"
+msgid "&Remove"
+msgstr ""
+ CfgExtTool.ER_FAIL_EXEC_
+#: CfgExtTool.ER_FAIL_EXEC_
+msgctxt "CfgExtTool.ER_FAIL_EXEC_"
+msgid "Fail executing: %s"
+msgstr ""
+ CfgExtTool.PRE_TOOL_NAME
+#: CfgExtTool.PRE_TOOL_NAME
+msgctxt "CfgExtTool.PRE_TOOL_NAME"
+msgid "Tool"
+msgstr ""
+ CfgExtTool.ER_ICO_FIL_UNEXIS_
+#: CfgExtTool.ER_ICO_FIL_UNEXIS_
+msgctxt "CfgExtTool.ER_ICO_FIL_UNEXIS_"
+msgid "Icon file doesn't exist: %s"
+msgstr ""
+ CfgExtTool.ER_BOTH_ICO_SPEC
+#: CfgExtTool.ER_BOTH_ICO_SPEC
+msgctxt "CfgExtTool.ER_BOTH_ICO_SPEC"
+msgid "Both icon files must be specified."
+msgstr ""
+
+#: CfgSynEdit.label10.Caption
+msgctxt "CfgSynEdit.label10.Caption"
+msgid "Back color:"
+msgstr ""
+
+#: CfgSynEdit.label11.Caption
+msgctxt "CfgSynEdit.label11.Caption"
+msgid "Text color:"
+msgstr ""
+
+#: CfgSynEdit.label12.Caption
+msgctxt "CfgSynEdit.label12.Caption"
+msgid "Frame color:"
+msgstr ""
+
+#: CfgSynEdit.chkFullWord.Caption
+msgctxt "CfgSynEdit.chkFullWord.Caption"
+msgid "Full Word"
+msgstr ""
+
+#: CompBase.ER_IDEN_EXPECT
+msgctxt "CompBase.ER_IDEN_EXPECT"
+msgid "Identifier expected."
+msgstr ""
+
+#: CompBase.ER_NOT_IMPLEM_
+msgctxt "CompBase.ER_NOT_IMPLEM_"
+msgid "Not implemented: \"%s\""
+msgstr ""
+
+#: CompBase.ER_DUPLIC_IDEN
+msgctxt "CompBase.ER_DUPLIC_IDEN"
+msgid "Duplicated identifier: \"%s\""
+msgstr ""
+
+#: CompBase.ER_UNDEF_TYPE_
+msgctxt "CompBase.ER_UNDEF_TYPE_"
+msgid "Undefined type \"%s\""
+msgstr ""
+
+#: CompBase.ER_SEMIC_EXPEC
+msgctxt "CompBase.ER_SEMIC_EXPEC"
+msgid "\";\" expected."
+msgstr ""
+
+#: CompBase.ER_STR_EXPECTED
+msgctxt "CompBase.ER_STR_EXPECTED"
+msgid "\"%s\" expected."
+msgstr ""
+
+#: CompBase.ER_TYP_PARM_ER_
+msgctxt "CompBase.ER_TYP_PARM_ER_"
+msgid "Type parameters error on %s"
+msgstr ""
+
+#: CompBase.ER_UNKNOWN_IDE_
+msgctxt "CompBase.ER_UNKNOWN_IDE_"
+msgid "Unknown identifier: %s"
+msgstr ""
+
+#: CompBase.ER_IN_EXPRESSI
+msgctxt "CompBase.ER_IN_EXPRESSI"
+msgid "Error in expression. \")\" expected."
+msgstr ""
+
+#: CompBase.ER_OPERAN_EXPEC
+msgctxt "CompBase.ER_OPERAN_EXPEC"
+msgid "Operand expected."
+msgstr ""
+
+#: CompBase.ER_ILLEG_OPERA_
+msgctxt "CompBase.ER_ILLEG_OPERA_"
+msgid "Illegal Operation: %s"
+msgstr ""
+
+#: CompBase.ER_UND_OPER_TY_
+msgctxt "CompBase.ER_UND_OPER_TY_"
+msgid "Undefined operator: %s for type: %s"
+msgstr ""
+
+#: CompBase.ER_CAN_AP_OPER_
+msgctxt "CompBase.ER_CAN_AP_OPER_"
+msgid "Cannot apply the operator \"%s\" to type \"%s\""
+msgstr ""
+
+#: CompBase.ER_IN_CHARACTER
+msgctxt "CompBase.ER_IN_CHARACTER"
+msgid "Error in character."
+msgstr ""
+
+#: CompBase.ER_INV_COD_CHAR
+msgctxt "CompBase.ER_INV_COD_CHAR"
+msgid "Invalid code for char."
+msgstr ""
+
+#: CompBase.ER_IDE_TYP_EXP
+msgctxt "CompBase.ER_IDE_TYP_EXP"
+msgid "Identifier of type expected."
+msgstr ""
+
+#: CompBase.ER_ONLY_ONE_REG
+msgctxt "CompBase.ER_ONLY_ONE_REG"
+msgid "Only one REGISTER parameter is allowed."
+msgstr ""
+
+#: CompBase.ER_RA_HAV_USED
+msgctxt "CompBase.ER_RA_HAV_USED"
+msgid "Register A has been used."
+msgstr ""
+
+#: Compiler.ER_NOT_IMPLEM_
+msgctxt "Compiler.ER_NOT_IMPLEM_"
+msgid "Not implemented: \"%s\""
+msgstr ""
+
+#: Compiler.ER_IDEN_EXPECT
+msgctxt "Compiler.ER_IDEN_EXPECT"
+msgid "Identifier expected."
+msgstr ""
+
+#: Compiler.ER_DUPLIC_IDEN
+msgctxt "Compiler.ER_DUPLIC_IDEN"
+msgid "Duplicated identifier: \"%s\""
+msgstr ""
+
+#: Compiler.ER_INVAL_FLOAT
+msgctxt "Compiler.ER_INVAL_FLOAT"
+msgid "Unvalid float number."
+msgstr ""
+
+#: Compiler.ER_NOTYPDEFNUM
+msgctxt "Compiler.ER_NOTYPDEFNUM"
+msgid "No type defined to accommodate this number."
+msgstr ""
+
+#: Compiler.ER_INV_MEMADDR
+msgctxt "Compiler.ER_INV_MEMADDR"
+msgid "Invalid memory address."
+msgstr ""
+
+#: Compiler.ER_BIT_VAR_REF
+msgctxt "Compiler.ER_BIT_VAR_REF"
+msgid "A bit variable reference expected."
+msgstr ""
+
+#: Compiler.ER_EXP_VAR_IDE
+msgctxt "Compiler.ER_EXP_VAR_IDE"
+msgid "Identifier of variable expected."
+msgstr ""
+
+#: Compiler.ER_UNKNOWN_ID_
+msgctxt "Compiler.ER_UNKNOWN_ID_"
+msgid "Unknown identifier: %s"
+msgstr ""
+
+#: Compiler.ER_IDE_CON_EXP
+msgctxt "Compiler.ER_IDE_CON_EXP"
+msgid "Identifier of constant expected."
+msgstr ""
+
+#: Compiler.ER_NUM_ADD_EXP
+msgctxt "Compiler.ER_NUM_ADD_EXP"
+msgid "Numeric address expected."
+msgstr ""
+
+#: Compiler.ER_IDE_TYP_EXP
+msgctxt "Compiler.ER_IDE_TYP_EXP"
+msgid "Identifier of type expected."
+msgstr ""
+
+#: Compiler.ER_SEM_COM_EXP
+msgctxt "Compiler.ER_SEM_COM_EXP"
+msgid "\":\" or \",\" expected."
+msgstr ""
+
+#: Compiler.ER_EQU_COM_EXP
+msgctxt "Compiler.ER_EQU_COM_EXP"
+msgid "\"=\" or \",\" expected."
+msgstr ""
+
+#: Compiler.ER_COMPIL_PROC
+msgctxt "Compiler.ER_COMPIL_PROC"
+msgid "There is a compilation in progress."
+msgstr ""
+
+#: Compiler.ER_CON_EXP_EXP
+msgctxt "Compiler.ER_CON_EXP_EXP"
+msgid "Constant expression expected."
+msgstr ""
+
+#: Compiler.ER_FIL_NOFOUND
+msgctxt "Compiler.ER_FIL_NOFOUND"
+msgid "File not found: %s"
+msgstr ""
+
+#: Compiler.WA_UNUSED_CON_
+msgctxt "Compiler.WA_UNUSED_CON_"
+msgid "Unused constant: %s"
+msgstr ""
+
+#: Compiler.WA_UNUSED_VAR_
+msgctxt "Compiler.WA_UNUSED_VAR_"
+msgid "Unused variable: %s"
+msgstr ""
+
+#: Compiler.WA_UNUSED_PRO_
+msgctxt "Compiler.WA_UNUSED_PRO_"
+msgid "Unused procedure: %s"
+msgstr ""
+
+#: Compiler.MSG_RAM_USED
+msgctxt "Compiler.MSG_RAM_USED"
+msgid "RAM Used   = "
+msgstr ""
+
+#: Compiler.MSG_FLS_USED
+msgctxt "Compiler.MSG_FLS_USED"
+msgid "Flash Used = "
+msgstr ""
+
+#: Compiler.ER_ARR_SIZ_BIG
+msgctxt "Compiler.ER_ARR_SIZ_BIG"
+msgid "Array size to big."
+msgstr ""
+
+#: Compiler.ER_INV_ARR_SIZ
+msgctxt "Compiler.ER_INV_ARR_SIZ"
+msgid "Invalid array size."
+msgstr ""
+
+#: CompMain.ER_INV_MEMADDR
+msgctxt "CompMain.ER_INV_MEMADDR"
+msgid "Invalid memory address."
+msgstr ""
+
+#: CompMain.ER_EXP_VAR_IDE
+msgctxt "CompMain.ER_EXP_VAR_IDE"
+msgid "Identifier of variable expected."
+msgstr ""
+
+#: CompMain.ER_NUM_ADD_EXP
+msgctxt "CompMain.ER_NUM_ADD_EXP"
+msgid "Numeric address expected."
+msgstr ""
+
+#: CompMain.ER_CON_EXP_EXP
+msgctxt "CompMain.ER_CON_EXP_EXP"
+msgid "Constant expression expected."
+msgstr ""
+
+#: CompMain.ER_EQU_EXPECTD
+msgctxt "CompMain.ER_EQU_EXPECTD"
+msgid "\"=\" expected."
+msgstr ""
+
+#: CompMain.ER_IDEN_EXPECT
+msgctxt "CompMain.ER_IDEN_EXPECT"
+msgid "Identifier expected."
+msgstr ""
+
+#: CompMain.ER_NOT_IMPLEM_
+msgctxt "CompMain.ER_NOT_IMPLEM_"
+msgid "Not implemented: \"%s\""
+msgstr ""
+
+#: CompMain.ER_SEM_COM_EXP
+msgctxt "CompMain.ER_SEM_COM_EXP"
+msgid "\":\" or \",\" expected."
+msgstr ""
+
+#: CompMain.ER_INV_ARR_SIZ
+msgctxt "CompMain.ER_INV_ARR_SIZ"
+msgid "Invalid array size."
+msgstr ""
+
+#: CompMain.ER_ARR_SIZ_BIG
+msgctxt "CompMain.ER_ARR_SIZ_BIG"
+msgid "Array size to big."
+msgstr ""
+
+#: CompMain.ER_IDE_TYP_EXP
+msgctxt "CompMain.ER_IDE_TYP_EXP"
+msgid "Identifier of type expected."
+msgstr ""
+
+#: CompMain.ER_IDE_CON_EXP
+msgctxt "CompMain.ER_IDE_CON_EXP"
+msgid "Identifier of constant expected."
+msgstr ""
+
+#: CompMain.ER_EQU_COM_EXP
+msgctxt "CompMain.ER_EQU_COM_EXP"
+msgid "\"=\" or \",\" expected."
+msgstr ""
+
+#: CompMain.ER_DUPLIC_IDEN
+msgctxt "CompMain.ER_DUPLIC_IDEN"
+msgid "Duplicated identifier: \"%s\""
+msgstr ""
+
+#: CompMain.ER_NOTYPDEF_NU
+msgctxt "CompMain.ER_NOTYPDEF_NU"
+msgid "No type defined to allocate this number."
+msgstr ""
+
+#: CompMain.ER_EOF_END_EXP
+msgctxt "CompMain.ER_EOF_END_EXP"
+msgid "Unexpected end of file. \"end\" expected."
+msgstr ""
+
+#: CompMain.ER_ELS_UNEXPEC
+msgctxt "CompMain.ER_ELS_UNEXPEC"
+msgid "\"else\" unexpected."
+msgstr ""
+
+#: CompMain.ER_END_EXPECTE
+msgctxt "CompMain.ER_END_EXPECTE"
+msgid "\"end\" expected."
+msgstr ""
+
+#: CompMain.ER_NOT_AFT_END
+msgctxt "CompMain.ER_NOT_AFT_END"
+msgid "Syntax error. Nothing should be after \"END.\""
+msgstr ""
+
+#: CompMain.ER_ONLY_ONE_REG
+msgctxt "CompMain.ER_ONLY_ONE_REG"
+msgid "Only one REGISTER parameter is allowed."
+msgstr ""
+
+#: CompMain.ER_BOOL_EXPECT
+msgctxt "CompMain.ER_BOOL_EXPECT"
+msgid "Boolean expression expected."
+msgstr ""
+
+#: CompMain.ER_INST_NEV_EXE
+msgctxt "CompMain.ER_INST_NEV_EXE"
+msgid "Instruction will never execute."
+msgstr ""
+
+#: CompMain.ER_UNKN_STRUCT
+msgctxt "CompMain.ER_UNKN_STRUCT"
+msgid "Unknown structure."
+msgstr ""
+
+#: CompMain.ER_ERR_IN_NUMB
+msgctxt "CompMain.ER_ERR_IN_NUMB"
+msgid "Error in number."
+msgstr ""
+
+#: CompMain.ER_UNDEF_TYPE_
+msgctxt "CompMain.ER_UNDEF_TYPE_"
+msgid "Undefined type \"%s\""
+msgstr ""
+
+#: CompMain.ER_DUPLIC_FUNC_
+msgctxt "CompMain.ER_DUPLIC_FUNC_"
+msgid "Duplicated function: %s"
+msgstr ""
+
+#: CompMain.ER_FIL_NOFOUND
+msgctxt "CompMain.ER_FIL_NOFOUND"
+msgid "File not found: %s"
+msgstr ""
+
+#: CompMain.ER_PROG_NAM_EX
+msgctxt "CompMain.ER_PROG_NAM_EX"
+msgid "Program name expected."
+msgstr ""
+
+#: FormConfig.TIT_CFG_ENVIRON
+msgctxt "FormConfig.TIT_CFG_ENVIRON"
+msgid "Environment"
+msgstr ""
+
+#: FormConfig.label3.Caption
+msgctxt "FormConfig.label3.Caption"
+msgid "&Set Theme"
+msgstr ""
+
+#: FormConfig.LABEL_THEM_NONE
+msgctxt "FormConfig.LABEL_THEM_NONE"
+msgid "None"
+msgstr ""
+
+#: FormConfig.label4.Caption
+msgctxt "FormConfig.label4.Caption"
+msgid "&Create Theme"
+msgstr ""
+
+#: FormConfig.butSaveCurThem.Caption
+msgctxt "FormConfig.butSaveCurThem.Caption"
+msgid "&Save current config."
+msgstr ""
+
+#: FormConfig.lblSplitCol.Caption
+msgctxt "FormConfig.lblSplitCol.Caption"
+msgid "Splitters color:"
+msgstr ""
+
+#: FormConfig.TIT_CFG_CODEXP
+msgctxt "FormConfig.TIT_CFG_CODEXP"
+msgid "Code Explorer"
+msgstr ""
+
+#: FormConfig.grpFilType.Caption
+msgctxt "FormConfig.grpFilType.Caption"
+msgid "File types shown:"
+msgstr ""
+
+#: FormConfig.TIT_CFG_MESPAN
+msgctxt "FormConfig.TIT_CFG_MESPAN"
+msgid "Message Panel"
+msgstr ""
+
+#: FormConfig.TIT_CFG_EDITOR
+msgctxt "FormConfig.TIT_CFG_EDITOR"
+msgid "Editor"
+msgstr ""
+
+#: FormConfig.Label6.Caption
+msgctxt "FormConfig.Label6.Caption"
+msgid "&Font:"
+msgstr ""
+
+#: FormConfig.Label7.Caption
+msgctxt "FormConfig.Label7.Caption"
+msgid "&Size:"
+msgstr ""
+
+#: FormConfig.chkViewVScroll.Caption
+msgctxt "FormConfig.chkViewVScroll.Caption"
+msgid "&Vertical Scrollbar"
+msgstr ""
+
+#: FormConfig.chkViewHScroll.Caption
+msgctxt "FormConfig.chkViewHScroll.Caption"
+msgid "&Horizontal Scrollbar"
+msgstr ""
+
+#: FormConfig.TIT_CFG_EDICOL
+msgctxt "FormConfig.TIT_CFG_EDICOL"
+msgid "Colors"
+msgstr ""
+
+#: FormConfig.TIT_CFG_SYNTAX
+msgctxt "FormConfig.TIT_CFG_SYNTAX"
+msgid "Syntax"
+msgstr ""
+
+#: FormConfig.TIT_CFG_ASSEMB
+msgctxt "FormConfig.TIT_CFG_ASSEMB"
+msgid "Assembler"
+msgstr ""
+
+#: FormConfig.TIT_CFG_COMPIL
+msgctxt "FormConfig.TIT_CFG_COMPIL"
+msgid "Compiler"
+msgstr ""
+
+#: FormConfig.chkReuProcVar.Caption
+msgctxt "FormConfig.chkReuProcVar.Caption"
+msgid "Reuse Procedures Variables"
+msgstr ""
+
+#: FormConfig.TIT_CFG_EXTOOL
+msgctxt "FormConfig.TIT_CFG_EXTOOL"
+msgid "External Tool"
+msgstr ""
+
+#: FormPrincipal.acSearFind.Caption
+msgctxt "FormPrincipal.acSearFind.Caption"
+msgid "Find..."
+msgstr ""
+
+#: FormPrincipal.acSearFind.Hint
+msgctxt "FormPrincipal.acSearFind.Hint"
+msgid "Find text"
+msgstr ""
+
+#: FormPrincipal.acSearFindNxt.Caption
+msgctxt "FormPrincipal.acSearFindNxt.Caption"
+msgid "Find &Next"
+msgstr ""
+
+#: FormPrincipal.acSearFindNxt.Hint
+msgctxt "FormPrincipal.acSearFindNxt.Hint"
+msgid "Find Next"
+msgstr ""
+
+#: FormPrincipal.acSearFindPrv.Caption
+msgctxt "FormPrincipal.acSearFindPrv.Caption"
+msgid "Find &Previous"
+msgstr ""
+
+#: FormPrincipal.acSearFindPrv.Hint
+msgctxt "FormPrincipal.acSearFindPrv.Hint"
+msgid "Find &Previous"
+msgstr ""
+
+#: FormPrincipal.acSearReplac.Caption
+msgctxt "FormPrincipal.acSearReplac.Caption"
+msgid "&Replace..."
+msgstr ""
+
+#: FormPrincipal.acSearReplac.Hint
+msgctxt "FormPrincipal.acSearReplac.Hint"
+msgid "Replace text"
+msgstr ""
+
+#: FormPrincipal.acViewAsmPan.Caption
+msgctxt "FormPrincipal.acViewAsmPan.Caption"
+msgid "&Assembler Panel"
+msgstr ""
+
+#: FormPrincipal.acToolListRep.Caption
+msgctxt "FormPrincipal.acToolListRep.Caption"
+msgid "&List Report"
+msgstr ""
+
+#: FormPrincipal.acToolRamExp.Caption
+msgctxt "FormPrincipal.acToolRamExp.Caption"
+msgid "&RAM Explorer"
+msgstr ""
+
+#: FormPrincipal.acToolASMDebug.Caption
+msgctxt "FormPrincipal.acToolASMDebug.Caption"
+msgid "ASM &Debugger"
+msgstr ""
+
+#: FormPrincipal.acToolASMDebug.Hint
+msgctxt "FormPrincipal.acToolASMDebug.Hint"
+msgid "ASM &Debugger"
+msgstr ""
+
+#: FormPrincipal.MenuItem51.Caption
+msgctxt "FormPrincipal.MenuItem51.Caption"
+msgid "&Select Compiler"
+msgstr ""
+
+#: FormPrincipal.MSG_MODIFIED
+msgctxt "FormPrincipal.MSG_MODIFIED"
+msgid "(*)Modified"
+msgstr ""
+
+#: FormPrincipal.MSG_SAVED
+msgctxt "FormPrincipal.MSG_SAVED"
+msgid "Saved"
+msgstr ""
+
+#: FormPrincipal.MSG_NOFILES
+msgctxt "FormPrincipal.MSG_NOFILES"
+msgid "No files."
+msgstr ""
+
+#: FormPrincipal.MSG_NOFOUND_
+msgctxt "FormPrincipal.MSG_NOFOUND_"
+msgid "No found \"%s\""
+msgstr ""
+
+#: FormPrincipal.MSG_N_REPLAC
+msgctxt "FormPrincipal.MSG_N_REPLAC"
+msgid "%d words replaced"
+msgstr ""
+
+#: FormPrincipal.MSG_REPTHIS
+msgctxt "FormPrincipal.MSG_REPTHIS"
+msgid "Replace this?"
+msgstr ""
+
+#: FormPrincipal.MSG_SYNFIL_NOF
+msgctxt "FormPrincipal.MSG_SYNFIL_NOF"
+msgid "Syntax file not found: %s"
+msgstr ""
+
+#: FormPrincipal.MSG_FILSAVCOMP
+msgctxt "FormPrincipal.MSG_FILSAVCOMP"
+msgid "File must be saved before compiling."
+msgstr ""
+
+#: FormPrincipal.MSG_BASEL_COMP
+msgctxt "FormPrincipal.MSG_BASEL_COMP"
+msgid "Baseline Compiler"
+msgstr ""
+
+#: FormPrincipal.MSG_MIDRAN_COMP
+msgctxt "FormPrincipal.MSG_MIDRAN_COMP"
+msgid "Mid-range Compiler"
+msgstr ""
+
+#: FormPrincipal.MSG_ENMIDR_COMP
+msgctxt "FormPrincipal.MSG_ENMIDR_COMP"
+msgid "Enhanced Mid-range Compiler"
+msgstr ""
+
+#: FormPrincipal.MSG_PROJECT
+msgctxt "FormPrincipal.MSG_PROJECT"
+msgid "Project: "
+msgstr ""
+
+#: FrameArcExplor.NEW_FILE_NAME
+msgctxt "FrameArcExplor.NEW_FILE_NAME"
+msgid "newfile.pas"
+msgstr ""
+
+#: FrameArcExplor.FOLDER_NAME
+msgctxt "FrameArcExplor.FOLDER_NAME"
+msgid "folder"
+msgstr ""
+
+#: FrameArcExplor.TXT_EMPTY
+msgctxt "FrameArcExplor.TXT_EMPTY"
+msgid "<empty>"
+msgstr ""
+
+#: FrameArcExplor.TXT_FOLD
+msgctxt "FrameArcExplor.TXT_FOLD"
+msgid "C&ollapse"
+msgstr ""
+
+#: FrameArcExplor.TXT_UNFOLD
+msgctxt "FrameArcExplor.TXT_UNFOLD"
+msgid "E&xpand"
+msgstr ""
+
+#: FrameArcExplor.TXT_NOTDELFOL
+msgctxt "FrameArcExplor.TXT_NOTDELFOL"
+msgid "Cannot delete folders"
+msgstr ""
+
+#: FrameArcExplor.TXT_DELFILE
+msgctxt "FrameArcExplor.TXT_DELFILE"
+msgid "Delete file \"%s\"?"
+msgstr ""
+
+#: FrameArcExplor.mnFolOpenInExplor.Caption
+msgctxt "FrameArcExplor.mnFolOpenInExplor.Caption"
+msgid "Open on &Windows Explorer"
+msgstr ""
+
+#: FrameArcExplor.mnFolNewFile.Caption
+msgctxt "FrameArcExplor.mnFolNewFile.Caption"
+msgid "&New File"
+msgstr ""
+
+#: FrameArcExplor.mnFolNewFolder.Caption
+msgctxt "FrameArcExplor.mnFolNewFolder.Caption"
+msgid "New &Folder"
+msgstr ""
+
+#: FrameArcExplor.mnFolChanName.Caption
+msgctxt "FrameArcExplor.mnFolChanName.Caption"
+msgid "Cha&nge Name"
+msgstr ""
+
+#: FrameArcExplor.mnFolDelete.Caption
+msgctxt "FrameArcExplor.mnFolDelete.Caption"
+msgid "&Delete"
+msgstr ""
+
+#: FrameArcExplor.mnFolRefresh.Caption
+msgctxt "FrameArcExplor.mnFolRefresh.Caption"
+msgid "&Refresh"
+msgstr ""
+
+#: FrameArcExplor.mnFilOpen.Caption
+msgctxt "FrameArcExplor.mnFilOpen.Caption"
+msgid "&Open"
+msgstr ""
+
+#: FrameArcExplor.mnFilChanName.Caption
+msgctxt "FrameArcExplor.mnFilChanName.Caption"
+msgid "Cha&nge Name"
+msgstr ""
+
+#: FrameArcExplor.mnFilCreCopFrom.Caption
+msgctxt "FrameArcExplor.mnFilCreCopFrom.Caption"
+msgid "Create Co&py from"
+msgstr ""
+
+#: FrameArcExplor.mnFilDelete.Caption
+msgctxt "FrameArcExplor.mnFilDelete.Caption"
+msgid "&Delete"
+msgstr ""
+
+#: FrameArcExplor.mnFilRefrescar.Caption
+msgctxt "FrameArcExplor.mnFilRefrescar.Caption"
+msgid "&Refresh"
+msgstr ""
+
+#: FrameEditView.mnCloseOthers.Caption
+msgctxt "FrameEditView.mnCloseOthers.Caption"
+msgid "Close &others"
+msgstr ""
+
+#: FrameEditView.mnRecents.Caption
+msgctxt "FrameEditView.mnRecents.Caption"
+msgid "&Recents"
+msgstr ""
+
+#: FrameMessagesWin.mnClearAll.Caption
+msgctxt "FrameMessagesWin.mnClearAll.Caption"
+msgid "Clear &All"
+msgstr ""
+
+#: FrameMessagesWin.mnCopyRow.Caption
+msgctxt "FrameMessagesWin.mnCopyRow.Caption"
+msgid "&Copy Row"
+msgstr ""
+
+#: FrameSyntaxTree.TIT_TYPE
+msgctxt "FrameSyntaxTree.TIT_TYPE"
+msgid "Types"
+msgstr ""
+
+#: GenCod.MSG_NOT_IMPLEM
+msgctxt "GenCod.MSG_NOT_IMPLEM"
+msgid "Not implemented."
+msgstr ""
+
+#: GenCod.MSG_INVAL_PARTYP
+msgctxt "GenCod.MSG_INVAL_PARTYP"
+msgid "Invalid parameter type: %s"
+msgstr ""
+
+#: GenCod.MSG_UNSUPPORTED
+msgctxt "GenCod.MSG_UNSUPPORTED"
+msgid "Unsupported"
+msgstr ""
+
+#: GenCod.MSG_CANNOT_COMPL
+msgctxt "GenCod.MSG_CANNOT_COMPL"
+msgid "Cannot Compile: \"%s\""
+msgstr ""
+
+#: GenCod.ER_INV_MEMADDR
+msgctxt "GenCod.ER_INV_MEMADDR"
+msgid "Invalid memory address."
+msgstr ""
+
+#: GenCod.ER_INV_MAD_DEV
+msgctxt "GenCod.ER_INV_MAD_DEV"
+msgid "Invalid memory address for this device."
+msgstr ""
+
+#: GenCodBas.TXT_SAVE_W
+msgctxt "GenCodBas.TXT_SAVE_W"
+msgid ";save W"
+msgstr ""
+
+#: GenCodBas.TXT_SAVE_Z
+msgctxt "GenCodBas.TXT_SAVE_Z"
+msgid ";save Z"
+msgstr ""
+
+#: GenCodBas.TXT_SAVE_H
+msgctxt "GenCodBas.TXT_SAVE_H"
+msgid ";save H"
+msgstr ""
+
+#: GenCodBas.MSG_NO_ENOU_RAM
+msgctxt "GenCodBas.MSG_NO_ENOU_RAM"
+msgid "No enough RAM"
+msgstr ""
+
+#: GenCodBas.MSG_VER_CMP_EXP
+msgctxt "GenCodBas.MSG_VER_CMP_EXP"
+msgid "Very complex expression. To simplify."
+msgstr ""
+
+#: GenCodBas.MSG_STACK_OVERF
+msgctxt "GenCodBas.MSG_STACK_OVERF"
+msgid "Stack Overflow"
+msgstr ""
+
+#: GenCodBas.MSG_NOT_IMPLEM
+msgctxt "GenCodBas.MSG_NOT_IMPLEM"
+msgid "Not implemented."
+msgstr ""
+
+#: GenCodBas.ER_VARIAB_EXPEC
+msgctxt "GenCodBas.ER_VARIAB_EXPEC"
+msgid "Variable expected."
+msgstr ""
+
+#: GenCodBas.ER_ONL_BYT_WORD
+msgctxt "GenCodBas.ER_ONL_BYT_WORD"
+msgid "Only BYTE or WORD index is allowed in FOR."
+msgstr ""
+
+#: GenCodBas.ER_ASIG_EXPECT
+msgctxt "GenCodBas.ER_ASIG_EXPECT"
+msgid "\":=\" expected."
+msgstr ""
+
+#: Parser.ER_NOTYPDEF_NU
+msgctxt "Parser.ER_NOTYPDEF_NU"
+msgid "No type defined to allocate this number."
+msgstr ""
+
+#: Parser.ER_ARR_SIZ_BIG
+msgctxt "Parser.ER_ARR_SIZ_BIG"
+msgid "Array size to big."
+msgstr ""
+
+#: Parser.ER_INV_ARR_SIZ
+msgctxt "Parser.ER_INV_ARR_SIZ"
+msgid "Invalid array size."
+msgstr ""
+
+#: ParserDirec.ER_TOOHIGHFRE
+msgctxt "ParserDirec.ER_TOOHIGHFRE"
+msgid "Frequency too high for this device."
+msgstr ""
+
+#: ParserDirec.ER_EXPECTED_BR
+msgctxt "ParserDirec.ER_EXPECTED_BR"
+msgid "Expected: \"}\"."
+msgstr ""
+
+#: ParserDirec.ER_ENDIF_NOFOU
+msgctxt "ParserDirec.ER_ENDIF_NOFOU"
+msgid "\"$ENDIF\" not found."
+msgstr ""
+
+#: ParserDirec.ER_UNEXP_ENDIF
+msgctxt "ParserDirec.ER_UNEXP_ENDIF"
+msgid "Unexpected \"$ENDIF\"."
+msgstr ""
+
+#: ParserDirec.ER_UNEXP_ELSE
+msgctxt "ParserDirec.ER_UNEXP_ELSE"
+msgid "Unexpected \"$ELSE\"."
+msgstr ""
+
+#: ParserDirec.ER_CONF_UNDEF_
+msgctxt "ParserDirec.ER_CONF_UNDEF_"
+msgid "Undefined Config. Bit: %s"
+msgstr ""
+
+#: ParserDirec.ER_INVAL_CBIT_
+msgctxt "ParserDirec.ER_INVAL_CBIT_"
+msgid "Invalid Config. Bit: %s"
+msgstr ""
+
+#: ParserDirec.ER_FILE_NO_FND_
+msgctxt "ParserDirec.ER_FILE_NO_FND_"
+msgid "File no found: %s"
+msgstr ""
+
+#: ParserDirec.ER_ERIN_NUMBER_
+msgctxt "ParserDirec.ER_ERIN_NUMBER_"
+msgid "Error in number: %s"
+msgstr ""
+
+#: ParserDirec.ER_UNKNW_IDENT_
+msgctxt "ParserDirec.ER_UNKNW_IDENT_"
+msgid "Unknown Identifier: %s"
+msgstr ""
+
+#: ParserDirec.ER_DIVIDE_ZERO
+msgctxt "ParserDirec.ER_DIVIDE_ZERO"
+msgid "Cannot divide by zero"
+msgstr ""
+
+#: ParserDirec.ER_EVA_ZER_ZER
+msgctxt "ParserDirec.ER_EVA_ZER_ZER"
+msgid "Cannot evaluate 0^0"
+msgstr ""
+
+#: ParserDirec.ER_OPE_NOT_IMP_
+msgctxt "ParserDirec.ER_OPE_NOT_IMP_"
+msgid "Operator not implemented: %s"
+msgstr ""
+
+#: ParserDirec.ER_EXPECT_CAR_
+msgctxt "ParserDirec.ER_EXPECT_CAR_"
+msgid "Expected \"%s\""
+msgstr ""
+
+#: RegWatcher.Label1.Caption
+msgctxt "RegWatcher.Label1.Caption"
+msgid "Register Watcher"
+msgstr ""
+
+#: RegWatcher.mnClearAll.Caption
+msgctxt "RegWatcher.mnClearAll.Caption"
+msgid "&Clear All"
+msgstr ""
+
+#: RegWatcher.mnAddVars.Caption
+msgctxt "RegWatcher.mnAddVars.Caption"
+msgid "Add Program &Variables"
+msgstr ""
+
+#: RegWatcher.mnAddRT.Caption
+msgctxt "RegWatcher.mnAddRT.Caption"
+msgid "Add &Registers"
+msgstr ""
+
+#: RegWatcher.TIT_ADD
+msgctxt "RegWatcher.TIT_ADD"
+msgid "Address"
+msgstr ""
+
+#: RegWatcher.TIT_NAM
+msgctxt "RegWatcher.TIT_NAM"
+msgid "Name"
+msgstr ""
+
+#: RegWatcher.TIT_VAL
+msgctxt "RegWatcher.TIT_VAL"
+msgid "Value"
+msgstr ""
