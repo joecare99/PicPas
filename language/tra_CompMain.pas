@@ -15,9 +15,9 @@ ER_NOT_IMPLEM_ := trans('Not implemented: "%s"'       , 'No implementado: "%s"' 
 ER_SEM_COM_EXP := trans('":" or "," expected.'        , 'Se esperaba ":" o ",".'        ,'',
                         '":"oder"," erwartet.'        , '":" або "," очікується.','":" или "," ожидается.', '":" ou "," attendus.');
 ER_INV_ARR_SIZ := trans('Invalid array size.', 'Tamaño de arreglo inválido', '',
-                        ''                   , 'Помилка в розмірі масиву.','Ошибка размера массива.', 'Taille de tableau invalide.');
+                        'Ungültige Arraygröße.'                   , 'Помилка в розмірі масиву.','Ошибка размера массива.', 'Taille de tableau invalide.');
 ER_ARR_SIZ_BIG := trans('Array size to big.' , 'Tamaño de arreglo muy grande', '',
-                        ''                   ,'Розмір масиву завеликий.','Размер массива слишком велик.', 'Tableau trop grand.');
+                        'Arraygröße zu groß.'                   ,'Розмір масиву завеликий.','Размер массива слишком велик.', 'Tableau trop grand.');
 ER_IDE_TYP_EXP := trans('Identifier of type expected.', 'Se esperaba identificador de tipo.','',
                         'Typenbezeichner erwartet.'   , 'Очікується ідентифікатор типу.','Ожидается идентификатор типа.', 'Identifiant de type attendu.');
 ER_IDE_CON_EXP := trans('Identifier of constant expected.', 'Se esperaba identificador de constante','',
@@ -27,7 +27,7 @@ ER_EQU_COM_EXP := trans('"=" or "," expected.'        , 'Se esperaba "=" o ","' 
 ER_DUPLIC_IDEN := trans('Duplicated identifier: "%s"' , 'Identificador duplicado: "%s"' ,'',
                         'Doppelter Platzhalter: "%s"' , 'Дубльований ідентифікатор: "%s"','Дублированный идентификатор: "%s"', 'Identifiant à double : "%s"');
 ER_NOTYPDEF_NU := trans('No type defined to allocate this number.', 'No hay tipo para almacenar este número.', '',
-                        '','Не визначено тип, щоб виділити цей номер.','Нет определенного типа, чтобы выделить это число.', 'Aucun type défini pour allouer ce nombre');
+                        'Es wurde kein Typ definiert, um diese Nummer zuzuweisen.','Не визначено тип, щоб виділити цей номер.','Нет определенного типа, чтобы выделить это число.', 'Aucun type défini pour allouer ce nombre');
 ER_EOF_END_EXP := trans('Unexpected end of file. "end" expected.', 'Inesperado fin de archivo. Se esperaba "end".','',
                         'Unerwartetes Dateiende. "end" erwartet.','Неочікуваний кінець файла. "end" очікується.','Неожиданный конец файла. "end" ожидается.', '"end" attendu à la fin du fichier.');
 ER_ELS_UNEXPEC := trans('"else" unexpected.'    , '"else" inesperado', '',
@@ -49,7 +49,7 @@ ER_ERR_IN_NUMB := trans('Error in number.'           , 'Error en número'       
 ER_UNDEF_TYPE_ := trans('Undefined type "%s"'        , 'Tipo "%s" no definido.'        ,'',
                         'Undefinierter Typ "%s"'     , 'Невизначений тип "%s"','Неопределённый тип "%s"', 'Type indéfini "%s"');
 ER_DUPLIC_FUNC_:= trans('Duplicated function: %s'     ,'Función duplicada: %s', '',
-                        '', '', '', '');
+                        'Duplizierte Funktion: %s', '', '', '');
 ER_FIL_NOFOUND := trans('File not found: %s'        , 'Archivo no encontrado: %s', '',
                         'Datei nicht gefunden: "%s"', 'Файл не знайдено: %s','Файл не найден: %s', 'Fichier non trouvé: %s');
 ER_PROG_NAM_EX := trans('Program name expected.'      , 'Se esperaba nombre de programa.','',

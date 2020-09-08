@@ -20,7 +20,7 @@ lblErrors.Caption := Trans('Errors'          , 'Errores'          , ''      ,
 PanGrilla.Caption := Trans('<< No messages >>','<< Sin mensajes >>',''      ,
                            '<<Keine Meldungen>>','<< Немає повідомлень >>','<< Нет сообщений >>', '<< Aucun message >>');
 mnClearAll.Caption:= Trans('Clear &All'      , 'Limpiar &Todo'    , ''      ,
-                           ''                 , 'Зтерти все'  ,'', 'Effacer &Tout');
+                           'Alle lös&chen'                 , 'Зтерти все'  ,'', 'Effacer &Tout');
 mnCopyRow.Caption := Trans('&Copy Row'       , '&Copiar fila'     , ''      ,
-                           ''                 , '','', '&Copier ligne');
+                           'Zeile &kopiere'                 , '','', '&Copier ligne');
 

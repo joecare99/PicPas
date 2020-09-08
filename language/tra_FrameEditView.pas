@@ -21,7 +21,7 @@ mnCloseTab.Caption    := Trans('Close'         , 'Cerrar'            , 'Wisqay' 
 mnCloseAll.Caption    := Trans('Close All'     , 'Cerrar todos'      , 'Llapanta wisqay'  ,
                                'Alle Schliessen','Закрити все','Закрыть всё', 'Fermer Tout');
 mnCloseOthers.Caption := Trans('Close &others' , 'Cerrar &otros'     , ''                 ,
-                               '','Закрити інші','Закрыть все другие', 'Fermer &Autres');
+                               'Schließe &andere','Закрити інші','Закрыть все другие', 'Fermer &Autres');
 if mnRecents<>nil then
   mnRecents.Caption   := Trans('&Recents' ,'&Recientes','','&Letzte',
                                'Нещодавні','Недавние', '&Récents');

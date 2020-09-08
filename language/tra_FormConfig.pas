@@ -37,13 +37,13 @@ label1.Caption      := Trans('Units Path:'             , 'Ruta de unidades'     
                               'Unitpfad:','','', 'Répertoire des unités:');
 
 label3.Caption      := Trans('&Set Theme'        , '&Fijar Tema', '',
-                               '','Обрати тему','Выбрать тему', '&Charger un thème');
+                               '&Wähle Design','Обрати тему','Выбрать тему', '&Charger un thème');
 LABEL_THEM_NONE     := Trans('None', 'Ninguno', '',
-                             '','Нічого','Ничего', 'Aucun');
+                             'Keine','Нічого','Ничего', 'Aucun');
 label4.Caption      := Trans('&Create Theme'        , '&Crear Tema', '',
-                               '','Створити тему','Создать тему', '&Créer un thème');
+                               '&Design erstellen','Створити тему','Создать тему', '&Créer un thème');
 butSaveCurThem.Caption := Trans('&Save current config.', 'Guardar config. actual', '',
-                             '','Зберегти налаштування','Сохранить настройки', '&Enregister thème actuel');;
+                             '&Aktuelle Konfiguration speichern.','Зберегти налаштування','Сохранить настройки', '&Enregister thème actuel');;
 
 chkLoadLast.Caption := Trans('Load last file edited'     , 'Cargar último archivo editado', '',
                              'Letzte editierte Datei laden','Завантажити останній файл','Загрузить последний файл', 'Charger le dernier' + #13#10 + 'fichier édité');
@@ -57,26 +57,26 @@ lblSplitCol.Caption := Trans('Splitters color:'          , 'Color de los separad
 //////////////////////////  Code Explorer //////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 TIT_CFG_CODEXP    := Trans('Code Explorer', 'Explorador de Código', '',
-                           '','Оглядач коду','Инспектор кода', 'Explorateur de Code');
+                           'Quellenexplorer','Оглядач коду','Инспектор кода', 'Explorateur de Code');
 lblCodExplCol1.Caption:= Trans('Back color:' , 'Color de Fondo:', '',
-                               'Hintergrundfarbe:','Колір фону:','Цвет фона:', 'Couleur de fond');
+                               'Code-Explorer Hintergrundfarbe:','Колір фону:','Цвет фона:', 'Couleur de fond');
 lblCodExplCol2.Caption:= Trans('Text Color:' , 'Color de Texto:', '',
-                               'Textfarbe:','Колір тексту:','Цвет текста:', 'Couleur du texte');
+                               'Code-Explorer Textfarbe:','Колір тексту:','Цвет текста:', 'Couleur du texte');
 grpFilType.Caption    := Trans('File types shown:' , 'Tipos de archivos mostrados:', '',
-                               '','','', 'Types de fichiers affichés:');
+                               'Gezeigte Dateitypen:','','', 'Types de fichiers affichés:');
 ////////////////////////////////////////////////////////////////////////////
 //////////////////////////  Message Panel //////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 TIT_CFG_MESPAN    := Trans('Message Panel', 'Panel de Mensajes', '',
-                           '','Панель повідомлень','Панель сообщений', 'Panneau de Messages');
+                           'Nachrichtenbereich','Панель повідомлень','Панель сообщений', 'Panneau de Messages');
 lblMessPan1.Caption   := Trans('Back color'   , 'Color de Fondo', '',
-                               'Hintergrundfarbe','Колір фону','Цвет фона', 'Couleur de fond');
+                               'Nachrichtenpaneel Hintergrundfarbe','Колір фону','Цвет фона', 'Couleur de fond');
 lblMessPan2.Caption   := Trans('Text color:'  , 'Color de Texto', '',
-                               'Textfarbe:','Колір тексту:','Цвет текста:', 'Couleur du texte:');
+                               'Nachrichtenpaneel Textfarbe:','Колір тексту:','Цвет текста:', 'Couleur du texte:');
 lblMessPan3.Caption   := Trans('Error color:' , 'Color de Error', '',
-                               'Fehlerfarbe:','Колір помилки:','Цвет ошибки:', 'Couleur des erreurs:');
+                               'Nachrichtenpaneel Fehlerfarbe:','Колір помилки:','Цвет ошибки:', 'Couleur des erreurs:');
 lblMessPan4.Caption   := Trans('Selection color:', 'Color de Selección', '',
-                               'Auswahlfarbe:','Колір обраного:','Цвет выделения:', 'Couleur de sélection:');
+                               'Nachrichtenpaneel Auswahlfarbe:','Колір обраного:','Цвет выделения:', 'Couleur de sélection:');
 
 ////////////////////////////////////////////////////////////////////////////
 //////////////////////////  Editor settings ///////////////////////////////
@@ -109,7 +109,7 @@ chkAutSynChk.Caption := Trans('Automatic Syntax checking', 'Verificac. Automáti
 //////////////////////////// Editor Colors Settings ////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 TIT_CFG_EDICOL      := Trans('Colors'                 , 'Colores'                   , '',
-                             '','Кольори','Цвета', 'Couleurs');
+                             'Farben','Кольори','Цвета', 'Couleurs');
 ////////////////////////////////////////////////////////////////////////////
 //////////////////////////// Editor-Syntax Settings ////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ chkIncDecVar.Caption := Trans('Include &Variables declaration', 'Incluir Declara
 RadioGroup2.Caption  := Trans('Style'                  , 'Estilo'                   , '',
                               'Stil','Стиль','Стиль', 'Style');
 chkExcUnused.Caption  := Trans('Exclude unused'         , 'Excluir no usadas'        , '',
-                             'Unbenutzte ausschlieÃŸen','Виключити невикористовуване','Исключить неиспользуемое', 'Exclure les portions inutilisées');
+                             'Unbenutzte ausschlieÃen','Виключити невикористовуване','Исключить неиспользуемое', 'Exclure les portions inutilisées');
 chkIncAddress.Caption := Trans('Include &Memory Address','Incluir &Dirección de memoria','',
                                'Speicheradressen einbinden','Включити Memory Address','Включить Memory Address', 'Inclure les adresses' + #13#10 + '&mémoire');
 chkIncComment.Caption := Trans('Include &Comments'      , 'Incluir &Comentarios'     , '',
@@ -156,12 +156,12 @@ chkOptBnkBefPro.Caption:= Trans('Before Procedures'     , 'Antes de procedimient
 chkOptBnkAftPro.Caption:= Trans('After Procedures'      , 'Después de procedimientos.', '',
                                 'Nach den Prozeduren','Після адреси','После адреса', 'Après les procédures');
 chkReuProcVar.Caption  := Trans('Reuse Procedures Variables', 'Reutilizar variables de proced.', '',
-                                '','Повторно використовувати змінні процедур','Повторно использовать переменные процедур', 'Ré-utiliser les variables de procédure');
+                                'Prozedurvariablen wiederverwenden','Повторно використовувати змінні процедур','Повторно использовать переменные процедур', 'Ré-utiliser les variables de procédure');
 ////////////////////////////////////////////////////////////////////////////
 //////////////////////////// External Tool ////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 TIT_CFG_EXTOOL    := Trans('External Tool'           , 'Herramienta Externa'      , '',
-                           '','Завнішній інструмент','Внешний инструмент', 'Outils Externes');
+                           'Externes Werkzeug','Завнішній інструмент','Внешний инструмент', 'Outils Externes');
 FillTree;
 end;
 

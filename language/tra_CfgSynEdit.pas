@@ -15,9 +15,9 @@ label10.Caption       := trans('Back color:'             , 'Color de fondo:'    
 label11.Caption       := trans('Text color:'             , 'Color de texto:'             ,'',
                                'Farbe Text:'             , 'Колір текста', 'Цвет текста', 'Texte');
 label12.Caption       := trans('Frame color:'            , 'Color de borde:'             ,'',
-                               ''                        , 'Колір рамки',  'Цвет рамки', 'Cadre');
+                               'Rahmenfarbe:'                        , 'Колір рамки',  'Цвет рамки', 'Cadre');
 chkFullWord.Caption   := trans('Full Word'               , 'Palabra completa'             ,'',
-                               ''                        , 'Повне слово',  'Полное слово', 'Mot complet');
+                               'Ganzes Wort'                        , 'Повне слово',  'Полное слово', 'Mot complet');
 
 chkVerPanVer.Caption := trans('Gutter '                 , 'Panel Vertical'              ,'',
                               'Rinne'                   , '','', 'Marge');
