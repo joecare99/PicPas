@@ -43,7 +43,7 @@ var
 //const
 // TestRec: TTranslation = (en: 'Something'; es: 'algo'; );
 
-function Trans(const strEn, strEs, strQu, strDe, strUk, strRu, strFr: string): string;
+function Trans(const strEn, strEs, strQu, strDe, strUk, strRu, strFr: string;const strCn:string=''): string;
 //////////////////////////////////////////////////////
 function LeerParametros: boolean;
 function NombDifArc(nomBase: String): String;
@@ -53,7 +53,7 @@ const
   WA_DIR_NOEXIST = 'Directory: %s no found. It will be created';
   ER_CANN_READDI = 'Cannot read or create directories.';
 
-function Trans(const strEn, strEs, strQu, strDe, strUk, strRu, strFr: string): string;
+function Trans(const strEn, strEs, strQu, strDe, strUk, strRu, strFr: string;const strCn:string=''): string;
   function ClearLangId(str: string): string;
   {Limpia la cadena del caracter identificador de lenguaje, de la forma:
   #en=
@@ -95,6 +95,10 @@ begin
   end;
   'fr': begin
      Result := ClearLangId(strFr);
+     if Result = '' then Result := ClearLangId(strEn); //por defecto
+  end;
+  'cn': begin
+     Result := ClearLangId(strCn);
      if Result = '' then Result := ClearLangId(strEn); //por defecto
   end;
   else  //Por defecto Inglés
