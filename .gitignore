@@ -1,0 +1,83 @@
+# ============================================
+# Archivos específicos de Lazarus/FPC
+# ============================================
+
+# Archivos compilados (ejecutables y librerías)
+*.exe
+*.dll
+*.so
+*.dylib
+*.dmg
+*.o
+*.or
+*.ppu
+*.a
+*.lib
+*.dbg
+
+# Archivos específicos de Lazarus
+*.lps          # Archivo de sesión del proyecto
+*.lpi          # Archivo de información del proyecto (solo si usas GUI)
+*.lpr          # Archivo del programa principal (SÍ debe estar en el repo)
+*.lrs          # Archivos de recursos compilados
+*.res          # Archivos de recursos compilados
+*.compiled     # Archivos compilados
+*.lcl
+
+# Archivos de backup de Lazarus
+*.bak
+*.~*
+*.swp
+*.old
+
+# Directorios de salida de compilación
+lib/
+backup/
+__history/
+__recovery/
+
+# ============================================
+# Binarios específicos de PicPas (los que eliminaste)
+# ============================================
+PicPas-linux
+PicPas-linux.xml
+PicPas-win64.exe
+PicPas-win64.xml
+PicPas-Mac.dmg
+Mac_notes.txt
+*.exe
+*.dmg
+
+# ============================================
+# Archivos temporales y de sistema
+# ============================================
+*.tmp
+*.temp
+*.log
+*.cache
+*.dsk
+*.tds
+*.map
+
+# Directorios temporales
+tmp/
+temp/
+cache/
+
+# ============================================
+# Archivos comprimidos (no deben estar en el repo)
+# ============================================
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tgz
+*.bz2
+
+# ============================================
+# Archivos del sistema operativo
+# ============================================
+Thumbs.db        # Windows
+desktop.ini      # Windows
+*.lnk            # Windows shortcuts
+
