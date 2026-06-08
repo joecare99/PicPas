@@ -1,4 +1,4 @@
-Puedes descargar la última versión estable desde la sección de [Releases](https://github.com/t-edson/PicPas/releases/latest).
+You can download the latest stable version from the section: [Releases](https://github.com/t-edson/PicPas/releases/latest).
 
 ## Donate to the project
 
